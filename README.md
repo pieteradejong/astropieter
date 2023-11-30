@@ -1,66 +1,42 @@
-# Astro Starter Kit: Blog
-
-# Custom TODOs
-* Custom component for social links
-* ? Replace svg icons with something simpler
-* 
+# Pieter de Jong - Personal website
+URL = [pieter.am](https://pieter.am/) and [peter.am](https://peter.am/); I have a highly common first and last name, and it's easily misspelled between English and Dutch, so finding a proper domain was challenging. I settled on these, so just yelling over the crowd "it's PETER DOT AM, AM AS IN MORNINGTIME!" should work.
 
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+**Thsi is my main online presence**, aside from [my LinkedIn](https://www.linkedin.com/in/pieteradejong/) and [my GitHub](https://github.com/pieteradejong). The Internet is a large place, and standing out is both critical and hard. This is where I aim to do so.
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+# Goals
+* Marketing: put myself out there.
+* Connect: Find like-minded, share ideas, potentially work together, etc.
 
-Features:
+# Website 'Table of contents':
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+* Blog - I like to write
+* About Me - Personal background, history, what sets me apart from the crowd.
+* Reading: I love to read, and seek out fellow readers.
+* Contact: self-evident.
 
-## 🚀 Project Structure
 
-Inside of your Astro project, you'll see the following folders and files:
+# Maintenance / deployment
+For hosting I use [Siteground](https://www.siteground.com/), and for DNS I use [iwantmyname](https://iwantmyname.com/). 
 
-```
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+I use the React-based `Astro.js` framework for development; the for web development standard process of `npm run astro dev` that monitors files for changes so you see all changes reflected immediately on `localhost`; and a custom `.sh` script to use `rsync` to build the site and sync all changes to my Siteground server. 
+
+
+## rsync script
+I run this `$ astrosync` from anywhere to build + sync my site to prod:
+
+```bash
+astrosync() {
+  cd <local_astropieter_dir>
+  npm run astro build
+  rsync -av --delete -e <ssh_key> <local_build_dir> <server_host>
+}
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+# TODO 
+Stuff I would like to add in the future:
+* Top priorities: content, quality, and loading speed.
+* auto translate to any language, especially Spanish and Dutch. Classic Latin and Classic Greek would be cool too.
+* Low-friction contact methods.
+* Inline programming code, e.g. `Python`.
+* If/when my content becomes good enough, a micro-payment "tip jar".
