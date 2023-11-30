@@ -1,0 +1,54 @@
+---
+// TODO: add component imports
+
+// import { getCollection } from 'astro:content';
+
+// const allPosts = (await getCollection('blog')).sort(
+// 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+// );
+/*
+const allPosts = await getCollection('blog');
+const allPostsFilteredByTag = allPosts.filter((post) => {
+  post.data.tags?.includes(tag);
+});
+const postsSorted = allPostsFilteredByTag.sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+
+export async function getStaticPaths() {
+  // const allPosts = await Astro.glob('../../../content/blog/*./md');
+  const allPosts = await Astro.glob('../../../content/blog/*.md');
+
+  return [
+    // {params: {tag: "all"}},
+    // {params: {tag: "math"}},
+    {params: {tag: "all"}, props: {posts: allPosts}},
+    {params: {tag: "math"}, props: {posts: allPosts}},
+  ]
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+// const filteredPosts = posts.filter((post) => post.frontmatter.tags?.includes(tag));
+*/
+export async function getStaticPaths() {
+
+  return [
+    // {params: {tag: "all"}},
+    // {params: {tag: "math"}},
+    {params: {tag: "all"}},
+    {params: {tag: "math"}},
+  ]
+}
+---
+<!-- 
+<p>Posts tagged with {tag}</p>
+<p>postsSorted =  {postsSorted}</p>
+<p>allPosts =  {allPosts}</p>
+  <ul>
+    {postsSorted.map((post) => <li><a href={post.url}>{post.data.title}</a></li>)}
+  </ul>
+  
+
+ -->

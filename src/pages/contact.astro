@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="Contact"
+	description=""
+	pubDate={new Date()}
+>
+
+<script>
+    function submitForm(event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const subject = document.getElementById("subject").value;
+      const message = document.getElementById("message").value;
+
+      console.log("Form Submitted");
+      console.log(`Name: ${name}`);
+      console.log(`Email: ${email}`);
+      console.log(`Subject: ${subject}`);
+      console.log(`Message: ${message}`);
+
+      // You can add more logic here to handle the form submission
+    }
+  </script>
+
+
+<form id="contactForm" onsubmit="submitForm(event)">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="subject">Subject:</label><br>
+    <input type="text" id="subject" name="subject" required><br>
+
+    <label for="message">Message:</label><br>
+    <textarea id="message" name="message" rows="4" cols="50" required></textarea><br>
+
+    <input type="submit" value="Submit">
+  </form>
+
+</Layout>

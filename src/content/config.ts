@@ -13,7 +13,29 @@ const blog = defineCollection({
 			.string()
 			.optional()
 			.transform((str) => (str ? new Date(str) : undefined)),
+		tags: z
+			.array(z.string()).nonempty("tags must have at least one item")
 	}),
 });
 
-export const collections = { blog };
+const tag = defineCollection({
+	schema: z.object({
+		title: z.string(),
+		// description: z.string(),
+		// Transform string to Date object
+		// pubDate: z
+		// 	.string()
+		// 	.or(z.date())
+		// 	.transform((val) => new Date(val)),
+		// updatedDate: z
+		// 	.string()
+		// 	.optional()
+		// 	.transform((str) => (str ? new Date(str) : undefined)),
+	}),
+});
+
+export const collections = { 
+	'blog': blog,
+	'tag': tag
+};
+
