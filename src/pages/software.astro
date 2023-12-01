@@ -1,35 +1,26 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import Layout from '../layouts/Default.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header title={SITE_TITLE} />
-		<main>
-			<h1>Software Engineering</h1>
-			<p>
-                Some of my work can be found at <a href="https://github.com/pieteradejong" target="_blank">github.com/pieteradejong</a>.
-            </p>
-                
-            <p>
-                As a <b>software developer</b> for close to 10 years, I've worked in various capacities, companies, and teams.
-                In industry-lingo, my work has been both "full-stack Web", in "data pipelines/data analytics", and using a 
-                variety of tools.
-            </p>
+<Layout
+	title="Software Engineer"
+	description="Software Engineering"
+>
+<main>
+    <p>
+        Some of my work can be found at <a href="https://github.com/pieteradejong" target="_blank">github.com/pieteradejong</a>.
+    </p>
+        
+    <p>
+        As a <b>software developer</b> for close to 10 years, I've worked in various capacities, companies, and teams.
+        In industry-lingo, my work has been both "full-stack Web", in "data pipelines/data analytics", and using a 
+        variety of tools.
+    </p>
 
-            <p>
-                Here's a <em>summary:</em> Postgres, MySQL, MongoDB, Redis;
-                Python, Node.js, PHP, C#, Rust.
-                Tools: Bash, Git, Docker, Terraform, CicleCI, GitHub+Actions.
-            </p>
-		</main>
-		<Footer />
-	</body>
-</html>
+    <p>
+        Here's a <em>summary:</em> Postgres, MySQL, MongoDB, Redis;
+        Python, Node.js, PHP, C#, Rust.
+        Tools: Bash, Git, Docker, Terraform, CicleCI, GitHub+Actions.
+    </p>
+</main>
+</Layout>

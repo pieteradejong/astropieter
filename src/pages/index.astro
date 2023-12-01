@@ -1,19 +1,13 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import Layout from '../layouts/Default.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header title={SITE_TITLE} />
-		<main>
-			<h1>Hi, I'm Pieter.</h1>
+<Layout
+	title="Hi, I'm Pieter"
+	description="Homepage of Pieter A. de Jong, Software Engineer"
+>
+<main>
+    <h1></h1>
 			<p>
 				Pieter is a Software Engineer with 10+ years experience in industries from 
 				consumer finance, e-commerce, digital agriculture, and solar energy.
@@ -34,7 +28,5 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 				and reading his favorite accounts on 
 				<a href="https://x.com/">X</a>.
 			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+</main>
+</Layout>

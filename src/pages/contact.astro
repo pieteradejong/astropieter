@@ -1,14 +1,13 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import Layout from '../layouts/Default.astro';
 ---
 
 <Layout
 	title="Contact"
-	description=""
-	pubDate={new Date()}
+	description="Contact me"
 >
-
-<script>
+<main>
+  <script>
     function submitForm(event) {
       event.preventDefault(); // Prevent the default form submission
 
@@ -43,5 +42,5 @@ import Layout from '../layouts/BlogPost.astro';
 
     <input type="submit" value="Submit">
   </form>
-
+</main>
 </Layout>
