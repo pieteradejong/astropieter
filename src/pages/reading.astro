@@ -1,45 +1,124 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import Layout from '../layouts/Default.astro';
+import { Image } from 'astro:assets';
+import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 ---
 
 <Layout
 	title="My Reading"
 	description=""
-	pubDate={new Date()}
 >
-	<p>
-		Reading is quite important to me. As for most people, the quantity of digital dominates, 
+	<h3>Why read?</h3>
+    <p>
+		Reading is important to me. As for most people, the quantity of digital dominates, 
         but I've never forgotten the added quality, sensation, and permanence (as opposed to
         ephemerality and transience) of physical books. Thankfully, I've gotten back into the habit of actually 
         reading the physical books I buy.
 	</p>
+    <h3>Keeping track</h3>
     <p>
         In the past, I used goodreads to keep a list of book "shelves" and reviews, but that website 
         doesn't seem to be maintained much. So I've decided to maintain my own list of books and 
         reviews, for now.
     </p>
 
+    <h3>Gifting and sharing books</h3>
+    <!-- <div style={{ display: 'flex', alignItems: 'center' }}> -->
+    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <Image src={bookSharingPhoto} alt="Sharing books in the neighborhood" width="150" style={{ marginRight: '20px' }} />
+        <p>
+            Some neighborhoods have a box which works as a "little library" where people can both leave books
+            for others to take, and take books that others have left for them. I appreciate this as a way to share books
+            etc.
+        </p>
+    </div>
+
+
+    <h3>Is it good?</h3>
     <p>
         My scoring methodology [to be further filled in]: I _do_ give "perfect" reviews, if I feel 
         that a book realistically couldn't have been done better. For example, as a movie trilogy, 
         The Lord of the Rings deserves a "perfect" score for many reasons.
     </p>
 
+    <h3>What I <i>aspire to</i> read</h3>
+    
+    <h5>Humanities</h5>
+    <p>Author: Fyodor Dostoevsky</p>
+    
+    
+    <h5>Technical: Software and Systems</h5>
+    <ul>
+        <li>Computer Science papers:</li>
+        <ul>
+            <li>Meta: </li>
+            <li>Netflix: </li>
+        </ul>
+    </ul>
+
+
+    <h3>What I <i>am</i> reading</h3>
+
+    <h5>Technical: Software and Systems</h5>
+    <b>Designing Data-Intensive Applications</b>
+    Published: 2017
+    Author: Martin Kleppmann
+    <p><b>Review: </b></p>
+
+    <h5>Theme: Humanity, Morality, Religion</h5>
+    <p>
+        <b>Title: Jesus & Personality Theory: Exploring the Five-Factor Model Exploring the Five-Factor Model</b>
+        Author: James R. Beck
+        Score: TBD %. 
+    </p>
+
+
+    <p>
+    <h5>Theme: Health and exercise</h5>
+        <b>The Physics of Resistance Exercise</b>
+        Author: Doug Brignole
+    </p>
+
+    <h3>What I <i>have</i> read</h3>
+    <h5>Non-fiction</h5>
+    <p>
+        <b>Title: Nuclear War</b>
+        Author: Annie Jacobsen
+        Score: 80%
+    </p>
+    <p><b>Review: </b>
+    Pros:
+    - interesting about nuclear doctrine
+    - visceral sense of the unimaginable desctruction
+    - clearer sense of the very-rapid timing of events after first launch (minutes, hours)
+    Cons: 
+    - overwhelming amount of government/military acronyms;
+    - detailed descriptions of desctruction get repetitive;
+    </p>
+
+    <h5>Technical: Software and Systems</h5>
+    <p>
+        <b>System Design Interview - An Insider's Guide: Volume 2</b>
+        Published: 2022
+        Author: Alex Xu, Sahn Lam
+        <p><b>Review: </b></p>
+    
+    </p>
+    <h5>Theme: Humanity, Morality, Religion</h5>
     <p>
         <b>Title: Mere Christianity</b>
         Author: C.S. Lewis
         Score: 100%. 
     </p>
+    <h5>Theme: History</h5>
         <b>Mine Were of Trouble</b>
         Author: Peter Kemp
     <p>
+    <h5>Theme: Intellectual development</h5>
         <b>The Art of Clear Thinking</b>
         Author: Hasard Lee
     </p>
 
-    <p>
-        <b>The Physics of Resistance Exercise</b>
-        Author: Doug Brignole
-    </p>
+    
 
 </Layout>

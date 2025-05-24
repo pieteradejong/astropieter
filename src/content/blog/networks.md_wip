@@ -1,0 +1,62 @@
+---
+title: 'Network Simulation'
+description: 'Modeling and Simulation in Probabilistic Networks'
+hook: 'Exploring the mathematical foundations of network theory'
+pubDate: 'June 2, 2024'
+tags: ['all', 'math', 'networks']
+---
+
+# Intro
+We start with the following definitions:
+
+$$G = (V, E)$$
+
+where this is a basic graph composed of nodes $V$ and edges $E$. A graph represents the framework of a network, which can be used to model relationships and interactions in complex systems ranging from telecommunications to social networks.
+
+## Degree of a Node
+The degree of a node in a graph is given by the number of edges connected to that node. For a node $v$, this can be represented as:
+
+$$\text{deg}(v) = |\{e \in E : v \in e\}|$$
+
+where $E$ is the set of edges in the graph.
+
+## Paths and Connectivity
+A path in a graph is a sequence of edges which connects a sequence of vertices. A simple path is one with no repeated vertices. The length of a path is the number of edges in the path. The distance between two vertices is defined as the length of the shortest path between them, if one exists.
+
+$$d(u,v) = \min(\text{length of all paths from } u \text{ to } v)$$
+
+## Network Flows
+In network theory, flow networks are a special class of graph where each edge has a capacity and each edge receives a flow. The amount of flow on an edge cannot exceed the capacity of the edge. A common problem is finding the maximum flow from a source node $s$ to a sink node $t$, which can be formulated and solved using the Ford-Fulkerson method:
+
+$$\text{max flow}(s,t) = \max(\sum_{\text{flows entering } t} - \sum_{\text{flows leaving } t})$$
+
+These concepts form the basis of much of network theory and are essential for analyzing and solving various practical problems in network design and operation.
+
+## SEIR Model for Pandemic Spread
+
+The SEIR model divides the population into four compartments:
+
+- **S (Susceptible)**: Individuals who can contract the disease
+- **E (Exposed)**: Individuals who have been exposed but are not yet infectious.
+- **I (Infectious)**: Individuals capable of spreading the disease.
+- **R (Recovered)**: Individuals who have recovered and are no longer infectious.
+
+The model is governed by the following differential equations:
+
+$$
+\begin{aligned}
+\frac{dS}{dt} &= -\beta \frac{SI}{N} \\
+\frac{dE}{dt} &= \beta \frac{SI}{N} - \sigma E \\
+\frac{dI}{dt} &= \sigma E - \gamma I \\
+\frac{dR}{dt} &= \gamma I
+\end{aligned}
+$$
+
+
+Where:
+- $$\beta$$ is the transmission rate
+- $$\sigma$$ is the rate at which exposed individuals become infectious
+- $$\gamma$$ is the recovery rate
+- $$N$$ is the total population size
+
+This model allows us to simulate the spread of a pandemic through a population, taking into account various disease parameters and population characteristics.
