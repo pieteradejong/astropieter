@@ -3,19 +3,134 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Pieter A. de Jong.<br />
-	<span class='all-right-reserved'>All rights reserved.</span>
+	<div class="footer-content">
+		<div class="footer-section">
+			<h3 class="section-header">Connect</h3>
+			<div class="social-links">
+				<a href="https://github.com/pieteradejong" target="_blank" rel="noopener noreferrer" class="secondary-link">
+					GitHub
+				</a>
+				<a href="https://linkedin.com/in/pieteradejong" target="_blank" rel="noopener noreferrer" class="secondary-link">
+					LinkedIn
+				</a>
+			</div>
+		</div>
+
+		<div class="footer-section">
+			<h3 class="section-header">Quick Links</h3>
+			<div class="quick-links">
+				<a href="/blog" class="tertiary-link">Blog</a>
+				<a href="/projects" class="tertiary-link">Projects</a>
+				<a href="/reading" class="tertiary-link">Reading</a>
+				<a href="/contact" class="button-link">Contact</a>
+			</div>
+		</div>
+
+		<div class="footer-section">
+			<h3 class="section-header">Interests</h3>
+			<div class="interests">
+				<span>Software Engineering</span>
+				<span>Mathematics</span>
+				<span>Skiing & Snowboarding</span>
+				<span>Geopolitics</span>
+				<span>Physical Fitness</span>
+				<span>Spiritual Growth</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer-bottom">
+		<p>&copy; {today.getFullYear()} Pieter A. de Jong. All rights reserved.</p>
+	</div>
 </footer>
+
 <style>
 	footer {
-		/* padding: 2em 1em 6em 1em; */
-		padding: 1em 0 1em 0;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		/* color: rgb(var(--gray)); */
-		text-align: center;
+		background: var(--footer-bg);
+		color: var(--secondary-text);
+		padding: 3rem 0 1.5rem;
+		border-top: 1px solid var(--border);
 	}
 
-	footer .all-right-reserved {
-		font-size: 14px;
+	.footer-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 2rem;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2rem;
+	}
+
+	.footer-section h3.section-header {
+		color: var(--non-link-text);
+		font-size: 1.1rem;
+		margin: 0 0 1rem;
+		font-weight: 600;
+	}
+
+	.footer-section > div {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.footer-section a:not(.button-link) {
+		padding: 0.25rem 0;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.footer-section a:not(.button-link):hover {
+		text-decoration: none;
+	}
+
+	.footer-section .quick-links a.button-link {
+		padding: 0.5em 0.5em;
+		display: inline-block;
+		text-align: center;
+		width: fit-content;
+	}
+
+	.interests span {
+		display: block;
+		font-size: 0.95rem;
+		color: var(--non-link-text);
+	}
+
+	.footer-bottom {
+		max-width: 1200px;
+		margin: 2rem auto 0;
+		padding: 1.5rem 2rem 0;
+		border-top: 1px solid var(--border);
+		text-align: center;
+		font-size: 0.9rem;
+	}
+
+	.footer-bottom p {
+		margin: 0;
+	}
+
+	@media (max-width: 768px) {
+		footer {
+			padding: 2rem 0 1rem;
+		}
+
+		.footer-content {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+			padding: 0 1rem;
+		}
+
+		.footer-section {
+			text-align: center;
+		}
+
+		.footer-section > div {
+			align-items: center;
+		}
+
+		.footer-bottom {
+			padding: 1rem 1rem 0;
+		}
 	}
 </style>

@@ -6,119 +6,407 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 
 <Layout
 	title="My Reading"
-	description=""
+	description="A collection of books I've read, am reading, and aspire to read - from technical to philosophical."
 >
-	<h3>Why read?</h3>
-    <p>
-		Reading is important to me. As for most people, the quantity of digital dominates, 
-        but I've never forgotten the added quality, sensation, and permanence (as opposed to
-        ephemerality and transience) of physical books. Thankfully, I've gotten back into the habit of actually 
-        reading the physical books I buy.
-	</p>
-    <h3>Keeping track</h3>
-    <p>
-        In the past, I used goodreads to keep a list of book "shelves" and reviews, but that website 
-        doesn't seem to be maintained much. So I've decided to maintain my own list of books and 
-        reviews, for now.
-    </p>
+	<div class="reading-intro">
+		<h3>Why read?</h3>
+		<p>
+			Reading is important to me. As for most people, the quantity of digital dominates, 
+			but I've never forgotten the added quality, sensation, and permanence (as opposed to
+			ephemerality and transience) of physical books. Thankfully, I've gotten back into the habit of actually 
+			reading the physical books I buy.
+		</p>
 
-    <h3>Gifting and sharing books</h3>
-    <!-- <div style={{ display: 'flex', alignItems: 'center' }}> -->
-    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-        <Image src={bookSharingPhoto} alt="Sharing books in the neighborhood" width="150" style={{ marginRight: '20px' }} />
-        <p>
-            Some neighborhoods have a box which works as a "little library" where people can both leave books
-            for others to take, and take books that others have left for them. I appreciate this as a way to share books
-            etc.
-        </p>
-    </div>
+		<div class="book-sharing">
+			<Image src={bookSharingPhoto} alt="Sharing books in the neighborhood" width="150" />
+			<p>
+				Some neighborhoods have a box which works as a "little library" where people can both leave books
+				for others to take, and take books that others have left for them. I appreciate this as a way to share books
+				etc.
+			</p>
+		</div>
 
+		<h3>My Review System</h3>
+		<p>
+			I do give "perfect" reviews if I feel that a book realistically couldn't have been done better. 
+			For example, as a movie trilogy, The Lord of the Rings deserves a "perfect" score for many reasons.
+		</p>
+	</div>
 
-    <h3>Is it good?</h3>
-    <p>
-        My scoring methodology [to be further filled in]: I _do_ give "perfect" reviews, if I feel 
-        that a book realistically couldn't have been done better. For example, as a movie trilogy, 
-        The Lord of the Rings deserves a "perfect" score for many reasons.
-    </p>
+	<div class="reading-sections">
+		<section class="reading-section current">
+			<h2>Currently Reading</h2>
+			<div class="book-grid">
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Designing Data-Intensive Applications</h3>
+						<p class="book-subtitle">The Big Ideas Behind Reliable, Scalable, and Maintainable Systems</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Technical: Software & Systems</span>
+						<span class="book-author">Martin Kleppmann</span>
+						<span class="book-year">2017</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<p>In progress...</p>
+					</div>
+				</div>
 
-    <h3>What I <i>aspire to</i> read</h3>
-    
-    <h5>Humanities</h5>
-    <p>Author: Fyodor Dostoevsky</p>
-    
-    
-    <h5>Technical: Software and Systems</h5>
-    <ul>
-        <li>Computer Science papers:</li>
-        <ul>
-            <li>Meta: </li>
-            <li>Netflix: </li>
-        </ul>
-    </ul>
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Jesus & Personality Theory</h3>
+						<p class="book-subtitle">Exploring the Five-Factor Model</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Humanity, Morality, Religion</span>
+						<span class="book-author">James R. Beck</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Jesus-Personality-Theory-Exploring-Five-Factor/dp/0830827685" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<p>In progress...</p>
+					</div>
+				</div>
 
+				<div class="book-card">
+					<div class="book-header">
+						<h3>The Physics of Resistance Exercise</h3>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Health & Exercise</span>
+						<span class="book-author">Doug Brignole</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Physics-Resistance-Exercise-Doug-Brignole/dp/1734073001" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<p>In progress...</p>
+					</div>
+				</div>
+			</div>
+		</section>
 
-    <h3>What I <i>am</i> reading</h3>
+		<section class="reading-section completed">
+			<h2>Completed Books</h2>
+			<div class="book-grid">
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Nuclear War</h3>
+						<p class="book-subtitle">A History of the World's Most Powerful Weapons</p>
+						<p class="book-author">Annie Jacobsen</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Non-fiction</span>
+						<span class="book-score">My Score: 80%</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Nuclear-War-History-Worlds-Powerful/dp/0316413733" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<div class="review-content">
+							<h5>Pros:</h5>
+							<ul>
+								<li>Interesting insights into nuclear doctrine</li>
+								<li>Visceral sense of the unimaginable destruction</li>
+								<li>Clearer understanding of the rapid timing of events after first launch (minutes, hours)</li>
+							</ul>
+							<h5>Cons:</h5>
+							<ul>
+								<li>Overwhelming amount of government/military acronyms</li>
+								<li>Detailed descriptions of destruction get repetitive</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 
-    <h5>Technical: Software and Systems</h5>
-    <b>Designing Data-Intensive Applications</b>
-    Published: 2017
-    Author: Martin Kleppmann
-    <p><b>Review: </b></p>
+				<div class="book-card">
+					<div class="book-header">
+						<h3>System Design Interview - An Insider's Guide: Volume 2</h3>
+						<p class="book-author">Alex Xu, Sahn Lam</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Technical: Software & Systems</span>
+						<span class="book-year">2022</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<p>Review in progress...</p>
+					</div>
+				</div>
 
-    <h5>Theme: Humanity, Morality, Religion</h5>
-    <p>
-        <b>Title: Jesus & Personality Theory: Exploring the Five-Factor Model Exploring the Five-Factor Model</b>
-        Author: James R. Beck
-        Score: TBD %. 
-    </p>
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Mere Christianity</h3>
+						<p class="book-author">C.S. Lewis</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Humanity, Morality, Religion</span>
+						<span class="book-score">My Score: 100%</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Mere-Christianity-C-S-Lewis/dp/0060652926" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<p>Review in progress...</p>
+					</div>
+				</div>
 
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Surely You're Joking, Mr. Feynman!</h3>
+						<p class="book-subtitle">Adventures of a Curious Character</p>
+						<p class="book-author">Richard P. Feynman</p>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Autobiography</span>
+						<span class="book-year">1985</span>
+						<span class="book-score">My Score: 100%</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/Surely-Feynman-Adventures-Curious-Character/dp/0393316041" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+					<div class="book-review">
+						<h4>Review</h4>
+						<div class="review-content">
+							<p>A masterpiece that perfectly captures Feynman's unique personality and approach to life. His stories about safecracking at Los Alamos, learning to draw, and his adventures in Brazil showcase not just his genius but his incredible curiosity and zest for life.</p>
+							<h5>Key Takeaways:</h5>
+							<ul>
+								<li>The importance of maintaining childlike curiosity throughout life</li>
+								<li>How to approach complex problems with simple, elegant solutions</li>
+								<li>The value of intellectual honesty and admitting what you don't know</li>
+								<li>The joy of learning for its own sake</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-    <p>
-    <h5>Theme: Health and exercise</h5>
-        <b>The Physics of Resistance Exercise</b>
-        Author: Doug Brignole
-    </p>
-
-    <h3>What I <i>have</i> read</h3>
-    <h5>Non-fiction</h5>
-    <p>
-        <b>Title: Nuclear War</b>
-        Author: Annie Jacobsen
-        Score: 80%
-    </p>
-    <p><b>Review: </b>
-    Pros:
-    - interesting about nuclear doctrine
-    - visceral sense of the unimaginable desctruction
-    - clearer sense of the very-rapid timing of events after first launch (minutes, hours)
-    Cons: 
-    - overwhelming amount of government/military acronyms;
-    - detailed descriptions of desctruction get repetitive;
-    </p>
-
-    <h5>Technical: Software and Systems</h5>
-    <p>
-        <b>System Design Interview - An Insider's Guide: Volume 2</b>
-        Published: 2022
-        Author: Alex Xu, Sahn Lam
-        <p><b>Review: </b></p>
-    
-    </p>
-    <h5>Theme: Humanity, Morality, Religion</h5>
-    <p>
-        <b>Title: Mere Christianity</b>
-        Author: C.S. Lewis
-        Score: 100%. 
-    </p>
-    <h5>Theme: History</h5>
-        <b>Mine Were of Trouble</b>
-        Author: Peter Kemp
-    <p>
-    <h5>Theme: Intellectual development</h5>
-        <b>The Art of Clear Thinking</b>
-        Author: Hasard Lee
-    </p>
-
-    
-
+		<section class="reading-section aspirational">
+			<h2>Books I Aspire to Read</h2>
+			<div class="book-grid">
+				<div class="book-card">
+					<div class="book-header">
+						<h3>Works of Fyodor Dostoevsky</h3>
+					</div>
+					<div class="book-meta">
+						<span class="book-genre">Humanities</span>
+						<span class="book-author">Fyodor Dostoevsky</span>
+					</div>
+					<div class="book-actions">
+						<a href="https://www.amazon.com/stores/Fyodor-Dostoevsky/author/B000AQ6LWY" 
+						   target="_blank" 
+						   rel="noopener noreferrer" 
+						   class="tertiary-link">
+							View on Amazon
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
 </Layout>
+
+<style>
+	.reading-intro {
+		margin-bottom: 3rem;
+	}
+
+	.book-sharing {
+		display: flex;
+		align-items: flex-start;
+		gap: 1.5rem;
+		margin: 2rem 0;
+		padding: 1.5rem;
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+	}
+
+	.reading-sections {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+	}
+
+	.reading-section {
+		padding: 2rem 0;
+		border-top: 2px solid var(--border);
+	}
+
+	.reading-section h2 {
+		margin-bottom: 1.5rem;
+		color: var(--primary-text);
+		font-size: 1.8rem;
+	}
+
+	.book-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.book-card {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+
+	.book-card:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px rgba(var(--gray), 15%);
+	}
+
+	.book-header {
+		margin-bottom: 0.5rem;
+	}
+
+	.book-header h3 {
+		font-size: 1.3rem;
+		margin: 0 0 0.5rem 0;
+		color: var(--primary-text);
+	}
+
+	.book-subtitle {
+		font-size: 0.95rem;
+		color: var(--secondary-text);
+		margin: 0 0 0.5rem 0;
+	}
+
+	.book-author {
+		font-style: italic;
+		font-size: 0.95rem;
+		color: var(--secondary-text);
+		margin: 0 0 0.75rem 0;
+	}
+
+	.book-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		font-size: 0.9rem;
+		align-items: center;
+	}
+
+	.book-genre {
+		background: var(--footer-bg);
+		padding: 0.25rem 0.75rem;
+		border-radius: 4px;
+		color: var(--secondary-text);
+	}
+
+	.book-year {
+		color: var(--secondary-text);
+	}
+
+	.book-score {
+		background: var(--card-bg);
+		padding: 0.25rem 0.75rem;
+		border-radius: 4px;
+		color: var(--accent);
+		font-weight: 500;
+		border: 1px solid var(--border);
+	}
+
+	.book-actions {
+		margin-top: auto;
+	}
+
+	.book-review {
+		margin-top: 1rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.book-review h4 {
+		font-size: 1.1rem;
+		margin: 0 0 0.75rem 0;
+		color: var(--primary-text);
+	}
+
+	.review-content {
+		font-size: 0.95rem;
+	}
+
+	.review-content h5 {
+		margin: 1rem 0 0.5rem 0;
+		color: var(--primary-text);
+	}
+
+	.review-content ul {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.review-content li {
+		margin-bottom: 0.5rem;
+	}
+
+	@media (max-width: 768px) {
+		.book-sharing {
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		.book-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.book-card {
+			padding: 1.25rem;
+		}
+	}
+</style>

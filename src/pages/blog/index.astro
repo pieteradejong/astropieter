@@ -1,8 +1,5 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import Layout from '../../layouts/Default.astro';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 
@@ -11,37 +8,61 @@ const posts = (await getCollection('blog')).sort(
 );
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main class='blog-page'>
-			<h1>Blog</h1>
-			<section>
-				<ul>
-					{
-						// allPosts.map((post) => (
-						posts.map((post) => (
-						<a class='blogtitle' href={`/blog/${post.slug}/`}>
+<Layout
+	title="Blog"
+	description="Blog posts by Pieter de Jong"
+>
+	<section>
+		<ul>
+			{
+				posts.map((post) => (
+					<a class='blogtitle' href={`/blog/${post.slug}/`}>
 						<li>
-								
-									<span class="blogtitle">
-										{post.data.title}
-									</span>
-								
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</li>
-						</a>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+							<span class="blogtitle">
+								{post.data.title}
+							</span>
+							<p class="date">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
+						</li>
+					</a>
+				))
+			}
+		</ul>
+	</section>
+</Layout>
+
+<style>
+	/* blog section */
+	section a.blogtitle, section a.blogtitle:hover {
+		color: black;
+		text-decoration: none;
+	}
+
+	section ul {
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	section li {
+		margin: 10px 0;
+		padding: 1.2em;
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		box-shadow: 0 2px 8px rgba(34, 34, 34, 0.04);
+	}
+
+	section li:hover {
+		background: white;
+	}
+
+	section li a {
+		display: block;
+	}
+
+	section span.blogtitle {
+		font-size: 24px;
+	}
+</style>

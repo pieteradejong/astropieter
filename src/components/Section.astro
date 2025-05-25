@@ -1,0 +1,71 @@
+---
+interface Props {
+    title: string;
+    subtitle?: string;
+    className?: string;
+}
+
+const { title, subtitle, className = '' } = Astro.props;
+---
+
+<section class:list={['section', className]}>
+    <div class="section-header">
+        <h2 class="section-title">{title}</h2>
+        {subtitle && <p class="section-subtitle">{subtitle}</p>}
+    </div>
+    <div class="section-content">
+        <slot />
+    </div>
+</section>
+
+<style>
+    .section {
+        margin: 2rem 0;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        color: var(--non-link-text);
+        font-size: 1.8rem;
+        margin: 0 0 0.5rem 0;
+        line-height: 1.2;
+    }
+
+    .section-subtitle {
+        color: var(--secondary-text);
+        font-size: 1.1rem;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .section-content {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    /* Responsive grid layout */
+    .section-content {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    @media (max-width: var(--mobile-cutoff)) {
+        .section {
+            margin: 1.5rem 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+        }
+
+        .section-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style> 

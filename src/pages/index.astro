@@ -1,52 +1,170 @@
 ---
 import Layout from '../layouts/Default.astro';
+import { Image } from 'astro:assets';
+import profileImage from '../assets/pieter-de-jong-300.png';
 ---
 
 <Layout
-	title="Software Engineer"
-	description="Homepage of Pieter A. de Jong, Software Engineer"
+	title="Software Engineer and Mathematician"
+	description="Homepage of Pieter de Jong, Software Engineer and Mathematician"
 >
 <main>
-    <h1></h1>
-		<p>
-			Pieter de Jong is a Software Engineer with 7+ years experience in industry, including  
-			consumer finance, e-commerce, digital agriculture, and solar energy. He started programming 
-			at a young age on pre-Pentium PCs, when Windows 3.11 was the standard and noisy modems 
-			connected you to the Altavista "directory of the Internet." Professionally, he started doing front-end 
-			Web development, growing into fullstack development over time. 
-		</p>
-		<p>
-			After immigrating from Amsterdam to Baltimore in 2011, he then arrived in Silicon Valley for an 
-			internship at WePay, a consumer payments company. He realized he was a Technologist at heart, and fell 
-			in love with the culture of Silicon Valley and technology thinking in general. 
-			Over the decade ahead, he would work for 
-			companies ranging from seed-stage to public, on teams small and large, scrappy and quick-moving versus 
-			larger and highly structured. He has always sought to apply his passion and skill for applied mathematics, 
-			developing an interest in machine learning and other areas of overlap between math and code. 
-		</p>
-		<p>
-			Recently, he is working as a Senior Software Engineer and first outside technical hire, 
-			for a rapidly growing startup, on a product with a powerful mission. 
-			He is also pursuing a part-time, online MSc. in Computer Science at Georgia Tech ("OMCS").
-			As if that were not enough, he aspires to someday attend Johns Hopkins' Master's program 
-			for Applied and Computational Mathematics.
-			He likes to write (on this very website), code (GitHub whenever there is time), and read (see section above).
-		</p>
-		<p>
-			He is currently located in Miami, having previously lived in NYC, San Francisco, 
-			Palo Alto (Silicon Valley), and Baltimore. Before that, in 2011 he immigrated 
-			to Baltimore from Amsterdam, and got an internship 
-			at a Palo Alto payments startup in 2012, marking his professional start in the 
-			tech world and his acquaintance with Silicon Valley.
-		</p>
+    <div class="bio-container">
+        <div class="bio-left">
+            <div class="profile-image-container">
+                <Image 
+                    src={profileImage}
+                    alt="Pieter de Jong" 
+                    class="profile-image"
+                    width={300}
+                    height={300}
+                />
+                <div class="profile-info">
+                    <h2>Pieter A. de Jong</h2>
+                    <a href="/contact" class="contact-link">Contact</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bio-right">
+            <p>
+                Pieter de Jong is a Software Engineer with a decade experience in industry, in verticals from   
+                consumer finance, e-commerce, digital agriculture, and solar energy. 
+                My work has ranged from ... to .... .                
+                
 
-		<p>
-			In his free time, Pieter codes on 
-			<a href="https://github.com/pieteradejong" target="_blank">GitHub</a>,
-			works out daily, is learning 
-			<a href="https://www.ckokickboxing.com/" target="_blank">kickboxing</a>, 
-			and reading his favorite accounts on 
-			<a href="https://x.com/">X</a>.
-		</p>
+
+                <!-- He started programming 
+                at a young age on pre-Pentium PCs, when Windows 3.11 was the standard and noisy modems 
+                connected you to the Altavista "directory of the Internet." Professionally, he started doing front-end 
+                Web development, growing into fullstack development over time.  -->
+            </p>
+
+
+            <p>I’ve shipped production code at every stage; from seed startups and 
+                series A/b, to  
+                publicly traded companies; moving comfortably between front-end 
+                polish
+                 to back-end scale. 
+            </p>
+            <p>
+                After immigrating from Amsterdam to Baltimore in 2011, he then arrived in Silicon Valley for an 
+                internship at WePay, a consumer payments company. He realized he was a Technologist at heart, and fell 
+                in love with the culture of Silicon Valley and technology thinking in general. 
+                Over the decade ahead, he would work for 
+                companies ranging from seed-stage to public, on teams small and large, scrappy and quick-moving versus 
+                larger and highly structured. He has always sought to apply his passion and skill for applied mathematics, 
+                developing an interest in machine learning and other areas of overlap between math and code. 
+            </p>
+            <p></p>
+            <p>
+                <!-- Recently, he is working as a Senior Software Engineer and first outside technical hire, 
+                for a rapidly growing startup, on a product with a powerful mission. 
+                He is also pursuing a part-time, online MSc. in Computer Science at Georgia Tech ("OMCS").
+                As if that were not enough, he aspires to someday attend Johns Hopkins' Master's program 
+                for Applied and Computational Mathematics.
+                He likes to write (on this very website), code (GitHub whenever there is time), and read (see section above). -->
+            </p>
+            <p>
+                <!-- He is currently located in Miami, having previously lived in NYC, San Francisco, 
+                Palo Alto (Silicon Valley), and Baltimore. Before that, in 2011 he immigrated 
+                to Baltimore from Amsterdam, and got an internship 
+                at a Palo Alto payments startup in 2012, marking his professional start in the 
+                tech world and his acquaintance with Silicon Valley. -->
+            </p>
+            <p>
+                My interest also include skiing, snowboarding, geopolitics, physical fitness, (some CKO kickboxing a while ago), linguistics, and spiritual growth.
+                I kindly invite you to hit Contact if you're interested in any of those topics.
+            </p>
+            <p>
+                In his free time, Pieter codes on 
+                <a href="https://github.com/pieteradejong" target="_blank">GitHub</a>,
+                works out daily, is learning 
+                <a href="https://www.ckokickboxing.com/" target="_blank">kickboxing</a>, 
+                and reading his favorite accounts on 
+                <a href="https://x.com/">X</a>.
+            </p>
+        </div>
+    </div>
 </main>
+
+<style>
+    .bio-container {
+        display: flex;
+        gap: 3em;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .bio-left {
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
+    }
+
+    .bio-right {
+        flex: 0 0 66.667%;
+        max-width: 66.667%;
+    }
+
+    .profile-image-container {
+        margin-bottom: 2em;
+        width: 100%;
+    }
+
+    .profile-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--border);
+    }
+
+    .profile-info {
+        text-align: center;
+        margin-top: 1em;
+    }
+
+    .profile-info h2 {
+        margin: 0;
+        font-size: 1.5em;
+        color: var(--primary-text);
+    }
+
+    .contact-link {
+        display: inline-block;
+        margin-top: 0.5em;
+        padding: 0.5em 1em;
+        background: var(--accent);
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .contact-link:hover {
+        background: var(--accent-hover);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .bio-container {
+            flex-direction: column;
+            gap: 2em;
+        }
+
+        .bio-left {
+            flex: none;
+            max-width: 300px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .bio-right {
+            flex: none;
+            max-width: 100%;
+            width: 100%;
+        }
+    }
+</style>
 </Layout>

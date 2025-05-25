@@ -1,0 +1,66 @@
+---
+interface Props {
+    title?: string;
+    subtitle?: string;
+    href?: string;
+    className?: string;
+}
+
+const { title, subtitle, href, className = '' } = Astro.props;
+---
+
+<div class:list={['card', className]}>
+    {href ? (
+        <a href={href} class="card-link">
+            {title && <h3 class="card-title">{title}</h3>}
+            {subtitle && <p class="card-subtitle">{subtitle}</p>}
+            <slot />
+        </a>
+    ) : (
+        <>
+            {title && <h3 class="card-title">{title}</h3>}
+            {subtitle && <p class="card-subtitle">{subtitle}</p>}
+            <slot />
+        </>
+    )}
+</div>
+
+<style>
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .card-title {
+        color: var(--non-link-text);
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    .card-subtitle {
+        color: var(--secondary-text);
+        margin: 0 0 1rem 0;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: var(--mobile-cutoff)) {
+        .card {
+            padding: 1rem;
+        }
+    }
+</style> 

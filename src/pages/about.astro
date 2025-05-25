@@ -4,22 +4,250 @@ import Layout from '../layouts/Default.astro';
 
 <Layout
 	title="About Me"
-	description="My timeline in reverse-chronological order."
+	description="My journey through education, work, and life"
 >
-	<p>
-		My timeline in reverse-chronological order.
-	</p>
-    
-    <ul>
-        <li>
-            <span>September, 2011</span>
-            <h5>Moved to America</h5>
-        </li>
-        <li>
-            <span>2012</span>
-            <h5>Palo Alto, Silicon Valley</h5>
-        </li>
-    </ul>
-    
+	<div class="timeline">
+		<ul class="timeline-list">
+			<!-- 2014 -->
+			<li class="event-education">
+				<span class="date">2014</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>CodePath</h3>
+					<h4>Software Engineering</h4>
+					<p>8-week Android development program. Built 4 apps including Google and Twitter clients. Group project selected for Demo Day.</p>
+				</div>
+			</li>
+			<li class="event-education">
+				<span class="date">2014</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>Hack Reactor</h3>
+					<h4>Advanced Software Engineering Immersive</h4>
+					<p>Full-stack web development program. Lab instructor, helped students across the web stack. Contributed to Alumni Relations program.</p>
+				</div>
+			</li>
 
+			<!-- 2012 -->
+			<li class="event-personal">
+				<span class="date">2012</span>
+				<div class="event">
+					<div class="event-type">Personal</div>
+					<h3>Silicon Valley</h3>
+					<h4>Discovery of Technology</h4>
+					<p>Arrived in Silicon Valley and fell in love with Technology. First exposure to Silicon Valley tech culture through WePay internship in consumer payments.</p>
+				</div>
+			</li>
+
+			<!-- 2011 -->
+			<li class="event-personal">
+				<span class="date">2011</span>
+				<div class="event">
+					<div class="event-type">Personal</div>
+					<h3>Baltimore</h3>
+					<h4>Immigration to America</h4>
+					<p>Immigrated from Amsterdam, The Netherlands, to Baltimore, USA, beginning a new chapter in America.</p>
+				</div>
+			</li>
+			<li class="event-education">
+				<span class="date">2011</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>University of Amsterdam</h3>
+					<h4>Minor in Business Studies</h4>
+					<p>71 ECTS in business fundamentals: Corporate finance, accounting, strategy, operations, marketing, HR, and auditing. Collaborated on Harvard Business School case studies.</p>
+				</div>
+			</li>
+
+			<!-- 2010 -->
+			<li class="event-education">
+				<span class="date">2010</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>University of Amsterdam</h3>
+					<h4>BSc. Mathematics (Beta-gamma)</h4>
+					<p>Interdisciplinary degree combining social and natural sciences with a major in Applied Mathematics. Thesis: "Bayesian Networks in Forensic Science".</p>
+					<ul class="details">
+						<li>Mathematics: Analysis, Statistics, Financial Math, Modeling, Probability, Stochastics</li>
+						<li>Social Sciences: Political Science, Psychology, Economics, Philosophy</li>
+						<li>Natural Sciences: Chemistry, Earth Sciences</li>
+					</ul>
+				</div>
+			</li>
+
+			<!-- 2004 -->
+			<li class="event-education">
+				<span class="date">2004</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>Goois Lyceum</h3>
+					<h4>VWO (Pre-University Education)</h4>
+					<p>Science, Nature & Health track. Classical Studies (Latin, Greek), French, German, Mathematics, Physics, Chemistry, Computer Science.</p>
+					<p>Final paper on data compression, focusing on Shannon's Theory of Information Entropy.</p>
+				</div>
+			</li>
+
+			<!-- 2003 -->
+			<li class="event-education">
+				<span class="date">2003</span>
+				<div class="event">
+					<div class="event-type">Education</div>
+					<h3>Brown University</h3>
+					<h4>Summer School in Computer Science</h4>
+					<p>Programming in Perl</p>
+				</div>
+			</li>
+		</ul>
+	</div>
 </Layout>
+
+<style>
+	.timeline {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 2rem 0;
+	}
+
+	.timeline-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		position: relative;
+	}
+
+	.timeline-list::before {
+		content: '';
+		position: absolute;
+		left: 120px;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--border);
+	}
+
+	.timeline-list li {
+		position: relative;
+		margin-bottom: 2rem;
+		padding-left: 150px;
+	}
+
+	.timeline-list .date {
+		position: absolute;
+		left: 0;
+		width: 100px;
+		text-align: right;
+		font-weight: 600;
+		color: var(--non-link-text);
+	}
+
+	.timeline-list .event {
+		background: var(--card-bg);
+		padding: 1.5rem;
+		border-radius: 8px;
+		border: 1px solid var(--border);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		position: relative;
+	}
+
+	.event-type {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.timeline-list .event h3 {
+		margin: 0 0 0.5rem 0;
+		color: var(--non-link-text);
+		font-size: 1.3rem;
+		padding-right: 100px;
+	}
+
+	.timeline-list .event h4 {
+		margin: 0 0 1rem 0;
+		color: var(--non-link-text);
+		font-size: 1.1rem;
+		font-weight: 500;
+	}
+
+	.timeline-list .event p {
+		margin: 0 0 1rem 0;
+		line-height: 1.6;
+	}
+
+	.timeline-list .details {
+		list-style: disc;
+		margin: 1rem 0 0 1.5rem;
+		color: var(--secondary-text);
+		font-size: 0.95rem;
+	}
+
+	.timeline-list .details li {
+		margin: 0.3rem 0;
+		padding: 0;
+	}
+
+	/* Event type styles */
+	.event-education .event-type {
+		background: var(--accent);
+		color: white;
+	}
+
+	.event-professional .event-type {
+		background: #2A7FA5;
+		color: white;
+	}
+
+	.event-personal .event-type {
+		background: #4A90E2;
+		color: white;
+	}
+
+	/* Event type borders */
+	.event-education .event {
+		border-left: 4px solid var(--accent);
+	}
+
+	.event-professional .event {
+		border-left: 4px solid #2A7FA5;
+	}
+
+	.event-personal .event {
+		border-left: 4px solid #4A90E2;
+	}
+
+	/* Responsive adjustments */
+	@media (max-width: 768px) {
+		.timeline-list::before {
+			left: 80px;
+		}
+
+		.timeline-list li {
+			padding-left: 110px;
+		}
+
+		.timeline-list .date {
+			width: 70px;
+			font-size: 0.9rem;
+		}
+
+		.timeline-list .event {
+			padding: 1rem;
+		}
+
+		.event-type {
+			position: static;
+			display: inline-block;
+			margin-bottom: 0.5rem;
+		}
+
+		.timeline-list .event h3 {
+			padding-right: 0;
+		}
+	}
+</style>
