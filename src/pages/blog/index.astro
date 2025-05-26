@@ -12,57 +12,111 @@ const posts = (await getCollection('blog')).sort(
 	title="Blog"
 	description="Blog posts by Pieter de Jong"
 >
-	<section>
-		<ul>
+	<section class="blog-section">
+		<div class="blog-grid">
 			{
 				posts.map((post) => (
-					<a class='blogtitle' href={`/blog/${post.slug}/`}>
-						<li>
-							<span class="blogtitle">
-								{post.data.title}
-							</span>
-							<p class="date">
+					<a href={`/blog/${post.slug}/`} class="blog-card">
+						<div class="blog-card-content">
+							<h2 class="blog-title">{post.data.title}</h2>
+							<p class="blog-date">
 								<FormattedDate date={post.data.pubDate} />
 							</p>
-						</li>
+							{post.data.description && (
+								<p class="blog-description">{post.data.description}</p>
+							)}
+							<div class="blog-tags">
+								{post.data.tags.map((tag) => (
+									<span class="blog-tag">{tag}</span>
+								))}
+							</div>
+						</div>
 					</a>
 				))
 			}
-		</ul>
+		</div>
 	</section>
 </Layout>
 
 <style>
-	/* blog section */
-	section a.blogtitle, section a.blogtitle:hover {
-		color: black;
+	.blog-section {
+		margin: 2rem 0;
+	}
+
+	.blog-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.blog-card {
+		display: block;
 		text-decoration: none;
-	}
-
-	section ul {
-		margin: 0;
-		padding: 0;
-		list-style-type: none;
-	}
-
-	section li {
-		margin: 10px 0;
-		padding: 1.2em;
+		color: inherit;
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 10px;
-		box-shadow: 0 2px 8px rgba(34, 34, 34, 0.04);
+		border-radius: 8px;
+		transition: transform 0.2s, box-shadow 0.2s;
 	}
 
-	section li:hover {
-		background: white;
+	.blog-card:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 2px 4px rgba(var(--gray), 15%);
 	}
 
-	section li a {
-		display: block;
+	.blog-card-content {
+		padding: 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
 	}
 
-	section span.blogtitle {
-		font-size: 24px;
+	.blog-title {
+		margin: 0;
+		font-size: 1.3rem;
+		color: var(--non-link-text);
+		line-height: 1.3;
+	}
+
+	.blog-date {
+		margin: 0;
+		font-size: 0.9rem;
+		color: var(--secondary-text);
+	}
+
+	.blog-description {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--secondary-text);
+		line-height: 1.5;
+	}
+
+	.blog-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.blog-tag {
+		font-size: 0.8rem;
+		padding: 0.2rem 0.6rem;
+		background: var(--footer-bg);
+		color: var(--secondary-text);
+		border-radius: 4px;
+	}
+
+	@media (max-width: var(--mobile-cutoff)) {
+		.blog-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.blog-card-content {
+			padding: 1.25rem;
+		}
+
+		.blog-title {
+			font-size: 1.2rem;
+		}
 	}
 </style>

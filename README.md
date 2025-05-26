@@ -40,3 +40,112 @@ Stuff I would like to add in the future:
 * Low-friction contact methods.
 * Inline programming code, e.g. `Python`.
 * If/when my content becomes good enough, a micro-payment "tip jar".
+
+# Astro Blog
+
+A modern, fast blog built with Astro.js featuring static search capabilities.
+
+## Features
+
+- 🚀 Built with Astro.js for optimal performance
+- 📝 Markdown and MDX support
+- 🔍 Static search functionality with Pagefind
+- 📱 Responsive design
+- 🎨 Clean, professional styling
+- 📊 LaTeX support for mathematical content
+- 🔄 Easy deployment with included scripts
+
+## Quick Start
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/astropieter.git
+cd astropieter
+```
+
+2. Run the initialization script:
+```bash
+chmod +x init.sh
+./init.sh
+```
+
+This will:
+- Install all necessary dependencies
+- Set up the search functionality
+- Create required directories
+- Configure the project
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+## Search Functionality
+
+The site includes static search powered by Pagefind. To use the search:
+
+1. Visit any page and use the search box in the header
+2. Or navigate directly to `/search?q=your-search-term`
+
+The search index is automatically generated during deployment.
+
+## Deployment
+
+To deploy the site:
+
+1. Update the configuration in `deploy.sh` with your deployment details
+2. Run the deployment script:
+```bash
+./deploy.sh
+```
+
+The script will:
+- Build the site
+- Generate the search index
+- Deploy using either your existing `astrosync` script or rsync
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── components/    # Reusable components
+│   ├── content/      # Blog posts and other content
+│   ├── layouts/      # Page layouts
+│   ├── pages/        # Astro pages
+│   └── styles/       # Global styles
+├── public/           # Static assets
+├── init.sh          # Initialization script
+├── deploy.sh        # Deployment script
+└── pagefind.json    # Search configuration
+```
+
+## Customization
+
+### Search Configuration
+
+Edit `pagefind.json` to customize search behavior:
+- Update `site` URL
+- Modify `exclude_selectors` to exclude content from search
+- Adjust other search parameters
+
+### Styling
+
+All styles use CSS variables defined in `src/styles/global.css`. Key variables:
+- `--accent`: Primary accent color (used for links)
+- `--non-link-text`: Color for non-interactive text
+- `--card-bg`: Background color for cards
+- `--border`: Border color
+- `--mobile-cutoff`: Breakpoint for mobile devices
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+MIT License - see LICENSE file for details
