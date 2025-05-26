@@ -198,17 +198,15 @@ nav a {
     font-size: 1.1em;
     font-weight: 500;
     border-radius: 4px;
-    transition: all 0.2s ease;
+    transition: color 0.2s, background-color 0.2s;
     position: relative;
 }
 
 nav a:hover {
     background-color: rgba(42, 127, 165, 0.1);
-    transform: translateY(-1px);
 }
 
 nav a.active {
-    font-weight: 600;
     background-color: rgba(42, 127, 165, 0.15);
 }
 

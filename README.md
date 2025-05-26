@@ -1,8 +1,8 @@
 # Pieter de Jong - Personal website
-URL = [pieter.am](https://pieter.am/) and [peter.am](https://peter.am/); I have a highly common first and last name, and it's easily misspelled between English and Dutch, so finding a proper domain was challenging. I settled on these, so just yelling over the crowd "it's PETER DOT AM, AM AS IN MORNINGTIME!" should work.
 
+Currently deployed at: https://pieterd38.sg-host.com/
 
-**Thsi is my main online presence**, aside from [my LinkedIn](https://www.linkedin.com/in/pieteradejong/) and [my GitHub](https://github.com/pieteradejong). The Internet is a large place, and standing out is both critical and hard. This is where I aim to do so.
+**This is my main online presence**, aside from [my LinkedIn](https://www.linkedin.com/in/pieteradejong/) and [my GitHub](https://github.com/pieteradejong). The Internet is a large place, and standing out is both critical and hard. This is where I aim to do so.
 
 # Goals
 * Marketing: put myself out there.
@@ -69,25 +69,38 @@ chmod +x init.sh
 ./init.sh
 ```
 
-This will:
-- Install all necessary dependencies
-- Set up the search functionality
-- Create required directories
-- Configure the project
-
 3. Start the development server:
 ```bash
 npm run dev
 ```
 
-## Search Functionality
+## Local Development
 
-The site includes static search powered by Pagefind. To use the search:
+To run the site locally:
 
-1. Visit any page and use the search box in the header
-2. Or navigate directly to `/search?q=your-search-term`
+1. Make sure you have Node.js installed (version 16 or higher recommended)
+2. Clone the repository and navigate to it:
+```bash
+git clone https://github.com/yourusername/astropieter.git
+cd astropieter
+```
 
-The search index is automatically generated during deployment.
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+The site will be available at `http://localhost:4321` (or another port if 4321 is in use).
+
+Key development commands:
+- `npm run dev` - Start development server with hot reloading
+- `npm run build` - Build the site for production
+- `npm run preview` - Preview the production build locally
 
 ## Deployment
 
@@ -99,10 +112,7 @@ To deploy the site:
 ./deploy.sh
 ```
 
-The script will:
-- Build the site
-- Generate the search index
-- Deploy using either your existing `astrosync` script or rsync
+The script will build the site and deploy using either your existing `astrosync` script or rsync.
 
 ## Project Structure
 
@@ -116,18 +126,10 @@ The script will:
 │   └── styles/       # Global styles
 ├── public/           # Static assets
 ├── init.sh          # Initialization script
-├── deploy.sh        # Deployment script
-└── pagefind.json    # Search configuration
+└── deploy.sh        # Deployment script
 ```
 
 ## Customization
-
-### Search Configuration
-
-Edit `pagefind.json` to customize search behavior:
-- Update `site` URL
-- Modify `exclude_selectors` to exclude content from search
-- Adjust other search parameters
 
 ### Styling
 

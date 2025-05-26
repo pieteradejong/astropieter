@@ -1,221 +1,79 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Default.astro';
 import Card from '../components/Card.astro';
 import Tag from '../components/Tag.astro';
+
+const projects = await getCollection('projects');
 ---
 
 <Layout
 	title="Projects"
-	description="Projects and volunteer work"
+	description="Software engineering and applied mathematics projects"
 >
 	<section class="projects-section">
 		<h2>Current Projects</h2>
 		<div class="project-grid">
-			<Card 
-				title="Buffy Episode Semantic Search"
-				subtitle="A Python-based semantic search engine for 'Buffy the Vampire Slayer' episodes"
-				className="project-card-content"
-			>
-				<div class="project-content">
-					<div class="tech-stack">
-						<Tag text="Python" />
-						<Tag text="Redis" />
-						<Tag text="Sentence Transformers" />
-						<Tag text="NLP" />
-						<Tag text="Vector Search" />
-					</div>
+			{projects.map((project) => (
+				<Card 
+					title={project.data.title}
+					subtitle={project.data.description}
+					className="project-card-content"
+				>
+					<div class="project-content">
+						<div class="tech-stack">
+							{project.data.techStack.map((tech) => (
+								<Tag text={tech} />
+							))}
+						</div>
 
-					<p class="project-description">
-						A Python-based semantic search engine for 'Buffy the Vampire Slayer' episodes using Redis vector search and Sentence Transformers.
-					</p>
-
-					<div class="project-details">
-						<h4>Key Features</h4>
-						<ul>
-							<li>Semantic search across all Buffy episodes using vector embeddings</li>
-							<li>Fast KNN-based retrieval with Redis vector search</li>
-							<li>Structured ingestion and storage of episode metadata and summaries</li>
-							<li>Embedding generation with state-of-the-art NLP models</li>
-						</ul>
-
-						<h4>Technical Highlights</h4>
-						<ul>
-							<li>Custom Redis JSON + vector index for efficient search</li>
-							<li>Sentence Transformers (msmarco-distilbert-base-v4) for high-quality embeddings</li>
-							<li>Scalable pipeline for data ingestion and embedding</li>
-							<li>Clean, modular Python codebase</li>
-						</ul>
-
-						<p class="project-impact">
-							Demonstrates practical use of modern NLP and vector search to build a scalable, intelligent search engine for TV show content.
+						<p class="project-description">
+							{project.data.description}
 						</p>
 
-						<div class="project-tags">
-							<Tag text="semantic-search" />
-							<Tag text="nlp" />
-							<Tag text="python" />
-							<Tag text="redis" />
-							<Tag text="vector-search" />
-						</div>
+						<div class="project-details">
+							<h4>Key Features</h4>
+							<ul>
+								{project.data.keyFeatures.slice(0, 3).map((feature) => (
+									<li>{feature}</li>
+								))}
+							</ul>
 
-						<div class="project-links">
-							<a href="YOUR_GITHUB_URL_HERE" class="secondary-link" target="_blank" rel="noopener noreferrer">
-								View Source Code →
-							</a>
-							<a href="YOUR_DEMO_URL_HERE" class="secondary-link" target="_blank" rel="noopener noreferrer">
-								Live Demo →
-							</a>
-						</div>
-					</div>
-				</div>
-			</Card>
+							<div class="project-tags">
+								{project.data.tags.map((tag) => (
+									<Tag text={tag} />
+								))}
+							</div>
 
-			<Card 
-				title="Reaction Message Service"
-				subtitle="A Go-based microservice for real-time emoji reactions"
-				className="project-card-content"
-			>
-				<div class="project-content">
-					<div class="tech-stack">
-						<Tag text="Go" />
-						<Tag text="Apache Kafka" />
-						<Tag text="REST API" />
-						<Tag text="Event-Driven" />
-					</div>
-
-					<p class="project-description">
-						A Go-based microservice that processes real-time emoji reactions using Kafka for event streaming
-					</p>
-
-					<div class="project-details">
-						<h4>Key Features</h4>
-						<ul>
-							<li>Real-time emoji reaction processing</li>
-							<li>Fault-tolerant message handling with retry mechanisms</li>
-							<li>Health monitoring endpoints</li>
-							<li>Event-driven architecture using Kafka</li>
-							<li>Production-grade error handling and logging</li>
-						</ul>
-
-						<h4>Technical Highlights</h4>
-						<ul>
-							<li>Implemented exponential backoff with jitter for reliable message delivery</li>
-							<li>Designed RESTful API with proper HTTP status codes and content types</li>
-							<li>Built with scalability in mind using message queue architecture</li>
-							<li>Structured logging and health check monitoring</li>
-							<li>Clean code organization with separation of concerns</li>
-						</ul>
-
-						<p class="project-impact">
-							Demonstrates practical implementation of distributed systems and event-driven architecture, 
-							showcasing production-ready microservice design
-						</p>
-
-						<div class="project-tags">
-							<Tag text="microservices" />
-							<Tag text="distributed-systems" />
-							<Tag text="event-driven" />
-							<Tag text="go" />
-							<Tag text="kafka" />
-							<Tag text="api-design" />
-						</div>
-
-						<div class="project-links">
-							<a href="YOUR_GITHUB_URL_HERE" class="secondary-link" target="_blank" rel="noopener noreferrer">
-								View Source Code →
-							</a>
-							<a href="YOUR_DEMO_URL_HERE" class="secondary-link" target="_blank" rel="noopener noreferrer">
-								Live Demo →
-							</a>
+							<div class="project-links">
+								<a href={`/projects/${project.slug}`} class="secondary-link">
+									View Details →
+								</a>
+								{project.data.githubUrl && (
+									<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+										Source Code →
+									</a>
+								)}
+								{project.data.demoUrl && (
+									<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+										Live Demo →
+									</a>
+								)}
+							</div>
 						</div>
 					</div>
-				</div>
-			</Card>
-
-			<Card 
-				title="TBD"
-				className="project-card-content"
-			>
-				<p class="project-description">More projects coming soon...</p>
-			</Card>
-		</div>
-	</section>
-
-	<section class="volunteering-section">
-		<h2>Volunteering</h2>
-		<div class="volunteer-grid">
-			<div class="volunteer-item">
-				<h3><a href="https://dekleineconsultant.nl/" target="_blank" rel="noopener noreferrer">De Kleine Consultant</a></h3>
-				<p class="date">Jun 2010 - Jan 2011</p>
-				<p class="role">Strategy Consultant, Economic Empowerment</p>
-				<p>Student-run non-profit strategy consultancy group.</p>
-				<ul>
-					<li>Worked on project to design market-entry and marketing strategy for innovative, niche product</li>
-					<li>Developed and implemented internal wiki to document projects and facilitate knowledge sharing</li>
-					<li>Received training in issue analysis, presentation and case interview skills by professional strategy consultants</li>
-				</ul>
-			</div>
-
-			<div class="volunteer-item">
-				<h3><a href="https://www.uva.nl/en" target="_blank" rel="noopener noreferrer">University of Amsterdam</a></h3>
-				<p class="date">Sep 2007 - May 2010</p>
-				<p class="role">Student Ambassador</p>
-				<p>Program to inform high school students about college life and choosing a field of study.</p>
-				<ul>
-					<li>Visited numerous high schools and conducted Q&A sessions with students in small groups</li>
-					<li>Specifically engaged students interested in STEM fields: Science, Tech, Engineering and Math</li>
-				</ul>
-			</div>
-
-			<div class="volunteer-item">
-				<h3><a href="https://aegee-amsterdam.nl/" target="_blank" rel="noopener noreferrer">AEGEE-Amsterdam</a></h3>
-				<p class="date">Nov 2008 - Jul 2010</p>
-				<p class="role">Chairman, IT Committee</p>
-				<p>Led IT initiatives for the Amsterdam chapter of European student association <a href="https://www.aegee.org/" target="_blank" rel="noopener noreferrer">AEGEE</a>.</p>
-				<ul>
-					<li>Supported and trained the Board in IT-related matters</li>
-					<li>Maintained and improved IT infrastructure: mailing list, office PCs, website</li>
-					<li>Led a team of 5 in designing and launching a complete website overhaul</li>
-				</ul>
-			</div>
-
-			<div class="volunteer-item">
-				<h3><a href="https://www.aegee.org/" target="_blank" rel="noopener noreferrer">AEGEE-Europe</a></h3>
-				<p class="date">Jan 2008 - Jan 2009</p>
-				<p class="role">Board Member, IT Working Group</p>
-				<p>Contributed to IT initiatives for <a href="https://www.aegee.org/" target="_blank" rel="noopener noreferrer">AEGEE-Europe</a>, serving 12,000 members across 200+ university cities.</p>
-				<ul>
-					<li>Initiated revamp of AEGEE-Europe website</li>
-					<li>Organized workshops in Poland and Germany to gather member input</li>
-					<li>Represented IT Working Group in Board meetings</li>
-					<li>Collaborated with international team of 8 developers</li>
-				</ul>
-			</div>
-
-			<div class="volunteer-item">
-				<h3><a href="https://aegee-amsterdam.nl/" target="_blank" rel="noopener noreferrer">AEGEE-Amsterdam</a></h3>
-				<p class="date">Apr 2007 - Apr 2008</p>
-				<p class="role">Secretary of the Board</p>
-				<p>Board member of Amsterdam chapter of <a href="https://www.aegee.org/" target="_blank" rel="noopener noreferrer">AEGEE</a>, a European student association with 12,000 members across 40 countries.</p>
-				<ul>
-					<li>Board liaison to several committees</li>
-					<li>Maintained member database and website</li>
-					<li>Organized and documented meetings</li>
-					<li>Participated in international exchanges and workshops across Europe</li>
-				</ul>
-			</div>
+				</Card>
+			))}
 		</div>
 	</section>
 </Layout>
 
 <style>
-	.projects-section,
-	.volunteering-section {
+	.projects-section {
 		margin: 2rem 0;
 	}
 
-	.projects-section h2,
-	.volunteering-section h2 {
+	.projects-section h2 {
 		color: var(--non-link-text);
 		font-size: 1.8rem;
 		margin-bottom: 1.5rem;
@@ -274,13 +132,6 @@ import Tag from '../components/Tag.astro';
 		color: var(--secondary-text);
 	}
 
-	.project-impact {
-		font-style: italic;
-		color: var(--secondary-text);
-		margin: 1rem 0;
-		line-height: 1.5;
-	}
-
 	.project-tags {
 		display: flex;
 		flex-wrap: wrap;
@@ -300,72 +151,8 @@ import Tag from '../components/Tag.astro';
 		gap: 0.25rem;
 	}
 
-	.volunteer-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		gap: 1.5rem;
-	}
-
-	.volunteer-item {
-		background: var(--card-bg);
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		padding: 1.5rem;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-	}
-
-	.volunteer-item h3 {
-		margin: 0 0 0.5rem 0;
-		font-size: 1.2rem;
-	}
-
-	/* Make all links blue */
-	.volunteer-item h3 a,
-	.volunteer-item p a,
-	.projects-section a,
-	.volunteering-section a {
-		color: var(--accent);
-		text-decoration: none;
-		transition: color 0.2s ease;
-	}
-
-	.volunteer-item h3 a:hover,
-	.volunteer-item p a:hover,
-	.projects-section a:hover,
-	.volunteering-section a:hover {
-		text-decoration: underline;
-	}
-
-	.volunteer-item .date {
-		color: var(--secondary-text);
-		font-size: 0.9rem;
-		margin: 0 0 0.5rem 0;
-	}
-
-	.volunteer-item .role {
-		font-weight: 500;
-		margin: 0 0 1rem 0;
-		color: var(--non-link-text);
-	}
-
-	.volunteer-item p {
-		margin: 0 0 1rem 0;
-		line-height: 1.6;
-	}
-
-	.volunteer-item ul {
-		margin: 0;
-		padding-left: 1.5rem;
-	}
-
-	.volunteer-item li {
-		margin: 0.5rem 0;
-		line-height: 1.5;
-	}
-
 	@media (max-width: 768px) {
-		.project-card-content,
-		.volunteer-item {
+		.project-card-content {
 			padding: 1rem;
 		}
 	}
