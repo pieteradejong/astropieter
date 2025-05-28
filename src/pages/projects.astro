@@ -11,61 +11,63 @@ const projects = await getCollection('projects');
 	title="Projects"
 	description="Software engineering and applied mathematics projects"
 >
-	<section class="projects-section">
-		<h2>Current Projects</h2>
-		<div class="project-grid">
-			{projects.map((project) => (
-				<Card 
-					title={project.data.title}
-					subtitle={project.data.description}
-					className="project-card-content"
-				>
-					<div class="project-content">
-						<div class="tech-stack">
-							{project.data.techStack.map((tech) => (
-								<Tag text={tech} />
-							))}
-						</div>
-
-						<p class="project-description">
-							{project.data.description}
-						</p>
-
-						<div class="project-details">
-							<h4>Key Features</h4>
-							<ul>
-								{project.data.keyFeatures.slice(0, 3).map((feature) => (
-									<li>{feature}</li>
-								))}
-							</ul>
-
-							<div class="project-tags">
-								{project.data.tags.map((tag) => (
-									<Tag text={tag} />
+	<div class="content-container">
+		<section class="projects-section">
+			<h2>Current Projects</h2>
+			<div class="grid-container">
+				{projects.map((project) => (
+					<Card 
+						title={project.data.title}
+						subtitle={project.data.description}
+						className="project-card-content"
+					>
+						<div class="project-content">
+							<div class="tech-stack">
+								{project.data.techStack.map((tech) => (
+									<Tag text={tech} />
 								))}
 							</div>
 
-							<div class="project-links">
-								<a href={`/projects/${project.slug}`} class="secondary-link">
-									View Details →
-								</a>
-								{project.data.githubUrl && (
-									<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-										Source Code →
+							<p class="project-description">
+								{project.data.description}
+							</p>
+
+							<div class="project-details">
+								<h4>Key Features</h4>
+								<ul>
+									{project.data.keyFeatures.slice(0, 3).map((feature) => (
+										<li>{feature}</li>
+									))}
+								</ul>
+
+								<div class="project-tags">
+									{project.data.tags.map((tag) => (
+										<Tag text={tag} />
+									))}
+								</div>
+
+								<div class="project-links">
+									<a href={`/projects/${project.slug}`} class="secondary-link">
+										View Details →
 									</a>
-								)}
-								{project.data.demoUrl && (
-									<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-										Live Demo →
-									</a>
-								)}
+									{project.data.githubUrl && (
+										<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+											Source Code →
+										</a>
+									)}
+									{project.data.demoUrl && (
+										<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+											Live Demo →
+										</a>
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
-				</Card>
-			))}
-		</div>
-	</section>
+					</Card>
+				))}
+			</div>
+		</section>
+	</div>
 </Layout>
 
 <style>
@@ -77,12 +79,6 @@ const projects = await getCollection('projects');
 		color: var(--non-link-text);
 		font-size: 1.8rem;
 		margin-bottom: 1.5rem;
-	}
-
-	.project-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		gap: 1.5rem;
 	}
 
 	.project-card-content {

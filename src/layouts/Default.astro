@@ -11,21 +11,56 @@ const { title = 'Default page title', description = 'Default page description' }
 		<BaseHead title={title} description={description} />
         <style>
 			.title {
-				margin: 0 0 16px;
-				padding: 1em 0;
+				margin: var(--spacing-unit) 0;
+				padding: var(--spacing-unit) 0;
 				text-align: center;
-				line-height: 1;
+				line-height: 1.2;
 			}
             .title h1 {
-				margin: 0 0 0.5em 0;
 				margin: 0;
+				font-size: var(--font-size-h1);
+			}
+
+			main {
+				width: min(100% - 2 * var(--spacing-unit), 1200px);
+				margin: var(--spacing-unit) auto;
+				padding: 0 var(--spacing-unit);
+			}
+
+			@media (max-width: var(--tablet-cutoff)) {
+				main {
+					padding: 0 var(--spacing-unit);
+				}
+			}
+
+			@media (max-width: var(--mobile-cutoff)) {
+				.title {
+					margin: var(--spacing-unit) 0;
+					padding: var(--spacing-unit) 0;
+				}
+			}
+
+			main.content-container {
+				width: 100%;
+				max-width: 720px;
+				margin: var(--spacing-unit) auto;
+				padding: 0 var(--spacing-unit);
+				background: none;
+				color: var(--primary-text);
+				flex: 1 0 auto;
+			}
+
+			@media (max-width: var(--mobile-cutoff)) {
+				main.content-container {
+					padding: 0 var(--spacing-unit);
+				}
 			}
 		</style>
 	</head>
 
 	<body>
 		<Header />
-		<main>
+		<main class="content-container">
 			<div class="title">
                 <h1>{title}</h1>
             </div>

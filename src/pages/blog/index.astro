@@ -12,30 +12,35 @@ const posts = (await getCollection('blog')).sort(
 	title="Blog"
 	description="Blog posts by Pieter de Jong"
 >
-	<section class="blog-section">
-		<div class="blog-grid">
-			{
-				posts.map((post) => (
-					<a href={`/blog/${post.slug}/`} class="blog-card">
-						<div class="blog-card-content">
-							<h2 class="blog-title">{post.data.title}</h2>
-							<p class="blog-date">
-								<FormattedDate date={post.data.pubDate} />
-							</p>
-							{post.data.description && (
-								<p class="blog-description">{post.data.description}</p>
-							)}
-							<div class="blog-tags">
-								{post.data.tags.map((tag) => (
-									<span class="blog-tag">{tag}</span>
-								))}
-							</div>
+	<div class="content-container">
+		<div class="blog-intro">
+			<h1>Blog Posts</h1>
+			<p>
+				Thoughts on software engineering, mathematics, and other topics that interest me.
+			</p>
+		</div>
+
+		<div class="grid-container">
+			{posts.map((post) => (
+				<article class="blog-card">
+					<a href={`/blog/${post.slug}/`} class="blog-card-content">
+						<h2 class="blog-title">{post.data.title}</h2>
+						<p class="blog-date">
+							<FormattedDate date={post.data.pubDate} />
+						</p>
+						{post.data.description && (
+							<p class="blog-description">{post.data.description}</p>
+						)}
+						<div class="blog-tags">
+							{post.data.tags.map((tag) => (
+								<span class="blog-tag">{tag}</span>
+							))}
 						</div>
 					</a>
-				))
-			}
+				</article>
+			))}
 		</div>
-	</section>
+	</div>
 </Layout>
 
 <style>
@@ -44,9 +49,7 @@ const posts = (await getCollection('blog')).sort(
 	}
 
 	.blog-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		gap: 1.5rem;
+		display: none;
 	}
 
 	.blog-card {
@@ -107,10 +110,6 @@ const posts = (await getCollection('blog')).sort(
 	}
 
 	@media (max-width: var(--mobile-cutoff)) {
-		.blog-grid {
-			grid-template-columns: 1fr;
-		}
-
 		.blog-card-content {
 			padding: 1.25rem;
 		}

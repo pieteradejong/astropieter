@@ -8,249 +8,251 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	title="My Reading"
 	description="A collection of books I've read, am reading, and aspire to read - from technical to philosophical."
 >
-	<div class="reading-intro">
-		<h3>Why read?</h3>
-		<p>
-			Reading is important to me. As for most people, the quantity of digital dominates, 
-			but I've never forgotten the added quality, sensation, and permanence (as opposed to
-			ephemerality and transience) of physical books. Thankfully, I've gotten back into the habit of actually 
-			reading the physical books I buy.
-		</p>
-
-		<div class="book-sharing">
-			<Image src={bookSharingPhoto} alt="Sharing books in the neighborhood" width="150" />
+	<div class="content-container">
+		<div class="reading-intro">
+			<h3>Why read?</h3>
 			<p>
-				Some neighborhoods have a box which works as a "little library" where people can both leave books
-				for others to take, and take books that others have left for them. I appreciate this as a way to share books
-				etc.
+				Reading is important to me. As for most people, the quantity of digital dominates, 
+				but I've never forgotten the added quality, sensation, and permanence (as opposed to
+				ephemerality and transience) of physical books. Thankfully, I've gotten back into the habit of actually 
+				reading the physical books I buy.
+			</p>
+
+			<div class="book-sharing">
+				<Image src={bookSharingPhoto} alt="Sharing books in the neighborhood" width="150" />
+				<p>
+					Some neighborhoods have a box which works as a "little library" where people can both leave books
+					for others to take, and take books that others have left for them. I appreciate this as a way to share books
+					etc.
+				</p>
+			</div>
+
+			<h3>My Review System</h3>
+			<p>
+				I do give "perfect" reviews if I feel that a book realistically couldn't have been done better. 
+				For example, as a movie trilogy, The Lord of the Rings deserves a "perfect" score for many reasons.
 			</p>
 		</div>
 
-		<h3>My Review System</h3>
-		<p>
-			I do give "perfect" reviews if I feel that a book realistically couldn't have been done better. 
-			For example, as a movie trilogy, The Lord of the Rings deserves a "perfect" score for many reasons.
-		</p>
-	</div>
+		<div class="reading-sections">
+			<section class="reading-section current">
+				<h2>Currently Reading</h2>
+				<div class="grid-container">
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Designing Data-Intensive Applications</h3>
+							<p class="book-subtitle">The Big Ideas Behind Reliable, Scalable, and Maintainable Systems</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Technical: Software & Systems</span>
+							<span class="book-author">Martin Kleppmann</span>
+							<span class="book-year">2017</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<p>In progress...</p>
+						</div>
+					</div>
 
-	<div class="reading-sections">
-		<section class="reading-section current">
-			<h2>Currently Reading</h2>
-			<div class="book-grid">
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Designing Data-Intensive Applications</h3>
-						<p class="book-subtitle">The Big Ideas Behind Reliable, Scalable, and Maintainable Systems</p>
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Jesus & Personality Theory</h3>
+							<p class="book-subtitle">Exploring the Five-Factor Model</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Humanity, Morality, Religion</span>
+							<span class="book-author">James R. Beck</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Jesus-Personality-Theory-Exploring-Five-Factor/dp/0830827685" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<p>In progress...</p>
+						</div>
 					</div>
-					<div class="book-meta">
-						<span class="book-genre">Technical: Software & Systems</span>
-						<span class="book-author">Martin Kleppmann</span>
-						<span class="book-year">2017</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Designing-Data-Intensive-Applications-Reliable-Maintainable/dp/1449373321" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<p>In progress...</p>
-					</div>
-				</div>
 
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Jesus & Personality Theory</h3>
-						<p class="book-subtitle">Exploring the Five-Factor Model</p>
-					</div>
-					<div class="book-meta">
-						<span class="book-genre">Humanity, Morality, Religion</span>
-						<span class="book-author">James R. Beck</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Jesus-Personality-Theory-Exploring-Five-Factor/dp/0830827685" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<p>In progress...</p>
-					</div>
-				</div>
-
-				<div class="book-card">
-					<div class="book-header">
-						<h3>The Physics of Resistance Exercise</h3>
-					</div>
-					<div class="book-meta">
-						<span class="book-genre">Health & Exercise</span>
-						<span class="book-author">Doug Brignole</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Physics-Resistance-Exercise-Doug-Brignole/dp/1734073001" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<p>In progress...</p>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<section class="reading-section completed">
-			<h2>Completed Books</h2>
-			<div class="book-grid">
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Nuclear War</h3>
-						<p class="book-subtitle">A History of the World's Most Powerful Weapons</p>
-						<p class="book-author">Annie Jacobsen</p>
-					</div>
-					<div class="book-meta">
-						<span class="book-genre">Non-fiction</span>
-						<span class="book-score">My Score: 80%</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Nuclear-War-History-Worlds-Powerful/dp/0316413733" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<div class="review-content">
-							<h5>Pros:</h5>
-							<ul>
-								<li>Interesting insights into nuclear doctrine</li>
-								<li>Visceral sense of the unimaginable destruction</li>
-								<li>Clearer understanding of the rapid timing of events after first launch (minutes, hours)</li>
-							</ul>
-							<h5>Cons:</h5>
-							<ul>
-								<li>Overwhelming amount of government/military acronyms</li>
-								<li>Detailed descriptions of destruction get repetitive</li>
-							</ul>
+					<div class="book-card">
+						<div class="book-header">
+							<h3>The Physics of Resistance Exercise</h3>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Health & Exercise</span>
+							<span class="book-author">Doug Brignole</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Physics-Resistance-Exercise-Doug-Brignole/dp/1734073001" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<p>In progress...</p>
 						</div>
 					</div>
 				</div>
+			</section>
 
-				<div class="book-card">
-					<div class="book-header">
-						<h3>System Design Interview - An Insider's Guide: Volume 2</h3>
-						<p class="book-author">Alex Xu, Sahn Lam</p>
+			<section class="reading-section completed">
+				<h2>Completed Books</h2>
+				<div class="grid-container">
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Nuclear War</h3>
+							<p class="book-subtitle">A History of the World's Most Powerful Weapons</p>
+							<p class="book-author">Annie Jacobsen</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Non-fiction</span>
+							<span class="book-score">My Score: 80%</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Nuclear-War-History-Worlds-Powerful/dp/0316413733" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<div class="review-content">
+								<h5>Pros:</h5>
+								<ul>
+									<li>Interesting insights into nuclear doctrine</li>
+									<li>Visceral sense of the unimaginable destruction</li>
+									<li>Clearer understanding of the rapid timing of events after first launch (minutes, hours)</li>
+								</ul>
+								<h5>Cons:</h5>
+								<ul>
+									<li>Overwhelming amount of government/military acronyms</li>
+									<li>Detailed descriptions of destruction get repetitive</li>
+								</ul>
+							</div>
+						</div>
 					</div>
-					<div class="book-meta">
-						<span class="book-genre">Technical: Software & Systems</span>
-						<span class="book-year">2022</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<p>Review in progress...</p>
-					</div>
-				</div>
 
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Mere Christianity</h3>
-						<p class="book-author">C.S. Lewis</p>
+					<div class="book-card">
+						<div class="book-header">
+							<h3>System Design Interview - An Insider's Guide: Volume 2</h3>
+							<p class="book-author">Alex Xu, Sahn Lam</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Technical: Software & Systems</span>
+							<span class="book-year">2022</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<p>Review in progress...</p>
+						</div>
 					</div>
-					<div class="book-meta">
-						<span class="book-genre">Humanity, Morality, Religion</span>
-						<span class="book-score">My Score: 100%</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Mere-Christianity-C-S-Lewis/dp/0060652926" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<p>Review in progress...</p>
-					</div>
-				</div>
 
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Surely You're Joking, Mr. Feynman!</h3>
-						<p class="book-subtitle">Adventures of a Curious Character</p>
-						<p class="book-author">Richard P. Feynman</p>
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Mere Christianity</h3>
+							<p class="book-author">C.S. Lewis</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Humanity, Morality, Religion</span>
+							<span class="book-score">My Score: 100%</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Mere-Christianity-C-S-Lewis/dp/0060652926" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<p>Review in progress...</p>
+						</div>
 					</div>
-					<div class="book-meta">
-						<span class="book-genre">Autobiography</span>
-						<span class="book-year">1985</span>
-						<span class="book-score">My Score: 100%</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/Surely-Feynman-Adventures-Curious-Character/dp/0393316041" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
-					</div>
-					<div class="book-review">
-						<h4>Review</h4>
-						<div class="review-content">
-							<p>A masterpiece that perfectly captures Feynman's unique personality and approach to life. His stories about safecracking at Los Alamos, learning to draw, and his adventures in Brazil showcase not just his genius but his incredible curiosity and zest for life.</p>
-							<h5>Key Takeaways:</h5>
-							<ul>
-								<li>The importance of maintaining childlike curiosity throughout life</li>
-								<li>How to approach complex problems with simple, elegant solutions</li>
-								<li>The value of intellectual honesty and admitting what you don't know</li>
-								<li>The joy of learning for its own sake</li>
-							</ul>
+
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Surely You're Joking, Mr. Feynman!</h3>
+							<p class="book-subtitle">Adventures of a Curious Character</p>
+							<p class="book-author">Richard P. Feynman</p>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Autobiography</span>
+							<span class="book-year">1985</span>
+							<span class="book-score">My Score: 100%</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/Surely-Feynman-Adventures-Curious-Character/dp/0393316041" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
+						<div class="book-review">
+							<h4>Review</h4>
+							<div class="review-content">
+								<p>A masterpiece that perfectly captures Feynman's unique personality and approach to life. His stories about safecracking at Los Alamos, learning to draw, and his adventures in Brazil showcase not just his genius but his incredible curiosity and zest for life.</p>
+								<h5>Key Takeaways:</h5>
+								<ul>
+									<li>The importance of maintaining childlike curiosity throughout life</li>
+									<li>How to approach complex problems with simple, elegant solutions</li>
+									<li>The value of intellectual honesty and admitting what you don't know</li>
+									<li>The joy of learning for its own sake</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
 
-		<section class="reading-section aspirational">
-			<h2>Books I Aspire to Read</h2>
-			<div class="book-grid">
-				<div class="book-card">
-					<div class="book-header">
-						<h3>Works of Fyodor Dostoevsky</h3>
-					</div>
-					<div class="book-meta">
-						<span class="book-genre">Humanities</span>
-						<span class="book-author">Fyodor Dostoevsky</span>
-					</div>
-					<div class="book-actions">
-						<a href="https://www.amazon.com/stores/Fyodor-Dostoevsky/author/B000AQ6LWY" 
-						   target="_blank" 
-						   rel="noopener noreferrer" 
-						   class="tertiary-link">
-							View on Amazon
-						</a>
+			<section class="reading-section aspirational">
+				<h2>Books I Aspire to Read</h2>
+				<div class="grid-container">
+					<div class="book-card">
+						<div class="book-header">
+							<h3>Works of Fyodor Dostoevsky</h3>
+						</div>
+						<div class="book-meta">
+							<span class="book-genre">Humanities</span>
+							<span class="book-author">Fyodor Dostoevsky</span>
+						</div>
+						<div class="book-actions">
+							<a href="https://www.amazon.com/stores/Fyodor-Dostoevsky/author/B000AQ6LWY" 
+							   target="_blank" 
+							   rel="noopener noreferrer" 
+							   class="tertiary-link">
+								View on Amazon
+							</a>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
+			</section>
+		</div>
 	</div>
 </Layout>
 
@@ -288,9 +290,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	}
 
 	.book-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		gap: 1.5rem;
+		display: none;
 	}
 
 	.book-card {

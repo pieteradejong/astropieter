@@ -2,16 +2,120 @@
 import HeaderLink from './HeaderLink.astro';
 ---
 
-<header>
-	<nav>
-		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
-			<HeaderLink href="/projects">Projects</HeaderLink>
-			<!-- <HeaderLink href="/software">Software</HeaderLink> -->
-			<HeaderLink href="/reading">Reading</HeaderLink>
-			<HeaderLink href="/contact">Contact</HeaderLink>
-		</div>
-	</nav>
+<header style="width: 100%;">
+	<div class="content-container">
+		<nav>
+			<button class="nav-toggle" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">
+				<span class="hamburger-icon">☰</span>
+			</button>
+			<div class="nav-menu" id="mainNav">
+				<HeaderLink href="/">Home</HeaderLink>
+				<HeaderLink href="/blog">Blog</HeaderLink>
+				<HeaderLink href="/about">About</HeaderLink>
+				<HeaderLink href="/projects">Projects</HeaderLink>
+				<!-- <HeaderLink href="/software">Software</HeaderLink> -->
+				<HeaderLink href="/reading">Reading</HeaderLink>
+				<HeaderLink href="/contact">Contact</HeaderLink>
+			</div>
+		</nav>
+	</div>
 </header>
+
+<script>
+// Simple vanilla JS hamburger menu toggle
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('hamburgerBtn');
+    const nav = document.getElementById('mainNav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      nav.classList.toggle('open', !expanded);
+    });
+    // Optional: close menu when a link is clicked (for SPA feel)
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        btn.setAttribute('aria-expanded', 'false');
+        nav.classList.remove('open');
+      });
+    });
+  });
+}
+</script>
+
+<style>
+/* Mobile (< 768px): Hamburger menu */
+.nav-toggle {
+	display: block;
+	background: none;
+	border: none;
+	font-size: 2rem;
+	padding: 0.5em;
+	min-width: 44px;
+	min-height: 44px;
+	cursor: pointer;
+}
+.nav-menu {
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	position: absolute;
+	top: 3.5rem;
+	left: 0;
+	right: 0;
+	background: var(--card-bg);
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	padding: 1.5rem 0;
+	z-index: 1000;
+}
+.nav-menu.open {
+	display: flex;
+}
+
+/* Tablet+ (≥ 768px): Horizontal nav */
+@media (min-width: 768px) {
+	.nav-toggle {
+		display: none;
+	}
+	.nav-menu {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		position: static;
+		background: none;
+		box-shadow: none;
+		padding: 0;
+		gap: 1.5rem;
+		width: 100%;
+	}
+}
+.hamburger-icon {
+	display: block;
+	line-height: 1;
+}
+
+/* Bottom border for nav links on hover/active */
+.nav-menu a {
+	border-bottom: 2px solid transparent;
+	transition: border-color 0.2s;
+	padding-bottom: 0.25em;
+	background: none;
+	text-decoration: none;
+}
+.nav-menu a:hover,
+.nav-menu a.active {
+	border-bottom: 2px solid var(--accent);
+	background: none;
+	text-decoration: none;
+}
+.nav-menu a:active,
+.nav-menu a:focus {
+	background: none;
+	color: var(--accent);
+	outline: none;
+	border-bottom: 2px solid var(--accent);
+}
+</style>

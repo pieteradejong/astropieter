@@ -20,7 +20,7 @@ import profileImage from '../assets/pieter-de-jong-300.png';
                     height={300}
                 />
                 <div class="profile-info">
-                    <h2>Pieter A. de Jong</h2>
+                    <h2>Pieter de Jong</h2>
                     <a href="/contact" class="button-link">Contact</a>
                 </div>
             </div>
@@ -28,7 +28,7 @@ import profileImage from '../assets/pieter-de-jong-300.png';
         
         <div class="bio-right">
             <p>
-                Pieter de Jong is a Software Engineer with a decade experience in industry, in verticals from   
+                I'm a Software Engineer with a decade experience in industry, in verticals from   
                 consumer finance, e-commerce, digital agriculture, and solar energy. 
                 My work has ranged from ... to .... .                
                 
@@ -39,10 +39,21 @@ import profileImage from '../assets/pieter-de-jong-300.png';
                 connected you to the Altavista "directory of the Internet." Professionally, he started doing front-end 
                 Web development, growing into fullstack development over time.  -->
             </p>
+            <p>
+                I'm a Senior Software Engineer with a decade of experience across the full technology spectrum—from seed-stage startups to publicly traded companies like Etsy and Tesla-acquired SolarCity. I've built and scaled systems serving millions of users, from mobile apps and payment platforms to data pipelines processing terabytes of agricultural data.
+            </p>
+            <p>test</p>
+            <p>
+                My work spans the entire stack: optimizing Rails backends that reduced KYC errors by 80%, building React Native apps as the sole mobile developer, and architecting AWS data infrastructure. I thrive in fast-moving environments where I can work directly with founders and technical leaders to ship features that drive real business impact.
+            </p>
+            
+            <p>
+                My interests also include skiing, snowboarding, geopolitics, physical fitness, linguistics, and spiritual growth. I kindly invite you to reach out via Contact if you'd like to discuss any of these topics or potential collaborations.
+            </p>
 
 
             <p>I've shipped production code at every stage; from seed startups and 
-                series A/b, to  
+                series A/B, to  
                 publicly traded companies; moving comfortably between front-end 
                 polish
                  to back-end scale. 
@@ -91,23 +102,23 @@ import profileImage from '../assets/pieter-de-jong-300.png';
 <style>
     .bio-container {
         display: flex;
-        gap: 3em;
+        gap: var(--spacing-xl);
         max-width: 100%;
         margin: 0 auto;
     }
 
     .bio-left {
-        flex: 0 0 33.333%;
-        max-width: 33.333%;
+        flex: 0 0 min(33.333%, 300px);
+        max-width: min(33.333%, 300px);
     }
 
     .bio-right {
-        flex: 0 0 66.667%;
-        max-width: 66.667%;
+        flex: 1;
+        min-width: 0; /* Prevents flex item from overflowing */
     }
 
     .profile-image-container {
-        margin-bottom: 2em;
+        margin-bottom: var(--spacing-large);
         width: 100%;
     }
 
@@ -122,32 +133,52 @@ import profileImage from '../assets/pieter-de-jong-300.png';
 
     .profile-info {
         text-align: center;
-        margin-top: 1em;
+        margin-top: var(--spacing-unit);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .profile-info h2 {
         margin: 0;
-        font-size: 1.5em;
+        font-size: var(--font-size-h2);
         color: var(--primary-text);
     }
 
-    @media (max-width: 768px) {
+    /* Tablet Layout */
+    @media (max-width: var(--tablet-cutoff)) {
         .bio-container {
-            flex-direction: column;
-            gap: 2em;
+            gap: var(--spacing-large);
         }
 
         .bio-left {
-            flex: none;
-            max-width: 300px;
+            flex: 0 0 min(40%, 250px);
+            max-width: min(40%, 250px);
+        }
+    }
+
+    /* Mobile Layout */
+    @media (max-width: var(--mobile-cutoff)) {
+        .bio-container {
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-large);
+        }
+
+        .bio-left, .bio-right {
+            max-width: 100%;
             width: 100%;
-            margin: 0 auto;
+            margin: 0;
+        }
+
+        .profile-info {
+            align-items: center;
+            text-align: center;
         }
 
         .bio-right {
-            flex: none;
-            max-width: 100%;
-            width: 100%;
+            padding: 0;
+            margin-top: var(--spacing-unit);
         }
     }
 </style>
