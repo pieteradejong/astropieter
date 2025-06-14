@@ -2,8 +2,7 @@
 title: "Buffy Episode Semantic Search"
 description: "A Python-based semantic search engine for 'Buffy the Vampire Slayer' episodes using Redis vector search and Sentence Transformers"
 techStack: ["Python", "Redis", "Sentence Transformers", "NLP", "Vector Search"]
-githubUrl: "YOUR_GITHUB_URL_HERE"
-demoUrl: "YOUR_DEMO_URL_HERE"
+githubUrl: "https://github.com/pieteradejong/tvshowchat"
 keyFeatures: [
   "Semantic search across all Buffy episodes using vector embeddings",
   "Fast KNN-based retrieval with Redis vector search",

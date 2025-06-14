@@ -22,79 +22,23 @@ import profileImage from '../assets/pieter-de-jong-300.png';
                 <div class="profile-info">
                     <h2>Pieter de Jong</h2>
                     <a href="/contact" class="button-link">Contact</a>
+                    <a href="https://www.linkedin.com/in/pieteradejong/" target="_blank" rel="noopener noreferrer" class="accent-link">LinkedIn</a>
+                    <a href="https://github.com/pieteradejong" target="_blank" rel="noopener noreferrer" class="accent-link">GitHub</a>
+                    
                 </div>
             </div>
         </div>
         
         <div class="bio-right">
-            <p>
-                I'm a Software Engineer with a decade experience in industry, in verticals from   
-                consumer finance, e-commerce, digital agriculture, and solar energy. 
-                My work has ranged from ... to .... .                
-                
-
-
-                <!-- He started programming 
-                at a young age on pre-Pentium PCs, when Windows 3.11 was the standard and noisy modems 
-                connected you to the Altavista "directory of the Internet." Professionally, he started doing front-end 
-                Web development, growing into fullstack development over time.  -->
-            </p>
-            <p>
-                I'm a Senior Software Engineer with a decade of experience across the full technology spectrum—from seed-stage startups to publicly traded companies like Etsy and Tesla-acquired SolarCity. I've built and scaled systems serving millions of users, from mobile apps and payment platforms to data pipelines processing terabytes of agricultural data.
-            </p>
-            <p>test</p>
-            <p>
-                My work spans the entire stack: optimizing Rails backends that reduced KYC errors by 80%, building React Native apps as the sole mobile developer, and architecting AWS data infrastructure. I thrive in fast-moving environments where I can work directly with founders and technical leaders to ship features that drive real business impact.
-            </p>
-            
-            <p>
-                My interests also include skiing, snowboarding, geopolitics, physical fitness, linguistics, and spiritual growth. I kindly invite you to reach out via Contact if you'd like to discuss any of these topics or potential collaborations.
-            </p>
-
-
-            <p>I've shipped production code at every stage; from seed startups and 
-                series A/B, to  
-                publicly traded companies; moving comfortably between front-end 
-                polish
-                 to back-end scale. 
-            </p>
-            <p>
-                After immigrating from Amsterdam to Baltimore in 2011, he then arrived in Silicon Valley for an 
-                internship at WePay, a consumer payments company. He realized he was a Technologist at heart, and fell 
-                in love with the culture of Silicon Valley and technology thinking in general. 
-                Over the decade ahead, he would work for 
-                companies ranging from seed-stage to public, on teams small and large, scrappy and quick-moving versus 
-                larger and highly structured. He has always sought to apply his passion and skill for applied mathematics, 
-                developing an interest in machine learning and other areas of overlap between math and code. 
-            </p>
-            <p></p>
-            <p>
-                <!-- Recently, he is working as a Senior Software Engineer and first outside technical hire, 
-                for a rapidly growing startup, on a product with a powerful mission. 
-                He is also pursuing a part-time, online MSc. in Computer Science at Georgia Tech ("OMCS").
-                As if that were not enough, he aspires to someday attend Johns Hopkins' Master's program 
-                for Applied and Computational Mathematics.
-                He likes to write (on this very website), code (GitHub whenever there is time), and read (see section above). -->
-            </p>
-            <p>
-                <!-- He is currently located in Miami, having previously lived in NYC, San Francisco, 
-                Palo Alto (Silicon Valley), and Baltimore. Before that, in 2011 he immigrated 
-                to Baltimore from Amsterdam, and got an internship 
-                at a Palo Alto payments startup in 2012, marking his professional start in the 
-                tech world and his acquaintance with Silicon Valley. -->
-            </p>
-            <p>
-                My interest also include skiing, snowboarding, geopolitics, physical fitness, (some CKO kickboxing a while ago), linguistics, and spiritual growth.
-                I kindly invite you to hit Contact if you're interested in any of those topics.
-            </p>
-            <p>
-                In his free time, Pieter codes on 
-                <a href="https://github.com/pieteradejong" target="_blank">GitHub</a>,
-                works out daily, is learning 
-                <a href="https://www.ckokickboxing.com/" target="_blank">kickboxing</a>, 
-                and reading his favorite accounts on 
-                <a href="https://x.com/">X</a>.
-            </p>
+        <p>
+            Hi, I'm Pieter. I'm a software engineer with industry experience since 2012, in industries including consumer finance, ecommerce, digital agriculture, Big Data, medical Q&amp;A, interpersonal experiences, and solar energy. Companies ranging from seed-stage to series A/B to publicly traded.
+        </p>
+        <p>
+            In my professional life, I've built and contributed to full stack web applications, React Native mobile apps, data pipelines, multi-million user ecommerce platforms, mission-critical user registration flows, developed Big Data educational curriculum, and developed foundational features for premium social experiences. I also use AI/LLM-based tools on a daily basis to increase my coding productivity. Finally, I've worked side by side with Founders/CEOs/CTOs to plan product strategy and brainstorm company strategy and product market fit.
+        </p>
+        <p>
+            Over my life, I've enjoyed sports including skiing and snowboarding, hiking, judo, and kickboxing group classes. In my free time, I pay attention to geopolitics, and aspirationally I'd like to study Classical Greek and Latin as I did in high school.
+        </p>
         </div>
     </div>
 </main>
@@ -146,7 +90,7 @@ import profileImage from '../assets/pieter-de-jong-300.png';
     }
 
     /* Tablet Layout */
-    @media (max-width: var(--tablet-cutoff)) {
+    @media (max-width: 1023px) {
         .bio-container {
             gap: var(--spacing-large);
         }
@@ -158,27 +102,28 @@ import profileImage from '../assets/pieter-de-jong-300.png';
     }
 
     /* Mobile Layout */
-    @media (max-width: var(--mobile-cutoff)) {
+    @media (max-width: 767px) {
         .bio-container {
             flex-direction: column;
             align-items: center;
             gap: var(--spacing-large);
         }
 
-        .bio-left, .bio-right {
+        .bio-left {
+            display: none;
+        }
+
+        .bio-right {
             max-width: 100%;
             width: 100%;
             margin: 0;
+            padding: 0;
+            margin-top: var(--spacing-unit);
         }
 
         .profile-info {
             align-items: center;
             text-align: center;
-        }
-
-        .bio-right {
-            padding: 0;
-            margin-top: var(--spacing-unit);
         }
     }
 </style>

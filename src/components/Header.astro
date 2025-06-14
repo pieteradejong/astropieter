@@ -1,10 +1,24 @@
 ---
 import HeaderLink from './HeaderLink.astro';
+import { Image } from 'astro:assets';
+import profileImage from '../assets/pieter-de-jong-300.png';
 ---
 
 <header style="width: 100%;">
 	<div class="content-container">
 		<nav>
+			<div class="mobile-header-left">
+				<div class="mobile-profile">
+					<Image 
+						src={profileImage}
+						alt="Pieter de Jong" 
+						class="profile-image"
+						width={40}
+						height={40}
+					/>
+				</div>
+				<span class="mobile-profile-name">Pieter de Jong</span>
+			</div>
 			<button class="nav-toggle" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav">
 				<span class="hamburger-icon">☰</span>
 			</button>
@@ -14,7 +28,7 @@ import HeaderLink from './HeaderLink.astro';
 				<HeaderLink href="/about">About</HeaderLink>
 				<HeaderLink href="/projects">Projects</HeaderLink>
 				<!-- <HeaderLink href="/software">Software</HeaderLink> -->
-				<HeaderLink href="/reading">Reading</HeaderLink>
+				<HeaderLink href="/reading">Reading and Lyrics</HeaderLink>
 				<HeaderLink href="/contact">Contact</HeaderLink>
 			</div>
 		</nav>
@@ -45,6 +59,50 @@ if (typeof window !== 'undefined') {
 </script>
 
 <style>
+/* Mobile Header Layout */
+.mobile-header-left {
+	display: none;
+}
+
+.mobile-profile {
+	display: inline-block;
+}
+
+.profile-image {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid var(--border);
+}
+
+.mobile-profile-name {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: var(--primary-text);
+	display: none;
+}
+
+/* Mobile (< 768px): Hamburger menu */
+@media (max-width: 767px) {
+	.content-container nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 var(--spacing-unit);
+	}
+
+	.mobile-header-left {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.mobile-profile-name {
+		display: inline-block;
+	}
+}
+
 /* Mobile (< 768px): Hamburger menu */
 .nav-toggle {
 	display: block;
@@ -60,7 +118,7 @@ if (typeof window !== 'undefined') {
 	display: none;
 	flex-direction: column;
 	align-items: center;
-	gap: 1rem;
+	gap: 0.5rem;
 	position: absolute;
 	top: 3.5rem;
 	left: 0;
@@ -88,8 +146,11 @@ if (typeof window !== 'undefined') {
 		background: none;
 		box-shadow: none;
 		padding: 0;
-		gap: 1.5rem;
+		gap: 1rem;
 		width: 100%;
+	}
+	.mobile-profile-name {
+		display: none;
 	}
 }
 .hamburger-icon {

@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Default.astro';
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
 ---
 
 <Layout
@@ -14,90 +15,56 @@ import Layout from '../layouts/Default.astro';
       linguistics, and spiritual growth.
     </p>
   </div>
-
-  <form id="contactForm" class="contact-form" onsubmit="submitForm(event)" novalidate>
-    <fieldset>
-      <legend>Send me a message</legend>
-      
-      <div class="form-group">
-        <label for="name" id="name-label">Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name" 
-          aria-labelledby="name-label"
-          required 
-          minlength="2"
-          placeholder="Your name"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="email" id="email-label">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          aria-labelledby="email-label"
-          required
-          placeholder="your.email@example.com"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="subject" id="subject-label">Subject</label>
-        <input 
-          type="text" 
-          id="subject" 
-          name="subject" 
-          aria-labelledby="subject-label"
-          required
-          minlength="3"
-          placeholder="What is this about?"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="message" id="message-label">Message</label>
-        <textarea 
-          id="message" 
-          name="message" 
-          aria-labelledby="message-label"
-          required
-          minlength="10"
-          rows="6"
-          placeholder="Your message here..."
-        ></textarea>
-      </div>
-
-      <div class="form-group">
-        <button type="submit">Send Message</button>
-      </div>
-    </fieldset>
+  <h1>Contact Me</h1>
+  <form id="form">
+    <input type="hidden" name="access_key" value={accessKey}>
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea>
+    </div>
+    <button type="submit">Send Message</button>
+    <div id="result"></div>
   </form>
 </main>
 
-<script>
-  function submitForm(event: SubmitEvent) {
-    event.preventDefault();
-    
-    const form = event.target as HTMLFormElement;
+<script is:inline>
+  const form = document.getElementById('form');
+  const result = document.getElementById('result');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
     const formData = new FormData(form);
-    
-    // Type-safe form data access
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const subject = formData.get('subject') as string;
-    const message = formData.get('message') as string;
-
-    console.log("Form Submitted");
-    console.log(`Name: ${name}`);
-    console.log(`Email: ${email}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Message: ${message}`);
-
-    // You can add more logic here to handle the form submission
-  }
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+    result.innerHTML = "Sending...";
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: json
+    })
+    .then(async (response) => {
+      let json = await response.json();
+      if (response.status == 200) {
+        result.innerHTML = "Message sent successfully!";
+        form.reset();
+      } else {
+        result.innerHTML = "Error: " + json.message;
+      }
+    })
+    .catch(error => {
+      result.innerHTML = "Error sending message";
+    });
+  });
 </script>
 
 <style>
@@ -108,43 +75,40 @@ import Layout from '../layouts/Default.astro';
     font-size: 1.1rem;
     line-height: 1.6;
   }
-
-  .contact-form {
-    margin: 2rem auto;
-    padding: 2rem;
+  .content-container {
+    max-width: var(--content-max-width, 900px);
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-
-  fieldset {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 2rem;
-  }
-
-  legend {
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0 1rem;
+  h1 {
+    margin-bottom: 1.2rem;
+    font-size: 2rem;
+    font-weight: 700;
     color: var(--primary-text);
   }
-
+  form {
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
   .form-group {
     margin-bottom: 1.5rem;
   }
-
   label {
     display: block;
     margin-bottom: 0.5rem;
     color: var(--primary-text);
     font-weight: 500;
   }
-
   input,
   textarea,
   button {
     font-family: inherit;
     font-size: 1rem;
   }
-
   input,
   textarea {
     width: 100%;
@@ -153,14 +117,12 @@ import Layout from '../layouts/Default.astro';
     border-radius: 4px;
     transition: border-color 0.2s;
   }
-
   input:focus,
   textarea:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 2px rgba(42, 127, 165, 0.1);
   }
-
   button {
     background: var(--accent);
     color: white;
@@ -170,31 +132,17 @@ import Layout from '../layouts/Default.astro';
     cursor: pointer;
     transition: background-color 0.2s;
   }
-
   button:hover {
     background: var(--accent-hover);
   }
-
-  /* Error states - only show after interaction */
-  input:not(:placeholder-shown):invalid,
-  textarea:not(:placeholder-shown):invalid {
-    border-color: #dc2626;
+  #result {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: var(--primary-text);
   }
-
-  /* Remove red border on focus if invalid */
-  input:focus:invalid,
-  textarea:focus:invalid {
-    border-color: var(--accent);
-  }
-
-  /* Responsive adjustments */
   @media (max-width: 768px) {
-    .contact-form {
+    form {
       padding: 1rem;
-    }
-
-    fieldset {
-      padding: 1.5rem;
     }
   }
 </style>
