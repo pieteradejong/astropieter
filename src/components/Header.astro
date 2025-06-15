@@ -42,17 +42,42 @@ if (typeof window !== 'undefined') {
     const btn = document.getElementById('hamburgerBtn');
     const nav = document.getElementById('mainNav');
     if (!btn || !nav) return;
-    btn.addEventListener('click', () => {
+    
+    // Function to close the menu
+    const closeMenu = () => {
+      btn.setAttribute('aria-expanded', 'false');
+      nav.classList.remove('open');
+    };
+    
+    // Toggle menu on button click
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent event bubbling
       const expanded = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!expanded));
       nav.classList.toggle('open', !expanded);
     });
-    // Optional: close menu when a link is clicked (for SPA feel)
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const isMenuOpen = nav.classList.contains('open');
+      const target = e.target as Node;
+      if (isMenuOpen && target && !nav.contains(target) && !btn.contains(target)) {
+        closeMenu();
+      }
+    });
+    
+    // Close menu when a link is clicked (for SPA feel)
     nav.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        btn.setAttribute('aria-expanded', 'false');
-        nav.classList.remove('open');
+        closeMenu();
       });
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('open')) {
+        closeMenu();
+      }
     });
   });
 }

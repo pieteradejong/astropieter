@@ -124,7 +124,7 @@ const today = new Date();
 	@media (max-width: var(--tablet-cutoff)) {
 		.footer-content {
 			grid-template-columns: 1fr 1fr;
-			gap: 0.5em;
+			gap: 1rem;
 			width: 100%;
 			max-width: var(--content-max-width, 900px);
 			margin: 0 auto;
@@ -132,12 +132,38 @@ const today = new Date();
 		.footer-section {
 			width: 100%;
 			margin-bottom: 1.5rem;
+			margin-right: 0;
 		}
 		.footer-section > div {
 			align-items: flex-start;
 		}
 		.footer-bottom {
 			padding: 1rem 0 0;
+		}
+	}
+
+	/* Mobile: Single column layout */
+	@media (max-width: 480px) {
+		.footer-content {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+		.footer-section {
+			margin-bottom: 2rem;
+			margin-right: 0;
+			max-width: none;
+		}
+		.footer-section h3.section-header {
+			font-size: 1.2rem;
+			margin-bottom: 1rem;
+		}
+		.footer-section a:not(.button-link) {
+			padding: 0.5rem 0;
+			font-size: 1rem;
+		}
+		.interests span {
+			font-size: 1rem;
+			padding: 0.25rem 0;
 		}
 	}
 </style>
