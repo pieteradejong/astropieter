@@ -20,46 +20,61 @@ const projects = await getCollection('projects');
 						title={project.data.title}
 						subtitle={project.data.description}
 						className="project-card-content"
+						showExpandButton={true}
 					>
 						<div class="project-content">
-							<div class="tech-stack">
-								{project.data.techStack.map((tech) => (
-									<Tag text={tech} />
-								))}
+							<!-- Mobile condensed view -->
+							<div class="mobile-condensed-view">
+								<div class="condensed-tech-stack">
+									{project.data.techStack.map((tech) => (
+										<Tag text={tech} />
+									))}
+								</div>
 							</div>
 
-							<p class="project-description">
-								{project.data.description}
-							</p>
-
-							<div class="project-details">
-								<h4>Key Features</h4>
-								<ul>
-									{project.data.keyFeatures.slice(0, 3).map((feature) => (
-										<li>{feature}</li>
-									))}
-								</ul>
-
-								<div class="project-tags">
-									{project.data.tags.map((tag) => (
-										<Tag text={tag} />
+							<!-- Full content (hidden on mobile by default) -->
+							<div class="full-content">
+								<div class="tech-stack">
+									{project.data.techStack.map((tech) => (
+										<Tag text={tech} />
 									))}
 								</div>
 
-								<div class="project-links">
-									<a href={`/projects/${project.slug}`} class="secondary-link">
-										View Details →
-									</a>
-									{project.data.githubUrl && (
-										<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-											Source Code →
-										</a>
-									)}
-									{project.data.demoUrl && (
-										<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-											Live Demo →
-										</a>
-									)}
+								<p class="project-description">
+									{project.data.description}
+								</p>
+
+								<div class="project-details">
+									<h4>Key Features</h4>
+									<ul>
+										{project.data.keyFeatures.slice(0, 3).map((feature) => (
+											<li>{feature}</li>
+										))}
+									</ul>
+
+									<div class="project-tags">
+										{project.data.tags.map((tag) => (
+											<Tag text={tag} />
+										))}
+									</div>
+
+									<div class="project-links">
+										{project.slug !== 'python-react-base-app' && (
+											<a href={`/projects/${project.slug}`} class="secondary-link">
+												View Details →
+											</a>
+										)}
+										{project.data.githubUrl && (
+											<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+												Source Code →
+											</a>
+										)}
+										{project.data.demoUrl && (
+											<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+												Live Demo →
+											</a>
+										)}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -69,6 +84,32 @@ const projects = await getCollection('projects');
 		</section>
 	</div>
 </Layout>
+
+<script>
+// Handle mobile project card expansion
+if (typeof window !== 'undefined') {
+	window.addEventListener('DOMContentLoaded', () => {
+		const expandButtons = document.querySelectorAll('.expand-button');
+		
+		expandButtons.forEach(button => {
+			button.addEventListener('click', (e) => {
+				e.preventDefault();
+				// Find the project content within the same card
+				const card = button.closest('.card');
+				const projectContent = card?.querySelector('.project-content');
+				
+				if (projectContent) {
+					projectContent.classList.toggle('expanded');
+					
+					// Update aria-label for accessibility
+					const isExpanded = projectContent.classList.contains('expanded');
+					button.setAttribute('aria-label', isExpanded ? 'Collapse project details' : 'Expand project details');
+				}
+			});
+		});
+	});
+}
+</script>
 
 <style>
 	.projects-section {
@@ -155,9 +196,59 @@ const projects = await getCollection('projects');
 		width: 100%;
 	}
 
+	/* Mobile fold-out styles */
+	.mobile-condensed-view {
+		display: none;
+		margin-bottom: 1rem;
+	}
+
+	.condensed-tech-stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.full-content {
+		display: block;
+	}
+
+	/* Expand button rotation when expanded */
+	.project-content.expanded .expand-icon {
+		transform: rotate(180deg);
+	}
+
 	@media (max-width: 768px) {
 		.project-card-content {
 			padding: 1rem;
+		}
+
+		.mobile-condensed-view {
+			display: block;
+		}
+
+		.full-content {
+			display: none;
+			animation: slideDown 0.2s ease-out;
+		}
+
+		.project-content.expanded .full-content {
+			display: block;
+		}
+
+		/* Hide tech stack in full content on mobile since it's shown in condensed view */
+		.project-content.expanded .full-content .tech-stack {
+			display: none;
+		}
+	}
+
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			max-height: 0;
+		}
+		to {
+			opacity: 1;
+			max-height: 1000px;
 		}
 	}
 </style>
