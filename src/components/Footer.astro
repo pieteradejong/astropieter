@@ -43,7 +43,7 @@ const today = new Date();
 	footer {
 		background: var(--footer-bg);
 		color: var(--secondary-text);
-		padding: 3rem 0 1.5rem;
+		padding: 2rem 0 1rem;
 		border-top: 1px solid var(--border);
 		width: 100%;
 	}
@@ -70,7 +70,7 @@ const today = new Date();
 	.footer-section h3.section-header {
 		color: var(--non-link-text);
 		font-size: 1.1rem;
-		margin: 0 0 0.5rem;
+		margin: 0 0 0.125rem;
 		font-weight: 600;
 	}
 	.footer-section > div {
@@ -78,7 +78,7 @@ const today = new Date();
 		flex-direction: column;
 	}
 	.footer-section a:not(.button-link) {
-		padding: 0.25rem 0;
+		padding: 0.0625rem 0;
 		text-decoration: none;
 		display: block;
 	}
@@ -99,7 +99,7 @@ const today = new Date();
 		flex-direction: column;
 	}
 	.footer-section .quick-links a.button-link {
-		margin-top: 0.5rem;
+		margin-top: 0.25rem;
 		padding: 0.5em 0.75em;
 		display: inline-block;
 		text-align: center;
@@ -109,10 +109,11 @@ const today = new Date();
 		display: block;
 		font-size: 0.95rem;
 		color: var(--non-link-text);
+		padding: 0.125rem 0;
 	}
 	.footer-bottom {
-		margin: 2rem auto 0;
-		padding: 1.5rem 0 0;
+		margin: 1.5rem auto 0;
+		padding: 1rem 0 0;
 		border-top: 1px solid var(--border);
 		text-align: center;
 		font-size: 0.9rem;
@@ -124,14 +125,14 @@ const today = new Date();
 	@media (max-width: var(--tablet-cutoff)) {
 		.footer-content {
 			grid-template-columns: 1fr 1fr;
-			gap: 1rem;
+			gap: 0.75rem;
 			width: 100%;
 			max-width: var(--content-max-width, 900px);
 			margin: 0 auto;
 		}
 		.footer-section {
 			width: 100%;
-			margin-bottom: 1.5rem;
+			margin-bottom: 0.5rem;
 			margin-right: 0;
 		}
 		.footer-section > div {
@@ -146,19 +147,19 @@ const today = new Date();
 	@media (max-width: 480px) {
 		.footer-content {
 			grid-template-columns: 1fr;
-			gap: 1.5rem;
+			gap: 1rem;
 		}
 		.footer-section {
-			margin-bottom: 2rem;
+			margin-bottom: 1rem;
 			margin-right: 0;
 			max-width: none;
 		}
 		.footer-section h3.section-header {
 			font-size: 1.2rem;
-			margin-bottom: 1rem;
+			margin-bottom: 0.5rem;
 		}
 		.footer-section a:not(.button-link) {
-			padding: 0.5rem 0;
+			padding: 0.25rem 0;
 			font-size: 1rem;
 		}
 		.interests span {
