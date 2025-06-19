@@ -24,15 +24,17 @@ if (currentPath.startsWith('/blog')) {
 	<div class="content-container">
 		<nav>
 			<div class="mobile-header-left">
-				<div class="mobile-profile">
-					<Image 
-						src={profileImage}
-						alt="Pieter de Jong" 
-						class="profile-image"
-						width={40}
-						height={40}
-					/>
-				</div>
+				<a href="/" class="mobile-profile-link">
+					<div class="mobile-profile">
+						<Image 
+							src={profileImage}
+							alt="Pieter de Jong" 
+							class="profile-image"
+							width={40}
+							height={40}
+						/>
+					</div>
+				</a>
 				<span class="mobile-profile-name">Pieter de Jong</span>
 				<span class="mobile-section-label">{currentSection}</span>
 			</div>
@@ -104,6 +106,17 @@ if (typeof window !== 'undefined') {
 /* Mobile Header Layout */
 .mobile-header-left {
 	display: none;
+}
+
+.mobile-profile-link {
+	display: inline-block;
+	text-decoration: none;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+}
+
+.mobile-profile-link:hover {
+	transform: scale(1.05);
 }
 
 .mobile-profile {
