@@ -1,0 +1,179 @@
+---
+import type { SeriesInfo } from '../utils/series';
+
+interface Props {
+	seriesInfo: SeriesInfo;
+	seriesName: string;
+	seriesDescription?: string;
+}
+
+const { seriesInfo, seriesName, seriesDescription } = Astro.props;
+---
+
+<div class="series-nav">
+	<div class="series-header">
+		<h4 class="series-title">
+			📚 {seriesName}
+		</h4>
+		{seriesDescription && (
+			<p class="series-description">{seriesDescription}</p>
+		)}
+		<div class="series-progress">
+			Part {seriesInfo.currentIndex + 1} of {seriesInfo.totalPosts}
+		</div>
+	</div>
+
+	<div class="series-navigation">
+		{seriesInfo.previousPost && (
+			<a href={`/blog/${seriesInfo.previousPost.slug}/`} class="nav-link prev-link">
+				← Previous: {seriesInfo.previousPost.data.title}
+			</a>
+		)}
+		
+		{seriesInfo.nextPost && (
+			<a href={`/blog/${seriesInfo.nextPost.slug}/`} class="nav-link next-link">
+				Next: {seriesInfo.nextPost.data.title} →
+			</a>
+		)}
+	</div>
+
+	<details class="series-index">
+		<summary>View all posts in this series</summary>
+		<ol class="series-list">
+			{seriesInfo.allPosts.map((post, index) => (
+				<li class={index === seriesInfo.currentIndex ? 'current-post' : ''}>
+					{index === seriesInfo.currentIndex ? (
+						<span class="current-indicator">
+							{post.data.title} (current)
+						</span>
+					) : (
+						<a href={`/blog/${post.slug}/`}>
+							{post.data.title}
+						</a>
+					)}
+				</li>
+			))}
+		</ol>
+	</details>
+</div>
+
+<style>
+	.series-nav {
+		background: var(--card-bg);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 1.5rem;
+		margin: 2rem 0;
+	}
+
+	.series-header {
+		margin-bottom: 1.5rem;
+	}
+
+	.series-title {
+		color: var(--non-link-text);
+		font-size: 1.2rem;
+		margin: 0 0 0.5rem 0;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.series-description {
+		color: var(--secondary-text);
+		font-size: 0.9rem;
+		margin: 0 0 0.75rem 0;
+		line-height: 1.4;
+	}
+
+	.series-progress {
+		color: var(--secondary-text);
+		font-size: 0.85rem;
+		font-weight: 600;
+		background: var(--footer-bg);
+		padding: 0.25rem 0.75rem;
+		border-radius: 4px;
+		display: inline-block;
+	}
+
+	.series-navigation {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.nav-link {
+		display: block;
+		padding: 0.75rem 1rem;
+		background: var(--footer-bg);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		text-decoration: none;
+		color: var(--accent);
+		font-size: 0.9rem;
+		transition: all 0.2s;
+	}
+
+	.nav-link:hover {
+		background: var(--accent);
+		color: white;
+		transform: translateY(-1px);
+	}
+
+	.series-index {
+		border-top: 1px solid var(--border);
+		padding-top: 1rem;
+	}
+
+	.series-index summary {
+		color: var(--secondary-text);
+		font-size: 0.9rem;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.series-index summary:hover {
+		color: var(--accent);
+	}
+
+	.series-list {
+		margin: 1rem 0 0 0;
+		padding-left: 1.5rem;
+	}
+
+	.series-list li {
+		margin: 0.5rem 0;
+		line-height: 1.4;
+	}
+
+	.series-list a {
+		color: var(--accent);
+		text-decoration: none;
+	}
+
+	.series-list a:hover {
+		text-decoration: underline;
+	}
+
+	.current-post .current-indicator {
+		color: var(--non-link-text);
+		font-weight: 600;
+	}
+
+	@media (min-width: var(--tablet-breakpoint)) {
+		.series-navigation {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		.nav-link {
+			flex: 1;
+			max-width: 45%;
+		}
+
+		.next-link {
+			text-align: right;
+		}
+	}
+</style> 
