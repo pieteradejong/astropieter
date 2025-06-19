@@ -2,7 +2,7 @@
 title: "SpaceX"
 description: "A SpaceX data visualization and tracking application"
 techStack: ["JavaScript", "API Integration", "Data Visualization"]
-githubUrl: ""
+githubUrl: "https://github.com/pieteradejong/spacex"
 keyFeatures: [
   "SpaceX mission data integration",
   "Real-time tracking capabilities",

@@ -2,7 +2,7 @@
 title: "Python-React Base App"
 description: "A foundational full-stack application template combining Python backend with React frontend"
 techStack: ["Python", "React", "JavaScript"]
-githubUrl: ""
+githubUrl: "https://github.com/pieteradejong/python-react-base-app"
 keyFeatures: [
   "Full-stack application architecture",
   "Python backend integration",

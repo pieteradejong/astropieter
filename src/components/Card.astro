@@ -116,4 +116,28 @@ const { title, subtitle, href, className = '', showExpandButton = false } = Astr
             padding: 1rem;
         }
     }
-</style> 
+</style>
+
+<script>
+// Handle project card expansion
+if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+        const expandButtons = document.querySelectorAll('.expand-button');
+        
+        expandButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const card = button.closest('.card');
+                const projectContent = card?.querySelector('.project-content');
+                
+                if (projectContent) {
+                    projectContent.classList.toggle('expanded');
+                    
+                    const isExpanded = projectContent.classList.contains('expanded');
+                    button.setAttribute('aria-label', isExpanded ? 'Collapse project details' : 'Expand project details');
+                }
+            });
+        });
+    });
+}
+</script> 
