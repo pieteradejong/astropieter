@@ -14,7 +14,8 @@ const blog = defineCollection({
 			.optional()
 			.transform((str) => (str ? new Date(str) : undefined)),
 		tags: z
-			.array(z.string()).nonempty("tags must have at least one item")
+			.array(z.string()).nonempty("tags must have at least one item"),
+		draft: z.boolean().optional().default(false)
 	}),
 });
 

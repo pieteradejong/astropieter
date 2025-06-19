@@ -3,9 +3,19 @@ import Layout from '../../layouts/Default.astro';
 import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const allPosts = await getCollection('blog');
+
+// Filter out draft posts in production, but show them in development
+const posts = allPosts
+	.filter((post) => {
+		// In development, show all posts
+		if (import.meta.env.DEV) {
+			return true;
+		}
+		// In production, only show published posts
+		return !post.data.draft;
+	})
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <Layout
@@ -24,7 +34,12 @@ const posts = (await getCollection('blog')).sort(
 			{posts.map((post) => (
 				<article class="blog-card">
 					<a href={`/blog/${post.slug}/`} class="blog-card-content">
-						<h2 class="blog-title">{post.data.title}</h2>
+						<div class="blog-header">
+							<h2 class="blog-title">{post.data.title}</h2>
+							{post.data.draft && (
+								<span class="draft-badge">DRAFT</span>
+							)}
+						</div>
 						<p class="blog-date">
 							<FormattedDate date={post.data.pubDate} />
 						</p>
@@ -107,6 +122,22 @@ const posts = (await getCollection('blog')).sort(
 		background: var(--footer-bg);
 		color: var(--secondary-text);
 		border-radius: 4px;
+	}
+
+	.blog-header {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.draft-badge {
+		font-size: 0.7rem;
+		padding: 0.2rem 0.5rem;
+		background: var(--warning-bg, #fff3cd);
+		color: var(--warning-text, #856404);
+		border-radius: 4px;
+		font-weight: bold;
+		border: 1px solid var(--warning-border, #ffeaa7);
 	}
 
 	@media (max-width: var(--mobile-cutoff)) {
