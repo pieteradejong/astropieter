@@ -31,6 +31,7 @@ const projects = defineCollection({
 		techStack: z.array(z.string()),
 		githubUrl: z.string().optional(),
 		demoUrl: z.string().optional(),
+		deploymentUrl: z.string().optional(),
 		keyFeatures: z.array(z.string()),
 		technicalHighlights: z.array(z.string()),
 		impact: z.string(),

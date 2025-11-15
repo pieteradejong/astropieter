@@ -42,6 +42,11 @@ const projects = await getCollection('projects');
 										Source Code →
 									</a>
 								)}
+								{project.data.deploymentUrl && (
+									<a href={project.data.deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+										View Live →
+									</a>
+								)}
 								{project.data.demoUrl && (
 									<a href={project.data.demoUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
 										Live Demo →

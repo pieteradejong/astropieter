@@ -3,6 +3,7 @@ title: "TV Show Chat"
 description: "Semantic search and chat application for TV show content using vector embeddings and natural language queries"
 techStack: ["Python", "FastAPI", "React", "TypeScript", "Redis", "Sentence Transformers", "HuggingFace"]
 githubUrl: "https://github.com/pieteradejong/tvshowchat"
+deploymentUrl: "https://tvshowchat1.onrender.com/"
 keyFeatures: [
   "Natural language querying of Buffy the Vampire Slayer episodes",
   "Semantic search using vector embeddings with all-MiniLM-L6-v2 model",

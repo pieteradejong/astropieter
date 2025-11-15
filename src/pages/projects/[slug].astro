@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 }
 
 const project = Astro.props;
-const { title, description, techStack, githubUrl, demoUrl, keyFeatures, technicalHighlights, impact, tags } = project.data;
+const { title, description, techStack, githubUrl, demoUrl, deploymentUrl, keyFeatures, technicalHighlights, impact, tags } = project.data;
 const { Content } = await project.render();
 ---
 
@@ -28,11 +28,16 @@ const { Content } = await project.render();
 				))}
 			</div>
 
-			{(githubUrl || demoUrl) && (
+			{(githubUrl || deploymentUrl || demoUrl) && (
 				<div class="project-links">
 					{githubUrl && (
 						<a href={githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
 							View Source Code →
+						</a>
+					)}
+					{deploymentUrl && (
+						<a href={deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
+							View Live →
 						</a>
 					)}
 					{demoUrl && (
