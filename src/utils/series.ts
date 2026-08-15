@@ -32,7 +32,7 @@ export function getSeriesInfo(posts: BlogPost[], currentPost: BlogPost): SeriesI
 	}
 
 	const seriesPosts = getSeriesPosts(posts, currentPost.data.series);
-	const currentIndex = seriesPosts.findIndex(post => post.slug === currentPost.slug);
+	const currentIndex = seriesPosts.findIndex(post => post.id === currentPost.id);
 	
 	if (currentIndex === -1) {
 		return null;

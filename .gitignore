@@ -15,7 +15,11 @@ pnpm-debug.log*
 
 # environment variables
 .env
+.env.*
+.env.local
 .env.production
+.deploy-env
+*.env.local
 
 # macOS-specific files
 .DS_Store
@@ -23,3 +27,23 @@ pnpm-debug.log*
 
 # Private notes and planning
 notes/
+
+# Deployment scripts and sensitive configuration
+deploy.sh
+*.sh.local
+deploy-config.sh
+.deploy-env
+*.deploy-env
+
+# SSH keys and certificates
+*.pem
+*.key
+*.ppk
+id_rsa*
+id_ed25519*
+*.crt
+*.cert
+
+# SiteGround and hosting credentials
+*.hosting
+hosting-config.*

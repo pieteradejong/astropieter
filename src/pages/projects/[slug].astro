@@ -1,19 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Default.astro';
 import Tag from '../../components/Tag.astro';
 
 export async function getStaticPaths() {
 	const projects = await getCollection('projects');
 	return projects.map(project => ({
-		params: { slug: project.slug },
+		params: { slug: project.id },
 		props: project,
 	}));
 }
 
 const project = Astro.props;
 const { title, description, techStack, githubUrl, demoUrl, deploymentUrl, keyFeatures, technicalHighlights, impact, tags } = project.data;
-const { Content } = await project.render();
+const { Content } = await render(project);
 ---
 
 <Layout title={title} description={description}>
@@ -37,7 +37,7 @@ const { Content } = await project.render();
 					)}
 					{deploymentUrl && (
 						<a href={deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-							View Live →
+							Demo →
 						</a>
 					)}
 					{demoUrl && (

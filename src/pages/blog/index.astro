@@ -33,7 +33,7 @@ const posts = allPosts
 		<div class="grid-container">
 			{posts.map((post) => (
 				<article class="blog-card">
-					<a href={`/blog/${post.slug}/`} class="blog-card-content">
+					<a href={`/blog/${post.id}/`} class="blog-card-content">
 						<div class="blog-header">
 							<h2 class="blog-title">{post.data.title}</h2>
 							{post.data.draft && (
@@ -163,7 +163,7 @@ const posts = allPosts
 		border-radius: 4px;
 	}
 
-	@media (max-width: var(--mobile-cutoff)) {
+	@media (max-width: 375px) {
 		.blog-card-content {
 			padding: 1.25rem;
 		}

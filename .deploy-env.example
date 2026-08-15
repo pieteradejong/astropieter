@@ -1,0 +1,14 @@
+# Deployment Configuration Example
+# Copy this file to .deploy-env and fill in your actual values
+# DO NOT commit .deploy-env to git - it contains sensitive information
+
+export ASTRO_SYNC_HOST="your-username@your-domain.com"
+export ASTRO_SYNC_DEST="public_html/"
+export ASTRO_SYNC_SSH_KEY="$HOME/.ssh/your-ssh-key"
+export ASTRO_SYNC_SSH_PORT="18765"
+
+# Optional
+export ASTRO_PROJECT_HOMEDIR="$(pwd)"
+export ASTRO_SYNC_SOURCE="./dist/"
+export PERSONAL_HOME_DIR="$HOME"
+

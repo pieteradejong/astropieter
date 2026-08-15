@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# Astro SiteGround Deployment Script - EXAMPLE TEMPLATE
+# Copy this file to deploy.sh and configure with your actual credentials
+# DO NOT commit deploy.sh to git - it contains sensitive information
+
+set -e  # Exit on any error
+
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Configuration - Set these environment variables or modify defaults here
+ASTRO_PROJECT_HOMEDIR="${ASTRO_PROJECT_HOMEDIR:-$(pwd)}"
+ASTRO_SYNC_SOURCE="${ASTRO_SYNC_SOURCE:-./dist/}"
+ASTRO_SYNC_HOST="${ASTRO_SYNC_HOST:-your-username@your-domain.com}"
+ASTRO_SYNC_DEST="${ASTRO_SYNC_DEST:-/path/to/public_html}"
+ASTRO_SYNC_SSH_KEY="${ASTRO_SYNC_SSH_KEY:-/path/to/your/private/key}"
+ASTRO_SYNC_SSH_PORT="${ASTRO_SYNC_SSH_PORT:-18765}"  # SiteGround default port
+
+# Function to print colored messages
+print_info() {
+    echo -e "${BLUE}$1${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}$1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+# Validate required environment variables
+validate_config() {
+    local missing_vars=()
+    
+    if [ -z "$ASTRO_SYNC_HOST" ] || [[ "$ASTRO_SYNC_HOST" == *"your-username"* ]]; then
+        missing_vars+=("ASTRO_SYNC_HOST")
+    fi
+    
+    if [ -z "$ASTRO_SYNC_DEST" ] || [[ "$ASTRO_SYNC_DEST" == *"path/to"* ]]; then
+        missing_vars+=("ASTRO_SYNC_DEST")
+    fi
+    
+    if [ -z "$ASTRO_SYNC_SSH_KEY" ] || [[ "$ASTRO_SYNC_SSH_KEY" == *"path/to"* ]]; then
+        missing_vars+=("ASTRO_SYNC_SSH_KEY")
+    fi
+    
+    if [ ${#missing_vars[@]} -ne 0 ]; then
+        print_error "Error: Missing required environment variables:"
+        for var in "${missing_vars[@]}"; do
+            echo "  - $var"
+        done
+        echo ""
+        echo "Please set these variables before running the script:"
+        echo "  export ASTRO_SYNC_HOST='your-username@your-domain.com'"
+        echo "  export ASTRO_SYNC_DEST='/path/to/public_html'"
+        echo "  export ASTRO_SYNC_SSH_KEY='/path/to/your/private/key'"
+        echo ""
+        echo "Optional variables:"
+        echo "  export ASTRO_PROJECT_HOMEDIR='/path/to/project' (default: current directory)"
+        echo "  export ASTRO_SYNC_SOURCE='./dist/' (default: ./dist/)"
+        echo "  export ASTRO_SYNC_SSH_PORT='18765' (default: 18765)"
+        exit 1
+    fi
+    
+    # Validate SSH key exists
+    if [ ! -f "$ASTRO_SYNC_SSH_KEY" ]; then
+        print_error "Error: SSH key not found at: $ASTRO_SYNC_SSH_KEY"
+        exit 1
+    fi
+    
+    # Validate SSH key permissions (should be 600)
+    local key_perms=$(stat -f "%OLp" "$ASTRO_SYNC_SSH_KEY" 2>/dev/null || stat -c "%a" "$ASTRO_SYNC_SSH_KEY" 2>/dev/null)
+    if [ "$key_perms" != "600" ] && [ "$key_perms" != "0600" ]; then
+        print_warning "Warning: SSH key permissions are $key_perms (should be 600)"
+        print_warning "Consider running: chmod 600 $ASTRO_SYNC_SSH_KEY"
+    fi
+}
+
+# Main deployment function
+main() {
+    print_info "=========================================="
+    print_info "Astro SiteGround Deployment Script"
+    print_info "=========================================="
+    echo ""
+    print_info "Script started at: $(date)"
+    echo ""
+    
+    # Validate configuration
+    print_info "Validating configuration..."
+    validate_config
+    
+    # Change to project directory
+    print_info "Changing to project directory: $ASTRO_PROJECT_HOMEDIR"
+    cd "$ASTRO_PROJECT_HOMEDIR" || {
+        print_error "Error: Failed to change to directory: $ASTRO_PROJECT_HOMEDIR"
+        exit 1
+    }
+    
+    # Check if package.json exists
+    if [ ! -f "package.json" ]; then
+        print_error "Error: package.json not found. Are you in the correct directory?"
+        exit 1
+    fi
+    
+    # Build the Astro project
+    print_info "Building Astro project..."
+    if ! npm run build; then
+        print_error "Build failed! Aborting deployment."
+        exit 1
+    fi
+    
+    # Check if dist directory exists
+    if [ ! -d "dist" ]; then
+        print_error "Error: dist directory not found after build."
+        exit 1
+    fi
+    
+    print_success "Build completed successfully!"
+    echo ""
+    
+    # Sync to SiteGround
+    print_info "Syncing files to SiteGround..."
+    print_info "Source: $ASTRO_SYNC_SOURCE"
+    print_info "Destination: $ASTRO_SYNC_HOST:$ASTRO_SYNC_DEST"
+    print_info "SSH Port: $ASTRO_SYNC_SSH_PORT"
+    echo ""
+    
+    if rsync -av --delete -e "ssh -i $ASTRO_SYNC_SSH_KEY -p $ASTRO_SYNC_SSH_PORT -o StrictHostKeyChecking=no" \
+        "$ASTRO_SYNC_SOURCE" \
+        "$ASTRO_SYNC_HOST:$ASTRO_SYNC_DEST"; then
+        print_success "Files synced successfully!"
+    else
+        print_error "Error: rsync failed!"
+        exit 1
+    fi
+    
+    echo ""
+    print_success "=========================================="
+    print_success "Deployment completed successfully!"
+    print_success "Script completed at: $(date)"
+    print_success "=========================================="
+}
+
+# Run main function
+main
+

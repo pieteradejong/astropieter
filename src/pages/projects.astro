@@ -4,7 +4,17 @@ import Layout from '../layouts/Default.astro';
 import Card from '../components/Card.astro';
 import Tag from '../components/Tag.astro';
 
-const projects = await getCollection('projects');
+const allProjects = await getCollection('projects');
+
+// Sort projects: first by order (if specified, lower numbers first), then by title
+const projects = allProjects.sort((a, b) => {
+	const orderA = a.data.order ?? 999;
+	const orderB = b.data.order ?? 999;
+	if (orderA !== orderB) {
+		return orderA - orderB;
+	}
+	return a.data.title.localeCompare(b.data.title);
+});
 ---
 
 <Layout
@@ -32,8 +42,8 @@ const projects = await getCollection('projects');
 
 							<!-- Project links - always visible -->
 							<div class="project-links">
-								{project.slug !== 'python-react-base-app' && (
-									<a href={`/projects/${project.slug}`} class="secondary-link">
+								{project.id !== 'python-react-base-app' && (
+									<a href={`/projects/${project.id}`} class="secondary-link">
 										View Details →
 									</a>
 								)}
@@ -44,7 +54,7 @@ const projects = await getCollection('projects');
 								)}
 								{project.data.deploymentUrl && (
 									<a href={project.data.deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-										View Live →
+										Demo →
 									</a>
 								)}
 								{project.data.demoUrl && (

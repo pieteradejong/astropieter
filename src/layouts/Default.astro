@@ -27,13 +27,13 @@ const { title = 'Default page title', description = 'Default page description' }
 				padding: 0 var(--spacing-unit);
 			}
 
-			@media (max-width: var(--tablet-cutoff)) {
+			@media (max-width: 768px) {
 				main {
 					padding: 0 var(--spacing-unit);
 				}
 			}
 
-			@media (max-width: var(--mobile-cutoff)) {
+			@media (max-width: 375px) {
 				.title {
 					margin: var(--spacing-unit) 0;
 					padding: var(--spacing-unit) 0;
@@ -50,7 +50,7 @@ const { title = 'Default page title', description = 'Default page description' }
 				flex: 1 0 auto;
 			}
 
-			@media (max-width: var(--mobile-cutoff)) {
+			@media (max-width: 375px) {
 				main.content-container {
 					padding: 0 var(--spacing-unit);
 				}

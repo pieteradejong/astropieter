@@ -21,6 +21,7 @@ technicalHighlights: [
 impact: "Demonstrates advanced NLP and vector search capabilities combined with full-stack development, showcasing expertise in semantic search, data pipeline engineering, and modern web application architecture."
 tags: ["semantic-search", "vector-embeddings", "nlp", "fastapi", "react", "redis", "websockets", "data-pipeline"]
 status: "active"
+order: 1
 ---
 
 A sophisticated semantic search and chat application that allows users to interact with TV show content through natural language queries. Features advanced vector embeddings, real-time chat capabilities, and comprehensive episode analysis for Buffy the Vampire Slayer. 

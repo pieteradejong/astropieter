@@ -25,13 +25,13 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 
 	<div class="series-navigation">
 		{seriesInfo.previousPost && (
-			<a href={`/blog/${seriesInfo.previousPost.slug}/`} class="nav-link prev-link">
+			<a href={`/blog/${seriesInfo.previousPost.id}/`} class="nav-link prev-link">
 				← Previous: {seriesInfo.previousPost.data.title}
 			</a>
 		)}
 		
 		{seriesInfo.nextPost && (
-			<a href={`/blog/${seriesInfo.nextPost.slug}/`} class="nav-link next-link">
+			<a href={`/blog/${seriesInfo.nextPost.id}/`} class="nav-link next-link">
 				Next: {seriesInfo.nextPost.data.title} →
 			</a>
 		)}
@@ -47,7 +47,7 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 							{post.data.title} (current)
 						</span>
 					) : (
-						<a href={`/blog/${post.slug}/`}>
+						<a href={`/blog/${post.id}/`}>
 							{post.data.title}
 						</a>
 					)}
@@ -161,7 +161,7 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 		font-weight: 600;
 	}
 
-	@media (min-width: var(--tablet-breakpoint)) {
+	@media (min-width: 768px) {
 		.series-navigation {
 			flex-direction: row;
 			justify-content: space-between;

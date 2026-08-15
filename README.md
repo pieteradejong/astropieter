@@ -129,6 +129,25 @@ The script will build the site and deploy using either your existing `astrosync`
 └── deploy.sh        # Deployment script
 ```
 
+## Upgrade Reqs
+
+Requirements/notes for upgrading Astro across major versions (last reviewed: Astro 5 → 7, Aug 2026):
+
+- **Node 22.12+** required starting in Astro v6 (drops Node 18/20 support)
+- **Env vars**: `import.meta.env` values are always inlined and no longer type-coerced (Astro v6); private env vars must be read via `process.env` explicitly
+- **Images**: default image service crops by default and never upscales (Astro v6)
+- **Routing**: file-extension endpoints can't be accessed with a trailing slash (Astro v6)
+- **Removed in v6**: legacy Content Collections API (v2 format), `Astro.glob()`, `<ViewTransitions />` (use `<ClientRouter />`), CJS config files
+- **Deprecated in v6**: `Astro` global in `getStaticPaths()`, `astro:schema` import (use `astro/zod`), session driver strings
+- **Dependency bumps in v6**: Vite 7, Zod 4 (`z.email()` instead of `z.string().email()`), Shiki 4
+- **New Rust-based compiler in v7**: stricter HTML — unclosed tags now error, invalid HTML no longer auto-corrected. Audit `.md`/`.mdx` content for malformed tags.
+- **Whitespace in v7**: `compressHTML` default changed from `true` to `'jsx'`, affecting spacing between inline elements
+- **Vite 8** upgrade in v7 — check custom plugins/config for compatibility
+- **Markdown in v7**: new "Sätteri" pipeline replaces remark/rehype by default. This project uses `remark-math` + `rehype-katex` for LaTeX — install `@astrojs/markdown-remark` to keep the remark/rehype pipeline working
+- **`@astrojs/db` removed** entirely in v7 (not used in this project)
+
+Recommended upgrade path: run `npx @astrojs/upgrade` to update Astro and official integrations together, then fix any compiler errors surfaced during build.
+
 ## Customization
 
 ### Styling

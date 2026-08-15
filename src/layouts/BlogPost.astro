@@ -18,7 +18,7 @@ const { title, description, pubDate, updatedDate, series, seriesDescription } = 
 let seriesInfo = null;
 if (series) {
 	const allPosts = await getCollection('blog');
-	const currentPost = allPosts.find(post => post.slug === Astro.props.slug);
+	const currentPost = allPosts.find(post => post.id === Astro.props.slug);
 	if (currentPost) {
 		seriesInfo = getSeriesInfo(allPosts, currentPost);
 	}
@@ -131,7 +131,7 @@ if (series) {
 				color: var(--accent-hover);
 				text-decoration: underline;
 			}
-			@media (max-width: var(--mobile-cutoff)) {
+			@media (max-width: 375px) {
 				.title h1 {
 					font-size: 2rem;
 				}
