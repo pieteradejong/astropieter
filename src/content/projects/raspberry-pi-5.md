@@ -20,6 +20,13 @@ impact: "First hardware project documented on this site. The Pi 5 serves as a fl
 tags: ["raspberry-pi", "linux", "arm", "hardware", "embedded", "canakit", "single-board-computer"]
 status: "active"
 order: 2
+heroImage: "/projects/raspberry-pi-5/kit-overview.jpg"
+images: [
+  "/projects/raspberry-pi-5/kit-overview.jpg",
+  "/projects/raspberry-pi-5/pi5-board-top.jpg",
+  "/projects/raspberry-pi-5/active-cooler.jpg",
+  "/projects/raspberry-pi-5/gpio-reference.jpg"
+]
 ---
 
 I picked up a CanaKit Raspberry Pi 5 to have a dedicated Linux box for tinkering, running local services, and hardware experiments. This is the 4GB variant—enough for most headless workloads without the premium of the 8GB model.
