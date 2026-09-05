@@ -78,7 +78,7 @@ npm run dev
 
 To run the site locally:
 
-1. Make sure you have Node.js installed (version 16 or higher recommended)
+1. Make sure you have Node.js 22.12+ installed (required by Astro 6+; see [Upgrade Reqs](#upgrade-reqs))
 2. Clone the repository and navigate to it:
 ```bash
 git clone https://github.com/yourusername/astropieter.git
@@ -98,15 +98,24 @@ npm run dev
 The site will be available at `http://localhost:4321` (or another port if 4321 is in use).
 
 Key development commands:
-- `npm run dev` - Start development server with hot reloading
+- `npm run dev` - Start development server with hot reloading (Astro 7 runs this as a background daemon — manage it with `npx astro dev status` / `stop` / `logs`)
 - `npm run build` - Build the site for production
 - `npm run preview` - Preview the production build locally
 
+## Testing
+
+Run `./test.sh` for a comprehensive check before deploying: build health, dependency audit, content-collection/draft correctness, RSS feed validity, KaTeX rendering, and a live dev-server smoke test across all main routes. See [Changelog](#changelog) for what it covers in detail.
+
 ## Deployment
 
-To deploy the site:
+Deployment configuration lives in `deploy.sh`, which is **gitignored** because it contains real SSH host/credentials — it is never committed. See `DEPLOYMENT.md` for full setup instructions.
 
-1. Update the configuration in `deploy.sh` with your deployment details
+1. Copy the templates and fill in your own values:
+```bash
+cp deploy.sh.example deploy.sh
+cp .deploy-env.example .deploy-env
+chmod +x deploy.sh
+```
 2. Run the deployment script:
 ```bash
 ./deploy.sh
@@ -119,14 +128,18 @@ The script will build the site and deploy using either your existing `astrosync`
 ```
 .
 ├── src/
-│   ├── components/    # Reusable components
-│   ├── content/      # Blog posts and other content
-│   ├── layouts/      # Page layouts
-│   ├── pages/        # Astro pages
-│   └── styles/       # Global styles
-├── public/           # Static assets
-├── init.sh          # Initialization script
-└── deploy.sh        # Deployment script
+│   ├── components/       # Reusable components
+│   ├── content/          # Blog posts and other content (markdown/MDX)
+│   ├── content.config.ts # Content collection schemas (Content Layer API)
+│   ├── layouts/          # Page layouts
+│   ├── pages/            # Astro pages
+│   └── styles/           # Global styles
+├── public/               # Static assets
+├── init.sh               # Initialization script
+├── test.sh               # Comprehensive pre-deploy test suite
+├── deploy.sh.example      # Deployment script template (copy to deploy.sh)
+├── deploy.sh              # Deployment script — gitignored, contains real credentials
+└── DEPLOYMENT.md          # Full deployment setup instructions
 ```
 
 ## Upgrade Reqs
@@ -147,6 +160,25 @@ Requirements/notes for upgrading Astro across major versions (last reviewed: Ast
 - **`@astrojs/db` removed** entirely in v7 (not used in this project)
 
 Recommended upgrade path: run `npx @astrojs/upgrade` to update Astro and official integrations together, then fix any compiler errors surfaced during build.
+
+## Changelog
+
+### Astro 5 → 7 upgrade (Aug 2026)
+
+Upgraded the site from Astro 5.15.5 to 7.2.2 via `npx @astrojs/upgrade`, then resolved every breaking change it surfaced:
+
+- **Removed `@astrojs/tailwind`** — it was an unused dependency (never imported in `astro.config.mjs`, no Tailwind config or `@tailwind` usage anywhere) and the sole blocker preventing `npm install` from resolving cleanly against Astro 7.
+- **Content collections migrated to the Content Layer API** — moved `src/content/config.ts` → `src/content.config.ts`, added `glob()` loaders per collection (`astro/loaders`), switched schema imports to `astro/zod`. The legacy config format was hard-removed in Astro v6.
+- **`entry.slug` → `entry.id`, `entry.render()` → `render(entry)`** — Content Layer API entries no longer expose `.slug` or a `.render()` method. Updated every usage across blog/project detail pages, `rss.xml.js`, `blog/index.astro`, `projects.astro`, `BlogPost.astro`, `SeriesNav.astro`, and `utils/series.ts`.
+- **Markdown pipeline** — moved `remarkPlugins`/`rehypePlugins` (used for KaTeX via `remark-math` + `rehype-katex`) into `unified({...})` from the new `@astrojs/markdown-remark` package, since Astro v7 replaced the default markdown pipeline.
+- **CSS media queries fixed** — `@media (max-width: var(--mobile-cutoff))` and similar are invalid CSS (custom properties aren't allowed in media-query conditions). The stricter LightningCSS minifier bundled with Astro 7 now hard-fails the build on this instead of silently ignoring it. Replaced with literal breakpoint values (`375px`, `768px`) in `global.css` and 6 components — this also fixed several responsive breakpoints that were silently dead before (the media queries never matched anything).
+- **`rss.xml.js` fixed** — the endpoint handler was `export function get()` (lowercase), which Astro no longer recognizes as a route handler (must be `GET`); the feed was silently broken. Also added draft-post filtering to the feed, since drafts were leaking into RSS even though they were correctly excluded from the blog index.
+- **`npm audit fix`** — resolved a moderate (`mdast-util-to-hast`) and a high (`sharp`/libvips) vulnerability pulled in transitively by the upgraded packages. 0 vulnerabilities remain.
+- **Local pre-commit hook fixed** (`.git/hooks/pre-commit`, not tracked in git) — it used to `grep` staged filenames for the substring `deploy.sh`, which false-positived on deleting `deploy.sh` from tracking and on unrelated files like `deploy.sh.example`. Rewrote it to exact-match filenames and to only check added/modified files, not deletions.
+- **Added `test.sh`** — a comprehensive test suite covering: Node/dependency health, `npm audit`, production build correctness (no errors/warnings), presence of every expected page, correct draft-post inclusion/exclusion, RSS feed validity (well-formed XML, no drafts, no `undefined` fields), KaTeX rendering, and a live dev-server smoke test across all main routes (Astro 7's `astro dev` now self-daemonizes in the background, managed via `astro dev status`/`stop`/`logs` — the script accounts for this).
+- **Deploy script separated from templates** — `deploy.sh` (real SSH credentials) is now gitignored and kept local-only; `deploy.sh.example`, `.deploy-env.example`, and `DEPLOYMENT.md` are the checked-in, credential-free templates.
+
+Verified with a clean `npm run build`, `./test.sh` (52/52 checks passing), and manual route checks in both dev and production builds.
 
 ## Customization
 
