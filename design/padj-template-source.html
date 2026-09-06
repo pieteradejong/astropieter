@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="8bb8dbc2-c6f7-4bb3-baba-fdd1de13f943"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1474437-b950-4156-a020-638acd5752bc") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1bfb6f38-3920-45c0-8baf-f8e57cb145cd") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("779b6b02-f7e9-46e0-b948-c7f08d9a4b8f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1474437-b950-4156-a020-638acd5752bc") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1bfb6f38-3920-45c0-8baf-f8e57cb145cd") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("779b6b02-f7e9-46e0-b948-c7f08d9a4b8f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1474437-b950-4156-a020-638acd5752bc") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1bfb6f38-3920-45c0-8baf-f8e57cb145cd") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("779b6b02-f7e9-46e0-b948-c7f08d9a4b8f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("b1474437-b950-4156-a020-638acd5752bc") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("1bfb6f38-3920-45c0-8baf-f8e57cb145cd") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("779b6b02-f7e9-46e0-b948-c7f08d9a4b8f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f36dcabc-9acf-4a4a-b499-b9a32eadc1f1") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7544b9ce-bd5a-4726-ac7b-16f05c4901f2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("36b854c9-4e8e-43f2-b747-e0a75c81a968") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a4b58993-4e63-4ddc-98b3-5b48de0b4dc4") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("26d2cfe0-caa5-4d82-b51f-e9476d04b053") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e08e12eb-c256-4353-8c6d-20978528c479") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("f36dcabc-9acf-4a4a-b499-b9a32eadc1f1") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("7544b9ce-bd5a-4726-ac7b-16f05c4901f2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("36b854c9-4e8e-43f2-b747-e0a75c81a968") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a4b58993-4e63-4ddc-98b3-5b48de0b4dc4") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("26d2cfe0-caa5-4d82-b51f-e9476d04b053") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e08e12eb-c256-4353-8c6d-20978528c479") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("35e7577a-aa19-480b-b6d7-c41fd33950f8") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7f36c92e-831a-4ac9-87c1-a4dcedfa111c") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2fd3d463-a6fe-4e3d-a837-e6adf0ee84d4") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fc667ea0-9983-4935-9dcc-84d95a337d57") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("597600a7-1a98-4544-89ca-a6f557148078") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("49173062-6a26-4924-939e-74d2f650f78d") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("2944dd1c-0ca3-4244-af21-1d8dcaa0abef") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("84713fa4-d778-493e-83e2-f8895a39669a") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("92a6f9c8-704b-463e-96d1-01f5c6ea1728") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("22e31e11-cafe-447f-8a42-fed81598f4db") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("ead10ca0-6e88-47dc-a70a-e275b81ab220") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("c5e57a0b-ef87-49c2-a15a-ecdae76e177c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2944dd1c-0ca3-4244-af21-1d8dcaa0abef") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("84713fa4-d778-493e-83e2-f8895a39669a") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("92a6f9c8-704b-463e-96d1-01f5c6ea1728") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("22e31e11-cafe-447f-8a42-fed81598f4db") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ead10ca0-6e88-47dc-a70a-e275b81ab220") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c5e57a0b-ef87-49c2-a15a-ecdae76e177c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("2944dd1c-0ca3-4244-af21-1d8dcaa0abef") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("84713fa4-d778-493e-83e2-f8895a39669a") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("92a6f9c8-704b-463e-96d1-01f5c6ea1728") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("22e31e11-cafe-447f-8a42-fed81598f4db") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("ead10ca0-6e88-47dc-a70a-e275b81ab220") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c5e57a0b-ef87-49c2-a15a-ecdae76e177c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("dfcc59a8-1dfc-4662-a6b1-0640f0d00504") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("4ec84d57-3822-49d7-a484-8cde3cfc9068") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("8d9648ad-6369-485b-9498-e4cb1c4f8590") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("ed00f210-1a92-4d1c-8768-8be26c166e15") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("b73346a0-7314-4770-afd6-b8915bdaf3bd") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("6f79580e-4fab-420f-bf91-8c606388700b") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("0211cea9-ae28-41fc-8e8d-4ed6347d09d6") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("33836bf7-4bb6-4e78-826f-5f917c3bce7b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("895d557e-32e0-4a6a-8a53-0ef5c584817e") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("33cc36bb-2c4c-4720-aa64-c6a8e966b745") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("bd5b535d-8544-4163-bbab-9e3e8e155113") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("814f5498-ef62-405c-b360-52e7659ebe7c") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("1dd21487-cefd-4e22-b693-cdeb2a2d2cdd") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("eedd30b3-5fe7-402d-ba80-79bc546844dc") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("5cc8cae1-9697-48f6-ac73-c89bf8903bb2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("22c340a7-f85f-4e6b-b426-17d357b5fc40") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("44b70eaa-c929-4b7c-b4c8-0f6690551b3f") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f6d8b06d-eaee-49e7-9347-0fd585bb6b23") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("81b5134f-2aeb-4ea1-864b-9c12328a581a") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("bd734b2d-effa-4df4-b00c-1b14265686f1") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("65731782-6c76-4855-a563-2472aac849bf") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("907c0ae3-7768-447b-9e62-79e249a1e8fe") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("6d0a3e7e-2327-4f30-ba93-7b52a1929e07") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("9afc815a-8972-4075-afce-4c2be58642d5") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("c0faac23-7190-4761-9b38-947a6de5f454") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+  body { margin: 0; background: #d9d5cc; }
+  a { color: #b0492a; text-decoration: none; }
+  a:hover { color: #7d3018; text-decoration: underline; }
+</style>
+</helmet>
+
+<section style="display:flex; flex-direction:column; gap:28px; padding:56px; font-family:Archivo, Helvetica, sans-serif;">
+  <div style="display:flex; align-items:baseline; gap:16px;">
+    <div style="font-size:13px; letter-spacing:0.18em; text-transform:uppercase; color:#6b6459;">Turn 1 — two directions</div>
+    <div style="font-size:13px; color:#8b8479;">Same content, same elements. <a href="#1a">1a</a> classic two-column, <a href="#1b">1b</a> single column with margin rail.</div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:40px; align-items:flex-start;">
+
+    <div id="1a" style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="font-family:Archivo, sans-serif; font-size:12px; font-weight:600; letter-spacing:0.12em; color:#fff; background:#26221e; padding:4px 9px; border-radius:2px;">1A</div>
+        <div style="font-family:Archivo, sans-serif; font-size:13px; color:#6b6459;">Two-column · Spectral + JetBrains Mono · rust</div>
+      </div>
+
+      <div style="width:816px; background:#fbf7f0; box-shadow:0 2px 24px rgba(38,34,30,0.18); font-family:Spectral, Georgia, serif; color:#26221e;">
+        <div style="background:#26221e; color:#e8e2d6; padding:11px 56px; display:flex; justify-content:space-between; align-items:center; font-family:Archivo, sans-serif; font-size:11px; letter-spacing:0.2em; text-transform:uppercase;">
+          <span>PADJ Productions</span>
+          <span style="color:#a49b8c;">Issue 01 · Field Notes</span>
+        </div>
+
+        <div style="padding:44px 56px 30px; text-align:center; background:#f2ede3; border-bottom:3px solid #b0492a;">
+          <div style="font-size:44px; letter-spacing:0.3em; font-weight:400; text-indent:0.3em;">PADJ</div>
+          <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-top:12px;">
+            <div style="width:56px; height:1px; background:#b8b0a2;"></div>
+            <div style="font-style:italic; font-size:17px; color:#5c554a;">A working publication for one idea at a time</div>
+            <div style="width:56px; height:1px; background:#b8b0a2;"></div>
+          </div>
+        </div>
+
+        <div style="padding:40px 56px 52px; display:flex; flex-direction:column; gap:22px;">
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <h1 style="margin:0; font-weight:400; font-size:46px; line-height:1.06; letter-spacing:-0.01em; text-wrap:balance;">The template, not the topic</h1>
+            <div style="font-style:italic; font-size:20px; line-height:1.35; color:#6b6459; text-wrap:pretty;">One layout that holds an argument, a number, a piece of code, and a caveat — without being redesigned each time.</div>
+            <div style="display:flex; gap:14px; font-family:Archivo, sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8b8479; border-top:1px solid #ddd5c6; border-bottom:1px solid #ddd5c6; padding:9px 0;">
+              <span>By the editors</span><span>·</span><span>2,100 words</span><span>·</span><span>August 2026</span>
+            </div>
+          </div>
+
+          <div style="column-count:2; column-gap:34px; column-rule:1px solid #e6ded0; font-size:15.5px; line-height:1.52; text-align:justify; hyphens:auto;">
+            <p style="margin:0;"><span style="float:left; font-size:74px; line-height:0.78; padding:6px 8px 0 0; color:#b0492a;">A</span> publication template earns its keep the second time it is used. The first article is easy: any layout can carry one headline and a thousand words. The trouble starts when the next piece arrives with a table, or three code blocks, or a single number that has to land harder than the sentence around it.</p>
+            <p style="margin:14px 0 0;">So the elements come first, and the article second. Each one has a fixed job and a fixed treatment, and nothing is invented at writing time.</p>
+            <div style="break-inside:avoid; margin:18px 0 0; padding:14px 16px; background:#f2ede3; border-left:3px solid #b0492a;">
+              <div style="font-family:Archivo, sans-serif; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#8b8479; margin-bottom:6px;">Margin note</div>
+              <div style="font-size:13px; line-height:1.45; text-align:left; color:#5c554a;">Set the measure before the type size. A justified column wants 62–72 characters; below that, the rag gets ugly fast.</div>
+            </div>
+            <h2 style="margin:22px 0 8px; font-family:Archivo, sans-serif; font-size:12px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#b0492a;">What each element is for</h2>
+            <p style="margin:0;">The drop cap marks the true beginning, which matters when a page carries a masthead, a deck, and a byline before the first sentence. It appears once per article and never after a subhead.</p>
+            <p style="margin:14px 0 0;">Code is set flush and unjustified, on a tinted band, so the eye reads it as an artifact rather than prose. Inline code such as <code style="font-family:'JetBrains Mono', monospace; font-size:13px; background:#eee7da; padding:1px 4px;">--dry-run</code> stays in the sentence.<sup style="color:#b0492a;">1</sup></p>
+          </div>
+
+          <div style="background:#f0eade; border-left:3px solid #c9c0ae; padding:16px 20px; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.7; color:#3a352e; white-space:pre;">$ padj build --issue 01 --format both
+  → publication.pdf   (8 pages, letter)
+  → publication.html  (responsive)</div>
+
+          <div style="display:flex; gap:34px; align-items:flex-start;">
+            <div style="flex:1; font-size:15.5px; line-height:1.52; text-align:justify; hyphens:auto;">
+              <p style="margin:0;">Numbers get a chart only when the shape of the comparison is the point. Three bars, one label per bar, no gridlines, no legend — the caption carries the claim, and the axis carries nothing.</p>
+              <p style="margin:14px 0 0;">Everything else is prose, which is the format's default state and the one it should be best at.</p>
+            </div>
+            <figure style="margin:0; width:300px; display:flex; flex-direction:column; gap:9px;">
+              <div style="font-family:Archivo, sans-serif; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:#8b8479;">Figure 1 — Minutes per issue</div>
+              <div style="display:flex; flex-direction:column; gap:7px;">
+                <div style="display:flex; align-items:center; gap:8px;"><div style="width:74px; font-size:12px; color:#5c554a;">Writing</div><div style="height:14px; width:210px; background:#b0492a;"></div></div>
+                <div style="display:flex; align-items:center; gap:8px;"><div style="width:74px; font-size:12px; color:#5c554a;">Editing</div><div style="height:14px; width:126px; background:#cf8a6d;"></div></div>
+                <div style="display:flex; align-items:center; gap:8px;"><div style="width:74px; font-size:12px; color:#5c554a;">Layout</div><div style="height:14px; width:31px; background:#ddc9bd;"></div></div>
+              </div>
+              <figcaption style="font-size:12.5px; line-height:1.4; color:#6b6459; font-style:italic;">Layout collapses to a rounding error once the elements are fixed.</figcaption>
+            </figure>
+          </div>
+
+          <blockquote style="margin:6px 0; padding-left:20px; border-left:3px solid #b0492a; font-style:italic; font-size:21px; line-height:1.34; color:#3a352e;">A template is a set of decisions you agree not to make again.</blockquote>
+
+          <div style="border-top:1px solid #ddd5c6; padding-top:12px; display:flex; flex-direction:column; gap:5px; font-size:12px; line-height:1.45; color:#8b8479;">
+            <div><sup style="color:#b0492a;">1</sup> Monospace inline runs stay at 0.85em of the body size so they sit on the same baseline grid.</div>
+            <div style="font-family:Archivo, sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; padding-top:6px;">PADJ Productions · Set in Spectral and JetBrains Mono · Page 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="font-family:Archivo, sans-serif; font-size:12px; font-weight:600; letter-spacing:0.12em; color:#fff; background:#26221e; padding:4px 9px; border-radius:2px;">1B</div>
+        <div style="font-family:Archivo, sans-serif; font-size:13px; color:#6b6459;">Single column + margin rail · Archivo + Source Serif · ink blue</div>
+      </div>
+
+      <div style="width:816px; background:#fcfbf9; box-shadow:0 2px 24px rgba(38,34,30,0.18); font-family:'Source Serif 4', Georgia, serif; color:#1f2328;">
+        <div style="padding:40px 64px 22px; display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid #1f2328;">
+          <div style="font-family:Archivo, sans-serif; font-weight:700; font-size:26px; letter-spacing:-0.02em;">PADJ<span style="color:#2f5d7c;">.</span>Productions</div>
+          <div style="font-family:Archivo, sans-serif; font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:#6a7078; text-align:right; line-height:1.7;">Issue 01<br>Field notes</div>
+        </div>
+
+        <div style="padding:38px 64px 52px; display:grid; grid-template-columns:1fr 176px; gap:0 32px; align-items:start;">
+          <div style="grid-column:1 / -1; display:flex; flex-direction:column; gap:13px; margin-bottom:26px;">
+            <div style="font-family:Archivo, sans-serif; font-size:10.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:#2f5d7c;">Method</div>
+            <h1 style="margin:0; font-family:Archivo, sans-serif; font-weight:600; font-size:42px; line-height:1.08; letter-spacing:-0.025em; max-width:600px; text-wrap:balance;">The template, not the topic</h1>
+            <div style="font-size:19px; line-height:1.4; color:#4a5158; max-width:600px; text-wrap:pretty;">One layout that holds an argument, a number, a piece of code, and a caveat — without being redesigned each time.</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:16px; font-size:16px; line-height:1.6;">
+            <p style="margin:0;"><span style="float:left; font-family:Archivo, sans-serif; font-weight:600; font-size:58px; line-height:0.82; padding:5px 10px 0 0; color:#2f5d7c;">A</span> publication template earns its keep the second time it is used. The first article is easy: any layout can carry one headline and a thousand words. The trouble starts when the next piece arrives with a table, or three code blocks, or a single number that has to land harder than the sentence around it.</p>
+            <p style="margin:0;">So the elements come first, and the article second. Each one has a fixed job and a fixed treatment, and nothing is invented at writing time.</p>
+            <h2 style="margin:8px 0 0; font-family:Archivo, sans-serif; font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#2f5d7c;">What each element is for</h2>
+            <p style="margin:0;">The drop cap marks the true beginning, which matters when a page carries a masthead, a deck, and a byline before the first sentence. Code is set flush and unjustified so the eye reads it as an artifact rather than prose; inline runs like <code style="font-family:'JetBrains Mono', monospace; font-size:13.5px; background:#eef1f4; padding:1px 4px;">--dry-run</code> stay in the sentence.<sup style="color:#2f5d7c;">1</sup></p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:22px; padding-top:6px; border-left:1px solid #dfe3e7; padding-left:20px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <div style="font-family:Archivo, sans-serif; font-size:9.5px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#8a9098;">Note</div>
+              <div style="font-size:13px; line-height:1.5; color:#4a5158;">Set the measure before the type size. This rail is 176px wide — enough for a note, a number, or a caption, never a second column.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="font-family:Archivo, sans-serif; font-size:9.5px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#8a9098;">Elements</div>
+              <div style="font-size:13px; line-height:1.6; color:#4a5158;">Drop cap · code · pull quote · chart · footnotes</div>
+            </div>
+          </div>
+
+          <div style="grid-column:1 / -1; margin:24px 0 0; background:#f2f4f6; border-left:3px solid #2f5d7c; padding:16px 20px; font-family:'JetBrains Mono', monospace; font-size:13px; line-height:1.7; color:#2b3138; white-space:pre;">$ padj build --issue 01 --format both
+  → publication.pdf   (8 pages, letter)
+  → publication.html  (responsive)</div>
+
+          <blockquote style="grid-column:1 / -1; margin:26px 0; font-family:Archivo, sans-serif; font-weight:500; font-size:26px; line-height:1.24; letter-spacing:-0.02em; color:#1f2328; max-width:640px;">“A template is a set of decisions you agree not to make again.”</blockquote>
+
+          <div style="display:flex; flex-direction:column; gap:16px; font-size:16px; line-height:1.6;">
+            <p style="margin:0;">Numbers get a chart only when the shape of the comparison is the point. Three bars, one label per bar, no gridlines, no legend — the caption carries the claim, and the axis carries nothing.</p>
+            <p style="margin:0;">Everything else is prose, which is the format's default state and the one it should be best at.</p>
+          </div>
+
+          <figure style="margin:0; display:flex; flex-direction:column; gap:8px; border-left:1px solid #dfe3e7; padding-left:20px;">
+            <div style="font-family:Archivo, sans-serif; font-size:9.5px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:#8a9098;">Fig. 1 — Minutes per issue</div>
+            <div style="display:flex; align-items:flex-end; gap:10px; height:90px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><div style="width:30px; height:78px; background:#2f5d7c;"></div><div style="font-family:Archivo, sans-serif; font-size:9.5px; color:#6a7078;">WRITE</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><div style="width:30px; height:47px; background:#7297ae;"></div><div style="font-family:Archivo, sans-serif; font-size:9.5px; color:#6a7078;">EDIT</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:5px;"><div style="width:30px; height:12px; background:#c3d0d9;"></div><div style="font-family:Archivo, sans-serif; font-size:9.5px; color:#6a7078;">LAYOUT</div></div>
+            </div>
+            <figcaption style="font-size:12.5px; line-height:1.45; color:#6a7078;">Layout collapses to a rounding error once the elements are fixed.</figcaption>
+          </figure>
+
+          <div style="grid-column:1 / -1; margin-top:30px; border-top:1px solid #dfe3e7; padding-top:12px; display:flex; justify-content:space-between; gap:24px; font-size:12px; line-height:1.5; color:#6a7078;">
+            <div style="max-width:480px;"><sup style="color:#2f5d7c;">1</sup> Monospace inline runs stay at 0.85em of the body size so they sit on the same baseline grid.</div>
+            <div style="font-family:Archivo, sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase;">Page 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+
+
+<div id="__claude_design_branding"><style>#__claude_design_branding{position:fixed;right:16px;bottom:16px;z-index:2147483646;display:flex;align-items:center;gap:7px;height:30px;padding:0 5px 0 10px;border-radius:999px;font-family:"Anthropic Sans",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:12.5px;font-weight:400;line-height:1;letter-spacing:normal;text-transform:none;color:#141413;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);box-shadow:0 0 0 .5px rgba(31,30,29,.14),0 2px 10px rgba(0,0,0,.09)}
+#__claude_design_branding *{box-sizing:border-box;margin:0}
+#__claude_design_branding a{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+#__claude_design_branding a:hover span{text-decoration:underline}
+#__claude_design_branding svg{flex:none}
+#__claude_design_branding a svg{color:#D97757}
+#__claude_design_branding button{width:20px;height:20px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:currentColor;opacity:.55;border:0;background:none;cursor:pointer;flex:none;font:inherit;transition:opacity .14s}
+#__claude_design_branding button:hover{opacity:1;background:rgba(127,127,127,.22)}
+@media print{#__claude_design_branding{display:none}}</style><a href="https://claude.com/product/design" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 20 21" fill="none" aria-hidden="true"><path fill="currentColor" d="M9.99902 0C15.5258 0.000170936 19.999 4.50643 19.999 10.0547C19.999 11.7656 19.5863 12.9976 18.7861 13.8203C17.9924 14.6362 16.9465 14.9138 15.9854 15.0078C15.05 15.0993 14.0097 15.0262 13.2549 15.0186C12.8524 15.0145 12.5177 15.0267 12.2441 15.0703C11.9682 15.1144 11.8143 15.1813 11.7305 15.2432C11.4745 15.4322 11.3353 15.7121 11.2656 16.1602C11.2303 16.3875 11.2168 16.6362 11.209 16.9131C11.2017 17.1715 11.1986 17.4893 11.1807 17.7705C11.1469 18.2975 11.0495 19.0865 10.4199 19.5908C9.7846 20.0996 8.88652 20.1057 7.85449 19.877C7.36399 19.7682 6.88652 19.6232 6.42578 19.4453C2.66989 17.9949 0.000187748 14.3414 0 10.0547C0 4.50643 4.47223 0.000171048 9.99902 0ZM9.99902 1.60547C5.36781 1.60564 1.60547 5.38391 1.60547 10.0547C1.60566 13.6582 3.84823 16.7296 7.00391 17.9482C7.39027 18.0974 7.79085 18.2184 8.20215 18.3096C9.1375 18.5169 9.384 18.3633 9.41602 18.3379C9.4524 18.3087 9.54558 18.1915 9.5791 17.668C9.5947 17.4239 9.59473 17.1786 9.60352 16.8672C9.61179 16.5742 9.62831 16.2435 9.67969 15.9131C9.78359 15.2455 10.0474 14.4906 10.7764 13.9521C11.1479 13.6778 11.5842 13.5493 11.9912 13.4844C12.4007 13.4191 12.8434 13.4088 13.2705 13.4131C14.1753 13.4222 15.0071 13.4905 15.8291 13.4102C16.6257 13.3322 17.2249 13.1235 17.6357 12.7012C18.0401 12.2855 18.3935 11.5261 18.3936 10.0547C18.3936 5.38391 14.6302 1.60564 9.99902 1.60547ZM5.11621 9.86719C5.86386 9.91468 6.45486 10.5348 6.45508 11.2939C6.45506 12.0838 5.81519 12.7245 5.02539 12.7246C4.28481 12.7246 3.67573 12.1617 3.60254 11.4404L3.59473 11.2939L3.60156 11.1533C3.66942 10.4596 4.23282 9.91186 4.93359 9.86719H5.11621ZM14.9814 7.19141C15.729 7.23889 16.3199 7.85919 16.3203 8.61816C16.3203 9.40801 15.6804 10.0487 14.8906 10.0488C14.1501 10.0487 13.5409 9.48586 13.4678 8.76465L13.46 8.61816L13.4668 8.47754C13.5348 7.78403 14.0983 7.23618 14.7988 7.19141H14.9814ZM6.4541 4.93457C7.20161 4.9822 7.79275 5.60231 7.79297 6.36133C7.79288 7.151 7.15291 7.7917 6.36328 7.79199C5.62274 7.79199 5.01369 7.22903 4.94043 6.50781L4.93262 6.36133L4.93945 6.2207C5.00731 5.52698 5.5707 4.97922 6.27148 4.93457H6.4541ZM11.3867 3.59668C12.1343 3.64419 12.7253 4.26436 12.7256 5.02344C12.7256 5.81326 12.0857 6.45393 11.2959 6.4541C10.5553 6.4541 9.94622 5.89123 9.87305 5.16992L9.86523 5.02344L9.87207 4.88281C9.93996 4.18912 10.5033 3.64133 11.2041 3.59668H11.3867Z"></path></svg><span>Made with Claude Design</span></a><button type="button" aria-label="Dismiss" onclick="this.parentElement.remove()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button></div></body></html>
