@@ -17,12 +17,18 @@
 
 ## Setup
 
-1. **Create your `.deploy-env` file** (copy from example):
+1. **Create your `deploy.sh`** (it is gitignored, so a fresh clone won't have it):
+   ```bash
+   cp deploy.sh.example deploy.sh
+   chmod +x deploy.sh
+   ```
+
+2. **Create your `.deploy-env` file** (copy from example):
    ```bash
    cp .deploy-env.example .deploy-env
    ```
 
-2. **Edit `.deploy-env`** with your actual credentials:
+3. **Edit `.deploy-env`** with your actual credentials:
    ```bash
    export ASTRO_SYNC_HOST="your-username@your-domain.com"
    export ASTRO_SYNC_DEST="public_html/"
@@ -30,7 +36,7 @@
    export ASTRO_SYNC_SSH_PORT="18765"
    ```
 
-3. **Verify `.deploy-env` is ignored**:
+4. **Verify `.deploy-env` is ignored**:
    ```bash
    git check-ignore .deploy-env
    # Should output: .deploy-env
@@ -38,7 +44,7 @@
 
 ## Usage
 
-The `deploy.sh` script will automatically source `.deploy-env` if it exists, or you can export variables manually:
+`deploy.sh` sources `.deploy-env` from its own directory, so it works from any cwd. You can also export the variables manually:
 
 ```bash
 # Option 1: Use .deploy-env (recommended)
@@ -50,6 +56,12 @@ export ASTRO_SYNC_DEST="..."
 export ASTRO_SYNC_SSH_KEY="..."
 ./deploy.sh
 ```
+
+### The `astrosync` shell function
+
+`astrosync` is a convenience function in `~/.zshrc` (not in this repo, not under version control). It is a thin wrapper that cd's to the project and runs `./deploy.sh` — there is only one deploy implementation, and this is not a second one.
+
+Historically it *was* a separate implementation, and it had drifted: its `ASTRO_SYNC_SOURCE` lacked the trailing slash that `.deploy-env` has. Since both paths run `rsync --delete`, that one character meant `astrosync` would wipe `public_html/` and rebuild the site one level down at `public_html/dist/`. If you ever restore a standalone version of this function, keep the trailing slash on the source path.
 
 ## What Gets Protected
 

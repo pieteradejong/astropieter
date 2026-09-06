@@ -108,7 +108,7 @@ Run `./test.sh` for a comprehensive check before deploying: build health, depend
 
 ## Deployment
 
-Deployment configuration lives in `deploy.sh`, which is **gitignored** because it contains real SSH host/credentials — it is never committed. See `DEPLOYMENT.md` for full setup instructions.
+`deploy.sh` is **gitignored** and never committed — not because it holds secrets (it holds none), but so each machine keeps its own copy. Credentials live only in `.deploy-env`, which is also gitignored. See `DEPLOYMENT.md` for full setup instructions.
 
 1. Copy the templates and fill in your own values:
 ```bash
@@ -121,7 +121,7 @@ chmod +x deploy.sh
 ./deploy.sh
 ```
 
-The script will build the site and deploy using either your existing `astrosync` script or rsync.
+`deploy.sh` is the single deploy path: it validates config, builds, aborts on any failure, then rsyncs `dist/` to the host. The `astrosync` shell function is a thin wrapper that calls it, so either command does the same safe thing.
 
 ## Project Structure
 
@@ -129,7 +129,7 @@ The script will build the site and deploy using either your existing `astrosync`
 .
 ├── src/
 │   ├── components/       # Reusable components
-│   ├── content/          # Blog posts and other content (markdown/MDX)
+│   ├── content/          # Content collections: blog/ and projects/ (markdown/MDX)
 │   ├── content.config.ts # Content collection schemas (Content Layer API)
 │   ├── layouts/          # Page layouts
 │   ├── pages/            # Astro pages
@@ -138,9 +138,47 @@ The script will build the site and deploy using either your existing `astrosync`
 ├── init.sh               # Initialization script
 ├── test.sh               # Comprehensive pre-deploy test suite
 ├── deploy.sh.example      # Deployment script template (copy to deploy.sh)
-├── deploy.sh              # Deployment script — gitignored, contains real credentials
+├── deploy.sh              # Deployment script — gitignored, per-machine copy
 └── DEPLOYMENT.md          # Full deployment setup instructions
 ```
+
+## Content Pipeline
+
+How a markdown file becomes a page. `entry.id` is the slugified filename, so `LaTeX_test.md` becomes `/blog/latex_test/`.
+
+```mermaid
+flowchart TD
+  MD["src/content/blog/*.md"] --> LOADER["content.config.ts<br/>glob loader + zod schema"]
+  PMD["src/content/projects/*.md"] --> PLOADER["content.config.ts<br/>projects collection"]
+
+  LOADER --> IDX["blog/index.astro<br/>draft filter (DEV-aware)<br/>sort pubDate desc"]
+  LOADER --> POST["blog/[...slug].astro<br/>draft filter (DEV-aware)<br/>render(entry)"]
+  LOADER --> RSS["rss.xml.js &mdash; GET()<br/>drafts always excluded"]
+
+  POST --> LAYOUT["layouts/BlogPost.astro<br/>re-queries blog, NO draft filter"]
+  LAYOUT --> NAV["SeriesNav.astro<br/>via getSeriesInfo()"]
+
+  PLOADER --> PIDX["projects.astro<br/>sort by order"]
+  PLOADER --> PDET["projects/[slug].astro<br/>render(entry)"]
+
+  IDX --> D1["dist/blog/index.html"]
+  NAV --> D2["dist/blog/&lt;id&gt;/index.html"]
+  RSS --> D3["dist/rss.xml"]
+  PIDX --> D4["dist/projects/index.html"]
+  PDET --> D5["dist/projects/&lt;id&gt;/index.html"]
+```
+
+### Known inconsistency: draft filtering
+
+The `draft` flag is honoured in three different ways, which is worth knowing before adding a fourth consumer:
+
+| Consumer | Behaviour |
+|---|---|
+| `blog/index.astro`, `blog/[...slug].astro` | DEV-aware — drafts visible in `astro dev`, excluded from the production build |
+| `rss.xml.js` | always excludes drafts, in dev and prod alike |
+| `layouts/BlogPost.astro` | **no draft filter at all** |
+
+`BlogPost.astro` re-queries the whole `blog` collection to build series navigation, so `SeriesNav` prev/next links can point at draft posts that have no generated page in production. Not currently fixed — recorded here so it isn't rediscovered from scratch.
 
 ## Upgrade Reqs
 
