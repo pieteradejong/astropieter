@@ -2,7 +2,6 @@
 title: "FlowShow"
 description: "Cross-platform mobile application built with Expo and React Native for dynamic presentations and workflows"
 techStack: ["React Native", "Expo", "TypeScript", "JavaScript", "Mobile Development"]
-githubUrl: "https://github.com/pieteradejong/flowshow"
 keyFeatures: [
   "Cross-platform mobile app (iOS, Android, Web) using Expo framework",
   "File-based routing for intuitive navigation structure",
