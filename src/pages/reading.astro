@@ -366,7 +366,6 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		padding: 1.5rem;
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
 	}
 
 	.reading-sections {
@@ -393,17 +392,16 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	.book-card {
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
 		padding: 1.5rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition: transform 0.2s, border-color 0.2s;
 	}
 
 	.book-card:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 2px 4px rgba(var(--gray), 15%);
+		border-color: var(--pub-accent);
 	}
 
 	.book-header {
@@ -440,7 +438,6 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	.book-genre {
 		background: var(--footer-bg);
 		padding: 0.25rem 0.75rem;
-		border-radius: 4px;
 		color: var(--secondary-text);
 	}
 
@@ -451,7 +448,6 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	.book-score {
 		background: var(--card-bg);
 		padding: 0.25rem 0.75rem;
-		border-radius: 4px;
 		color: var(--accent);
 		font-weight: 500;
 		border: 1px solid var(--border);
@@ -519,12 +515,11 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	.lyric-card {
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
 		padding: 2rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition: transform 0.2s, border-color 0.2s;
 		width: 100%;
 		overflow: visible;
 		max-height: none;
@@ -532,7 +527,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 
 	.lyric-card:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 2px 4px rgba(var(--gray), 15%);
+		border-color: var(--pub-accent);
 	}
 
 	.lyric-header {

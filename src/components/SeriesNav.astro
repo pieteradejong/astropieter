@@ -61,7 +61,6 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 	.series-nav {
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
 		padding: 1.5rem;
 		margin: 2rem 0;
 	}
@@ -92,7 +91,6 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 		font-weight: 600;
 		background: var(--footer-bg);
 		padding: 0.25rem 0.75rem;
-		border-radius: 4px;
 		display: inline-block;
 	}
 
@@ -108,7 +106,6 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 		padding: 0.75rem 1rem;
 		background: var(--footer-bg);
 		border: 1px solid var(--border);
-		border-radius: 6px;
 		text-decoration: none;
 		color: var(--accent);
 		font-size: 0.9rem;
@@ -117,7 +114,7 @@ const { seriesInfo, seriesName, seriesDescription } = Astro.props;
 
 	.nav-link:hover {
 		background: var(--accent);
-		color: white;
+		color: var(--pub-paper);
 		transform: translateY(-1px);
 	}
 

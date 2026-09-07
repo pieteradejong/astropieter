@@ -1,0 +1,97 @@
+/* ===============================================================
+   CORE TOKENS — structure, not color.
+   Fixed across every publication built on this system. Swap a
+   theme file to rebrand; touch this file only to change the
+   underlying rhythm.
+
+   Prefix: --pub-*  (avoids collisions with a host stylesheet)
+   =============================================================== */
+:root {
+
+  /* --- Type families -------------------------------------------
+     Three roles. Do not add a fourth.
+       display : masthead, headlines, H3, drop cap
+       body    : article text
+       meta    : labels, kickers, dates, table headers, running heads
+     ------------------------------------------------------------ */
+  --pub-font-display: "Playfair Display", "Charter", Georgia, serif;
+  --pub-font-body:    "Source Serif 4", "Charter", Georgia, serif;
+  --pub-font-meta:    "Inter", "Helvetica Neue", Arial, sans-serif;
+  --pub-font-mono:    ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* --- Web type scale ------------------------------------------
+     Root is 19px. Article text is the reference; all else relative.
+     ------------------------------------------------------------ */
+  --pub-size-root:      19px;
+  --pub-size-masthead:  clamp(1.6rem, 7vw, 2.6rem);
+  --pub-size-headline:  clamp(1.8rem, 5.5vw, 2.6rem);
+  --pub-size-deck:      1.15rem;
+  --pub-size-body:      1rem;
+  --pub-size-quote:     1.1rem;
+  --pub-size-h3:        1.25rem;
+  --pub-size-contents:  0.9rem;
+  --pub-size-blurb:     0.75rem;
+  --pub-size-label:     0.62rem;
+  --pub-size-dropcap:   3.6rem;
+
+  /* --- Print type scale ----------------------------------------
+     Physical units. Sized for Letter with 18mm side margins.
+     ------------------------------------------------------------ */
+  --pub-pt-masthead:  30pt;
+  --pub-pt-headline:  26pt;
+  --pub-pt-deck:      12pt;
+  --pub-pt-body:      10.5pt;
+  --pub-pt-quote:     11pt;
+  --pub-pt-h3:        12pt;
+  --pub-pt-contents:  10pt;
+  --pub-pt-blurb:     8.5pt;
+  --pub-pt-label:     7pt;
+  --pub-pt-runhead:   7.5pt;
+  --pub-pt-dropcap:   34pt;
+
+  /* --- Line height --------------------------------------------- */
+  --pub-leading-body:     1.65;   /* web */
+  --pub-leading-body-pt:  1.5;    /* print — tighter, ink on paper */
+  --pub-leading-tight:    1.15;   /* headlines */
+  --pub-leading-label:    1.3;
+
+  /* --- Letter spacing ------------------------------------------
+     The most characteristic feature of the system: every label is
+     small, uppercase, sans, and tracked.
+     ------------------------------------------------------------ */
+  --pub-track-masthead: 0.22em;
+  --pub-track-label:    0.16em;
+  --pub-track-meta:     0.10em;
+  --pub-track-headline: -0.01em;
+
+  /* --- Measure -------------------------------------------------- */
+  --pub-measure:        68ch;
+  --pub-measure-deck:   45ch;
+  --pub-measure-narrow: 60ch;
+
+  /* --- Spacing scale — loose 1.5x ramp. Use these, not arbitrary
+     values. ----------------------------------------------------- */
+  --pub-space-1: 0.3rem;
+  --pub-space-2: 0.6rem;
+  --pub-space-3: 1rem;
+  --pub-space-4: 1.5rem;
+  --pub-space-5: 2.25rem;
+  --pub-space-6: 3rem;
+
+  /* --- Rules — hairlines do the structural work. Only the
+     masthead underline is heavy, and only ever in the accent. --- */
+  --pub-rule-hair:   1px;
+  --pub-rule-accent: 3px;
+  --pub-rule-quote:  3px;
+
+  /* --- Layout --------------------------------------------------- */
+  --pub-wrap-max:      62rem;
+  --pub-sidebar-width: 15rem;
+  --pub-breakpoint:    900px;
+
+  /* --- Print page ----------------------------------------------- */
+  --pub-page-size:     Letter;
+  --pub-page-margin:   22mm 18mm 20mm 18mm;
+  --pub-page-bleed:    18mm;    /* must equal the side margin */
+  --pub-sidebar-print: 52mm;
+}

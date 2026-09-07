@@ -4,38 +4,42 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
-/* === Custom Color Palette === */
+/* === Design tokens: bridge to the personal_style house system ===
+   The bare-name variables below are consumed by every Astro scoped <style>
+   block in this project. Redefining them in terms of --pub-* (see
+   pub-core.css + pub-theme-terracotta.css) restyles all components at once.
+   Add new colors here as --pub-* references, never as raw hex. */
 :root {
-	--background: #FAF9F6;
-	--card-bg: #FFFFFF;
-	--primary-text: #222222;
-	--secondary-text: #555555;
-	--border: #E0DED9;
-	--accent: #2A7FA5;
-	--accent-hover: #1B5E7C;
-	--footer-bg: #F3F1ED;
-	--non-link-text: #2C3E50;  /* Deep slate/charcoal that complements our blue */
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	--background:     var(--pub-paper);
+	--card-bg:        var(--pub-paper-3);
+	--primary-text:   var(--pub-ink);
+	--secondary-text: var(--pub-muted);
+	--border:         var(--pub-rule);
+	/* Text accent is the DEEP accent (6.81:1 on paper). The bright
+	   --pub-accent is only 3.95:1, so it is reserved for decoration —
+	   rules, borders, the active-nav underline — where 3:1 suffices.
+	   This is what BRIEF.md means by "plus a deeper accent for links". */
+	--accent:         var(--pub-accent-deep);
+	--accent-hover:   var(--pub-ink);
+	--footer-bg:      var(--pub-paper-2);
+	--non-link-text:  var(--pub-ink);
 
-	--green-dark: 33, 50, 50;
-	--green-lighter: 190,223,214;
+	/* BRIEF: no shadows, no gradients. Kept as no-ops so any straggling
+	   var(--box-shadow) / var(--gray-gradient) reference resolves to nothing. */
+	--box-shadow:     none;
+	--gray-gradient:  var(--pub-paper);
+
 	--mobile-cutoff: 375px;
 	--tablet-cutoff: 768px;
 	--desktop-cutoff: 1024px;
-	
-	/* Responsive Typography */
-	--font-size-base: clamp(14px, 1vw + 14px, 16px);
+
+	/* Responsive Typography — ceiling raised for the serif body face */
+	--font-size-base: clamp(15px, 1vw + 14px, 18px);
 	--font-size-h1: clamp(2rem, 2.5vw + 1.5rem, 2.5rem);
 	--font-size-h2: clamp(1.5rem, 2vw + 1.2rem, 1.8rem);
 	--font-size-h3: clamp(1.2rem, 1.5vw + 1rem, 1.3rem);
-	--font-size-small: clamp(0.8rem, 0.8vw + 0.7rem, 0.9rem);
-	
+	--font-size-small: var(--pub-size-contents);
+
 	/* Responsive Spacing */
 	--spacing-unit: clamp(0.5rem, 1vw + 0.5rem, 1rem);
 	--spacing-large: clamp(1rem, 2vw + 1rem, 2rem);
@@ -44,7 +48,7 @@
 
 body {
 	/* width: 720px; */
-	font-family: 'Avenir', Helvetica, Arial, sans-serif;
+	font-family: var(--pub-font-body);
 	margin: 0;
 	padding: 0;
 	text-align: left;
@@ -52,7 +56,7 @@ body {
 	color: var(--primary-text);
 	/* font-size: 20px; */
 	font-size: var(--font-size-base);
-	line-height: 1.4;
+	line-height: var(--pub-leading-body);
 	-webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; 
 }
@@ -84,36 +88,41 @@ table {
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
 }
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	font-family: var(--pub-font-mono);
+	font-size: 0.85em;
+	background-color: var(--pub-paper-2);
 }
 pre {
 	padding: 1.5em;
-	border-radius: 8px;
+	font-family: var(--pub-font-mono);
+	background-color: var(--pub-paper-2);
+	border-left: var(--pub-rule-quote) solid var(--pub-rule);
 }
 pre > code {
 	all: unset;
 }
 blockquote {
-	border-left: 4px solid var(--accent);
+	border-left: var(--pub-rule-quote) solid var(--pub-accent);
 	padding: 0 0 0 20px;
 	margin: 0px;
 	font-size: 1.333em;
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: var(--pub-rule-hair) solid var(--pub-rule);
 }
 
 
 h1,h2,h3,h4,h5,h6 {
 	margin: 0 0 0.5rem 0;
+	font-family: var(--pub-font-display);
+	font-weight: 400;
 	color: var(--primary-text);
-	line-height: 1.2;
+	line-height: var(--pub-leading-tight);
+	letter-spacing: var(--pub-track-headline);
 }
 h1 {
 	font-size: var(--font-size-h1);
@@ -146,7 +155,8 @@ a:hover {
 
  /* blog section */
 main.blog-page a.blogtitle, main.blog-page a.blogtitle:hover {
-	color: black;
+	font-family: var(--pub-font-display);
+	color: var(--pub-ink);
 	text-decoration: none;
 }
 
@@ -160,15 +170,12 @@ main.blog-page li {
 	margin: 10px 0;
 	padding: 1.2em;
 	background: var(--card-bg);
-	border: 1px solid var(--border);
-	border-radius: 10px;
-	box-shadow: 0 2px 8px rgba(34, 34, 34, 0.04);
+	border: var(--pub-rule-hair) solid var(--pub-rule);
 }
 
 main.blog-page li:hover {
-	/* background: darkgrey; */
-	/* background: rgb(153, 153, 153) */
-	background: white;
+	background: var(--pub-paper-3);
+	border-color: var(--pub-accent);
 }
 
 
@@ -188,7 +195,7 @@ header {
 	padding-bottom: 0.25em;
 	background: var(--background);
 	box-shadow: none;
-	border-bottom: 2.5px solid var(--border);
+	border-bottom: var(--pub-rule-hair) solid var(--pub-rule);
 }
 
 /* Navigation Styles */
@@ -205,19 +212,21 @@ nav a {
     padding: 0.15em 1em;
     color: var(--accent);
     text-decoration: none;
-    font-size: 1.1em;
-    font-weight: 500;
-    border-radius: 4px;
+    font-family: var(--pub-font-meta);
+    font-size: var(--pub-size-contents);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--pub-track-meta);
     transition: color 0.2s, background-color 0.2s;
     position: relative;
 }
 
 nav a:hover {
-    background-color: rgba(42, 127, 165, 0.1);
+    background-color: var(--pub-paper-2);
 }
 
 nav a.active {
-    background-color: rgba(42, 127, 165, 0.15);
+    background-color: var(--pub-paper-2);
 }
 
 nav a.active::after {
@@ -227,8 +236,7 @@ nav a.active::after {
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: var(--accent);
-    border-radius: 2px;
+    background-color: var(--pub-accent);
 }
 
 @media (max-width: 768px) {
@@ -261,7 +269,7 @@ nav a.active::after {
 nav a:focus {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    background: rgba(42, 127, 165, 0.08);
+    background: var(--pub-paper-2);
 }
 
 /* Miscellaneous */
@@ -308,11 +316,14 @@ footer {
   box-shadow: none;
   width: 100%;
   margin-top: auto;
-  border-top: 2px solid var(--border);
+  border-top: var(--pub-rule-hair) solid var(--pub-rule);
 }
 
 footer .all-right-reserved {
-	font-size: 14px;
+	font-family: var(--pub-font-meta);
+	font-size: var(--pub-size-blurb);
+	text-transform: uppercase;
+	letter-spacing: var(--pub-track-label);
 }
 
 /* === Link Styling System === */
@@ -321,12 +332,15 @@ footer .all-right-reserved {
     display: inline-block;
     padding: 0.5em 0.75em;
     background: var(--accent);
-    color: white !important;
-    border-radius: 4px;
+    color: var(--pub-paper) !important;
     text-align: center;
     text-decoration: none;
     transition: background-color 0.2s;
-    font-weight: 500;
+    font-family: var(--pub-font-meta);
+    font-size: var(--pub-size-contents);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--pub-track-label);
 }
 
 .button-link:hover {
@@ -382,7 +396,7 @@ nav a {
 }
 
 nav a:hover {
-    color: var(--accent-hover);
+    color: var(--pub-accent-deep);
     font-weight: bold;
 }
 
@@ -392,7 +406,10 @@ nav a.active {
 }
 
 /* Responsive Typography Classes */
-.small-text { font-size: var(--font-size-small); }
+.small-text {
+	font-family: var(--pub-font-meta);
+	font-size: var(--font-size-small);
+}
 
 /* Responsive Container */
 .container {

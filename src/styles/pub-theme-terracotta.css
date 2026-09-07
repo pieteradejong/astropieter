@@ -1,0 +1,38 @@
+/* ===============================================================
+   THEME: Terracotta
+   Warm, editorial, contemporary. The default.
+   Eight colors. Swap this one file to rebrand a publication.
+
+   Vendored from ~/dev/projects/personal_style/tokens/theme-terracotta.css
+   Applied via data-pub-theme="terracotta" on <html> (both layouts).
+   =============================================================== */
+[data-pub-theme="terracotta"], :root.pub-terracotta {
+  --pub-ink:         #2B2724;
+  --pub-paper:       #FAF7F0;
+  --pub-paper-2:     #F2EDE3;
+  --pub-paper-3:     #FDFBF6;
+  --pub-accent:      #C15F3C;
+  --pub-accent-deep: #8F3E23;
+  --pub-rule:        #D9D0C1;
+  --pub-muted:       #6B635B;
+}
+
+/* Dark palette — deliberately NOT enabled yet.
+   The upstream theme ships this hand-tuned dark set, but this site's Astro
+   scoped styles still carry light-assuming hardcoded colors in places. Turning
+   this on before those are fully tokenized would hand every dark-mode visitor a
+   half-broken page. Re-enable once the component colors are all on --pub-*.
+
+@media (prefers-color-scheme: dark) {
+  [data-pub-theme="terracotta"], :root.pub-terracotta {
+    --pub-ink:         #EDE6DA;
+    --pub-paper:       #1C1917;
+    --pub-paper-2:     #26221F;
+    --pub-paper-3:     #232019;
+    --pub-accent:      #E08D6B;
+    --pub-accent-deep: #F0AC8E;
+    --pub-rule:        #3D3833;
+    --pub-muted:       #A39A8D;
+  }
+}
+*/

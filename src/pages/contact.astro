@@ -90,8 +90,7 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
     margin: 2rem auto;
     padding: 2rem;
     background: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: var(--pub-rule-hair) solid var(--pub-rule);
   }
   .form-group {
     margin-bottom: 1.5rem;
@@ -113,21 +112,18 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
-    border-radius: 4px;
     transition: border-color 0.2s;
   }
   input:focus,
   textarea:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(42, 127, 165, 0.1);
+    border-color: var(--pub-accent);
   }
   button {
     background: var(--accent);
-    color: white;
+    color: var(--pub-paper);
     border: none;
     padding: 0.75rem 1.5rem;
-    border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
   }

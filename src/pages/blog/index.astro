@@ -83,13 +83,12 @@ const posts = allPosts
 		color: inherit;
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition: transform 0.2s, border-color 0.2s;
 	}
 
 	.blog-card:hover {
 		transform: translateY(-1px);
-		box-shadow: 0 2px 4px rgba(var(--gray), 15%);
+		border-color: var(--pub-accent);
 	}
 
 	.blog-card-content {
@@ -131,7 +130,6 @@ const posts = allPosts
 		padding: 0.2rem 0.6rem;
 		background: var(--footer-bg);
 		color: var(--secondary-text);
-		border-radius: 4px;
 	}
 
 	.blog-header {
@@ -143,11 +141,13 @@ const posts = allPosts
 	.draft-badge {
 		font-size: 0.7rem;
 		padding: 0.2rem 0.5rem;
-		background: var(--warning-bg, #fff3cd);
-		color: var(--warning-text, #856404);
-		border-radius: 4px;
-		font-weight: bold;
-		border: 1px solid var(--warning-border, #ffeaa7);
+		background: var(--pub-paper-2);
+		color: var(--pub-accent-deep);
+		font-family: var(--pub-font-meta);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--pub-track-label);
+		border: var(--pub-rule-hair) solid var(--pub-accent);
 	}
 
 	.series-info {
@@ -160,7 +160,6 @@ const posts = allPosts
 		padding: 0.2rem 0.5rem;
 		background: var(--footer-bg);
 		color: var(--secondary-text);
-		border-radius: 4px;
 	}
 
 	@media (max-width: 375px) {

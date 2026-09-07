@@ -23,35 +23,37 @@ const variantClasses = {
     .tag {
         display: inline-block;
         padding: 0.25em 0.75em;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        font-weight: 500;
+        font-family: var(--pub-font-meta);
+        font-size: var(--pub-size-blurb);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: var(--pub-track-label);
         line-height: 1.4;
         white-space: nowrap;
     }
 
     .tag-default {
-        background: var(--tag-bg);
-        color: var(--secondary-text);
-        border: 1px solid var(--border);
+        background: var(--pub-paper-2);
+        color: var(--pub-muted);
+        border: var(--pub-rule-hair) solid var(--pub-rule);
     }
 
     .tag-accent {
-        background: var(--accent-light);
-        color: var(--accent);
-        border: 1px solid var(--accent-light);
+        background: var(--pub-paper-2);
+        color: var(--pub-accent-deep);
+        border: var(--pub-rule-hair) solid var(--pub-accent);
     }
 
     .tag-success {
-        background: var(--success-light);
-        color: var(--success);
-        border: 1px solid var(--success-light);
+        background: var(--pub-paper-2);
+        color: var(--pub-accent-deep);
+        border: var(--pub-rule-hair) solid var(--pub-accent-deep);
     }
 
     .tag-warning {
-        background: var(--warning-light);
-        color: var(--warning);
-        border: 1px solid var(--warning-light);
+        background: var(--pub-paper-2);
+        color: var(--pub-ink);
+        border: var(--pub-rule-hair) solid var(--pub-rule);
     }
 
     @media (max-width: 375px) {

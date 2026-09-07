@@ -164,9 +164,7 @@ import Layout from '../layouts/Default.astro';
 	.timeline-list .event {
 		background: var(--card-bg);
 		padding: 1.5rem;
-		border-radius: 8px;
-		border: 1px solid var(--border);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		border: var(--pub-rule-hair) solid var(--pub-rule);
 		position: relative;
 	}
 
@@ -177,7 +175,6 @@ import Layout from '../layouts/Default.astro';
 		font-size: 0.8rem;
 		font-weight: 600;
 		padding: 0.2rem 0.5rem;
-		border-radius: 4px;
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 	}
@@ -215,31 +212,34 @@ import Layout from '../layouts/Default.astro';
 
 	/* Event type styles */
 	.event-education .event-type {
-		background: var(--accent);
-		color: white;
+		background: var(--pub-paper-2);
+		color: var(--pub-accent-deep);
+		border: var(--pub-rule-hair) solid var(--pub-accent);
 	}
 
 	.event-professional .event-type {
-		background: #2A7FA5;
-		color: white;
+		background: var(--pub-paper-2);
+		color: var(--pub-ink);
+		border: var(--pub-rule-hair) solid var(--pub-ink);
 	}
 
 	.event-personal .event-type {
-		background: #4A90E2;
-		color: white;
+		background: var(--pub-paper-2);
+		color: var(--pub-muted);
+		border: var(--pub-rule-hair) solid var(--pub-rule);
 	}
 
 	/* Event type borders */
 	.event-education .event {
-		border-left: 4px solid var(--accent);
+		border-left: var(--pub-rule-quote) solid var(--pub-accent);
 	}
 
 	.event-professional .event {
-		border-left: 4px solid #2A7FA5;
+		border-left: var(--pub-rule-quote) solid var(--pub-ink);
 	}
 
 	.event-personal .event {
-		border-left: 4px solid #4A90E2;
+		border-left: var(--pub-rule-quote) solid var(--pub-rule);
 	}
 
 	/* Responsive adjustments */
@@ -288,7 +288,6 @@ import Layout from '../layouts/Default.astro';
 	.volunteering-content {
 		background: var(--card-bg);
 		border: 1px solid var(--border);
-		border-radius: 8px;
 		padding: 1.5rem;
 	}
 
@@ -310,7 +309,6 @@ import Layout from '../layouts/Default.astro';
 	.volunteering-list li {
 		padding: 1.5rem;
 		background: var(--footer-bg);
-		border-radius: 8px;
 	}
 
 	.volunteering-list h3 {
