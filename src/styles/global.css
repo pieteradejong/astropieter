@@ -10,6 +10,12 @@
    pub-core.css + pub-theme-terracotta.css) restyles all components at once.
    Add new colors here as --pub-* references, never as raw hex. */
 :root {
+	/* Both palettes are defined (see pub-theme-terracotta.css), so tell the UA.
+	   Without this, native chrome the page does not paint itself — scrollbars,
+	   date pickers, autofill, the default form-control ground — stays light on
+	   a dark page. */
+	color-scheme: light dark;
+
 	--background:     var(--pub-paper);
 	--card-bg:        var(--pub-paper-3);
 	--primary-text:   var(--pub-ink);

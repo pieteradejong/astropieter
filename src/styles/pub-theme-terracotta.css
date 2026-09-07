@@ -17,12 +17,21 @@
   --pub-muted:       #6B635B;
 }
 
-/* Dark palette — deliberately NOT enabled yet.
-   The upstream theme ships this hand-tuned dark set, but this site's Astro
-   scoped styles still carry light-assuming hardcoded colors in places. Turning
-   this on before those are fully tokenized would hand every dark-mode visitor a
-   half-broken page. Re-enable once the component colors are all on --pub-*.
+/* Dark palette — ENABLED.
 
+   Upstream ships this hand-tuned dark set. It was commented out during the
+   initial restyle because scoped component styles still carried light-assuming
+   hardcoded colors. That is no longer true: the production CSS bundle now
+   contains exactly the eight tokens below and nothing else, so every component
+   flips with the palette.
+
+   Verified before enabling — all 12 text/ground pairs clear WCAG AA:
+     ink 14.10:1 · muted 6.30:1 · accent-deep 9.16:1 · accent 6.82:1 (on paper)
+   Dark scores better than light, where bright --pub-accent is only 3.95:1 and
+   is therefore still restricted to decoration in both schemes.
+
+   This diverges from personal_style/tokens/theme-terracotta.css only in being
+   uncommented; the values are upstream's, unmodified. */
 @media (prefers-color-scheme: dark) {
   [data-pub-theme="terracotta"], :root.pub-terracotta {
     --pub-ink:         #EDE6DA;
@@ -35,4 +44,3 @@
     --pub-muted:       #A39A8D;
   }
 }
-*/

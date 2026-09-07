@@ -112,6 +112,11 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
+    /* Explicit, not inherited: a field with only a border gets the UA's own
+       ground, which is white in both schemes. On the dark palette that is a
+       white box on a dark page. */
+    background: var(--card-bg);
+    color: var(--primary-text);
     transition: border-color 0.2s;
   }
   input:focus,
