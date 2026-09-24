@@ -1,6 +1,12 @@
 ---
+// Cookie-less page-view analytics. Lives here, not in BaseHead: it renders a
+// custom element, which would end <head> early and push the meta tags into <body>.
+import Analytics from '@vercel/analytics/astro';
+
 const today = new Date();
 ---
+
+<Analytics />
 
 <footer style="width: 100%;">
 	<div class="content-container">

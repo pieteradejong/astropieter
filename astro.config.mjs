@@ -9,7 +9,7 @@ import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://pieterd38.sg-host.com',
+	site: 'https://padj.vercel.app',
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		processor: unified({

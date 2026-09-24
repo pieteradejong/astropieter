@@ -14,11 +14,15 @@
     "@astrojs/mdx": "8.0.2",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.4",
+    "@vercel/analytics": "2.0.1",
     "astro": "7.3.5",
     "rehype-katex": "7.0.1",
     "remark-math": "6.0.0"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
