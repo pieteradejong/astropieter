@@ -13,8 +13,10 @@
 # fails the build, so the suite does not cry wolf. A SKIP could not be
 # determined (usually no network).
 #
-# Usage: ./test.sh [--offline]
-#   --offline   skip the checks that need the network
+# Usage: ./test.sh [--offline] [--live <url>]
+#   --offline      skip the checks that need the network
+#   --live <url>   check only the deployed site at <url> (routes, canonical
+#                  host, analytics, browser rendering of every post)
 
 set -uo pipefail
 cd "$(dirname "$0")"
@@ -31,11 +33,17 @@ WARN_COUNT=0
 SKIP_COUNT=0
 
 OFFLINE=0
-for arg in "$@"; do
-	case "$arg" in
+LIVE_URL=""
+USAGE="usage: ./test.sh [--offline] [--live <url>]"
+while [ $# -gt 0 ]; do
+	case "$1" in
 		--offline) OFFLINE=1 ;;
-		*) echo "unknown option: $arg (usage: ./test.sh [--offline])"; exit 2 ;;
+		--live)
+			[ $# -ge 2 ] || { echo "--live needs a URL ($USAGE)"; exit 2; }
+			LIVE_URL="${2%/}"; shift ;;
+		*) echo "unknown option: $1 ($USAGE)"; exit 2 ;;
 	esac
+	shift
 done
 
 pass() { echo -e "  ${GREEN}✓${NC} $1"; PASS_COUNT=$((PASS_COUNT + 1)); }
@@ -50,6 +58,123 @@ cleanup() {
 	npx astro dev stop >/dev/null 2>&1
 }
 trap cleanup EXIT
+
+summary() {
+	section "Summary"
+	echo -e "${GREEN}${PASS_COUNT} passed${NC}, ${RED}${FAIL_COUNT} failed${NC}, ${YELLOW}${WARN_COUNT} warnings${NC}, ${YELLOW}${SKIP_COUNT} skipped${NC}"
+	if [ "$WARN_COUNT" -gt 0 ]; then
+		echo -e "${YELLOW}Warnings are known gaps, not breakage — they do not fail the run.${NC}"
+	fi
+	[ "$FAIL_COUNT" -gt 0 ] && exit 1
+	exit 0
+}
+
+# Main routes, checked on the dev server and on the live site.
+ROUTES=(
+	"/"
+	"/about/"
+	"/blog/"
+	"/blog/latex_test/"
+	"/blog/why-blog/"
+	"/projects/"
+	"/projects/tv-show-chat"
+	"/contact/"
+	"/reading/"
+	"/rss.xml"
+)
+
+# check_routes <base-url>: every route must end in a 200 (redirects followed).
+check_routes() {
+	local base="$1" route code
+	for route in "${ROUTES[@]}"; do
+		code=$(curl -s -o /dev/null -L --max-time 15 -w "%{http_code}" "${base}${route}")
+		if [ "$code" = "200" ]; then
+			pass "GET $route -> 200"
+		else
+			fail "GET $route -> $code (expected 200)"
+		fi
+	done
+}
+
+# run_browser_tests <base-url> [grep]: run tests/content.spec.ts against
+# <base-url> (optionally only tests matching grep) and report each test as
+# one pass/fail line.
+run_browser_tests() {
+	local base="$1" grep_arg=() pw_json results verdict msg
+	[ -n "${2:-}" ] && grep_arg=(-g "$2")
+	pw_json=$(mktemp)
+	BASE_URL="$base" PLAYWRIGHT_JSON_OUTPUT_NAME="$pw_json" \
+		npx playwright test --reporter=json ${grep_arg[@]+"${grep_arg[@]}"} >/dev/null 2>&1
+	results=$(node -e "
+		let r; try { r = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); } catch { console.log('ERR\tno Playwright report'); process.exit(); }
+		if (r.errors?.length) { console.log('ERR\t' + r.errors[0].message.split('\n')[0]); }
+		const walk = (s, pre) => {
+			const name = [pre, s.title].filter(Boolean).join(' › ');
+			for (const sp of s.specs ?? []) for (const t of sp.tests) {
+				if (t.status === 'skipped') continue;
+				const res = t.results.at(-1) ?? {};
+				const ok = t.status === 'expected';
+				const why = ok ? '' : (res.errors ?? [res.error]).filter(Boolean).map(e => (e.message ?? '').replace(/\x1b\[[0-9;]*m/g, '').split('\n').find(l => l.trim()) ).join(' | ');
+				console.log((ok ? 'PASS' : 'FAIL') + '\t' + name + ' › ' + sp.title + (why ? ' — ' + why.trim() : ''));
+			}
+			for (const c of s.suites ?? []) walk(c, s.file ? '' : name);
+		};
+		(r.suites ?? []).forEach(s => walk(s, ''));
+	" "$pw_json")
+	rm -f "$pw_json"
+	if [ -z "$results" ]; then
+		fail "browser tests produced no results (run: BASE_URL=$base npx playwright test)"
+		return
+	fi
+	while IFS=$'\t' read -r verdict msg; do
+		[ -z "$verdict" ] && continue
+		case "$verdict" in
+			PASS) pass "$msg" ;;
+			FAIL) fail "$msg" ;;
+			ERR)
+				if echo "$msg" | grep -qiE "executable doesn't exist|distribution .* is not found|playwright install"; then
+					skip "browser tests: no Chrome found (set CHROME_PATH, or run npx playwright install chromium)"
+				else
+					fail "browser tests could not run: $msg"
+				fi
+				;;
+		esac
+	done <<< "$results"
+}
+
+# ---------------------------------------------------------------------------
+# --live: check what the host is actually serving, then stop.
+# ---------------------------------------------------------------------------
+if [ -n "$LIVE_URL" ]; then
+	section "Live site: $LIVE_URL"
+	check_routes "$LIVE_URL"
+
+	# Canonical URLs must name the host being served; a stale `site` in
+	# astro.config.mjs sends every search engine to the old address.
+	LIVE_HOST=$(echo "$LIVE_URL" | sed -E 's#https?://([^/]+).*#\1#')
+	CANON=$(curl -s --max-time 15 "$LIVE_URL/" | grep -oE '<link rel="canonical" href="[^"]+"' | sed -E 's/.*href="([^"]+)"/\1/')
+	if [ -z "$CANON" ]; then
+		fail "no canonical link on $LIVE_URL/"
+	elif echo "$CANON" | grep -q "://$LIVE_HOST/"; then
+		pass "canonical URL uses the live host ($CANON)"
+	else
+		fail "canonical URL is $CANON, not on $LIVE_HOST — update site in astro.config.mjs"
+	fi
+
+	# Vercel serves the analytics script only once Web Analytics is enabled
+	# on the project; the <Analytics /> tag alone records nothing.
+	code=$(curl -s -o /dev/null --max-time 15 -w "%{http_code}" "$LIVE_URL/_vercel/insights/script.js")
+	if [ "$code" = "200" ]; then
+		pass "Vercel Web Analytics script is served"
+	else
+		fail "/_vercel/insights/script.js -> $code — enable Web Analytics on the Vercel project"
+	fi
+
+	section "Content rendering on the live site (browser)"
+	# Fixtures are drafts and never deployed, so only the every-post test applies.
+	run_browser_tests "$LIVE_URL" "Every blog post"
+	summary
+fi
 
 # ---------------------------------------------------------------------------
 section "Environment"
@@ -725,21 +850,27 @@ section "Repository hygiene"
 # ---------------------------------------------------------------------------
 
 if git rev-parse --git-dir >/dev/null 2>&1; then
-	if git check-ignore -q deploy.sh 2>/dev/null; then
-		pass "deploy.sh is gitignored"
+	if git check-ignore -q .vercel/project.json 2>/dev/null; then
+		pass ".vercel/ (local Vercel link) is gitignored"
 	else
-		fail "deploy.sh is NOT gitignored — it is meant to stay per-machine"
+		fail ".vercel/ is NOT gitignored — it is per-machine CLI state"
 	fi
-	if git ls-files --error-unmatch .deploy-env >/dev/null 2>&1; then
-		fail ".deploy-env is tracked — it holds credentials"
+	TRACKED_ENV=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.example$' || true)
+	if [ -z "$TRACKED_ENV" ]; then
+		pass "no .env file is tracked"
 	else
-		pass ".deploy-env is not tracked"
+		fail ".env file(s) tracked — they hold credentials: $(echo $TRACKED_ENV)"
+	fi
+	if grep -q "sg-host.com" astro.config.mjs; then
+		fail "site in astro.config.mjs still points at the cancelled SiteGround host"
+	else
+		pass "site in astro.config.mjs is not a SiteGround address"
 	fi
 
 	# The preview-terracotta lesson: a gitignored directory holding real source
 	# is work that exists in exactly one place and is invisible to every tool.
 	SHADOW=$(git status --porcelain --ignored 2>/dev/null | awk '$1=="!!"{print $2}' \
-		| grep -vE '^(node_modules|dist|\.astro|\.DS_Store|\.env|\.deploy-env|deploy\.sh|test-results|playwright-report)' || true)
+		| grep -vE '^(node_modules|dist|\.astro|\.DS_Store|\.env|\.vercel|test-results|playwright-report)' || true)
 	for d in $SHADOW; do
 		if [ -d "$d" ] && [ -n "$(find "$d" -name '*.astro' -o -name '*.ts' 2>/dev/null | head -1)" ]; then
 			warn "ignored directory holds source and is not in git: $d"
@@ -751,14 +882,14 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
 	if [ "$UNCOMMITTED" = "0" ]; then
 		pass "working tree is clean"
 	else
-		warn "$UNCOMMITTED uncommitted change(s) — deploying ships what is on disk, not what is in git"
+		warn "$UNCOMMITTED uncommitted change(s) — not live until committed and pushed to main"
 	fi
 
 	AHEAD=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo 0)
 	if [ "$AHEAD" = "0" ]; then
 		pass "branch is level with its remote"
 	else
-		warn "$AHEAD commit(s) not pushed — the deployed site would be ahead of GitHub"
+		warn "$AHEAD commit(s) not pushed — not live yet (pushing main deploys)"
 	fi
 fi
 
@@ -840,26 +971,7 @@ done
 if [ "$READY" = "1" ]; then
 	pass "dev server came up on :4322"
 
-	ROUTES=(
-		"/"
-		"/about/"
-		"/blog/"
-		"/blog/latex_test/"
-		"/blog/why-blog/"
-		"/projects/"
-		"/projects/tv-show-chat"
-		"/contact/"
-		"/reading/"
-		"/rss.xml"
-	)
-	for route in "${ROUTES[@]}"; do
-		code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:4322${route}")
-		if [ "$code" = "200" ]; then
-			pass "GET $route -> 200"
-		else
-			fail "GET $route -> $code (expected 200)"
-		fi
-	done
+	check_routes "http://localhost:4322"
 
 	# In dev mode draft posts should still be reachable for authoring/preview
 	draft_code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:4322/blog/ai-enhanced-programming-observations/")
@@ -876,61 +988,12 @@ if [ "$READY" = "1" ]; then
 	# Markdown/GFM constructs, LaTeX in .md and .mdx, the KaTeX stylesheet and
 	# fonts actually applied, phone-width overflow, and every blog post free of
 	# math errors, leaked LaTeX and console errors. Each test is one line here.
-	PW_JSON=$(mktemp)
-	BASE_URL="http://localhost:4322" PLAYWRIGHT_JSON_OUTPUT_NAME="$PW_JSON" \
-		npx playwright test --reporter=json >/dev/null 2>&1
-	PW_RESULTS=$(node -e "
-		let r; try { r = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); } catch { console.log('ERR\tno Playwright report'); process.exit(); }
-		if (r.errors?.length) { console.log('ERR\t' + r.errors[0].message.split('\n')[0]); }
-		const walk = (s, pre) => {
-			const name = [pre, s.title].filter(Boolean).join(' › ');
-			for (const sp of s.specs ?? []) for (const t of sp.tests) {
-				const res = t.results.at(-1) ?? {};
-				const ok = t.status === 'expected';
-				const why = ok ? '' : (res.errors ?? [res.error]).filter(Boolean).map(e => (e.message ?? '').replace(/\x1b\[[0-9;]*m/g, '').split('\n').find(l => l.trim()) ).join(' | ');
-				console.log((ok ? 'PASS' : 'FAIL') + '\t' + name + ' › ' + sp.title + (why ? ' — ' + why.trim() : ''));
-			}
-			for (const c of s.suites ?? []) walk(c, s.file ? '' : name);
-		};
-		(r.suites ?? []).forEach(s => walk(s, ''));
-	" "$PW_JSON")
-	rm -f "$PW_JSON"
-	if [ -z "$PW_RESULTS" ]; then
-		fail "browser tests produced no results (run: BASE_URL=http://localhost:4322 npx playwright test)"
-	fi
-	while IFS=$'\t' read -r verdict msg; do
-		[ -z "$verdict" ] && continue
-		case "$verdict" in
-			PASS) pass "$msg" ;;
-			FAIL) fail "$msg" ;;
-			ERR)
-				if echo "$msg" | grep -qiE "executable doesn't exist|distribution .* is not found|playwright install"; then
-					skip "browser tests: no Chrome found (set CHROME_PATH, or run npx playwright install chromium)"
-				else
-					fail "browser tests could not run: $msg"
-				fi
-				;;
-		esac
-	done <<< "$PW_RESULTS"
+	run_browser_tests "http://localhost:4322"
 else
 	fail "dev server did not respond on :4322 within 10s (see $DEV_LOG)"
 	SKIP_COUNT=$((SKIP_COUNT + 12))
 fi
 
 cleanup
-DEV_PID=""
 
-# ---------------------------------------------------------------------------
-section "Summary"
-# ---------------------------------------------------------------------------
-
-echo -e "${GREEN}${PASS_COUNT} passed${NC}, ${RED}${FAIL_COUNT} failed${NC}, ${YELLOW}${WARN_COUNT} warnings${NC}, ${YELLOW}${SKIP_COUNT} skipped${NC}"
-
-if [ "$WARN_COUNT" -gt 0 ]; then
-	echo -e "${YELLOW}Warnings are known gaps, not breakage — they do not fail the run.${NC}"
-fi
-
-if [ "$FAIL_COUNT" -gt 0 ]; then
-	exit 1
-fi
-exit 0
+summary
