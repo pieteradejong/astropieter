@@ -83,12 +83,19 @@ ROUTES=(
 	"/rss.xml"
 )
 
-# check_routes <base-url>: every route must end in a 200 (redirects followed).
+# check_routes <base-url>: every route must end in a 200 on the same host.
+# Redirects are followed, but one that leaves the host (a login wall such as
+# Vercel deployment protection) fails: its 200 is not this site.
 check_routes() {
-	local base="$1" route code
+	local base="$1" host route out code final
+	host=$(echo "$base" | sed -E 's#https?://([^/]+).*#\1#')
 	for route in "${ROUTES[@]}"; do
-		code=$(curl -s -o /dev/null -L --max-time 15 -w "%{http_code}" "${base}${route}")
-		if [ "$code" = "200" ]; then
+		out=$(curl -s -o /dev/null -L --max-time 15 -w "%{http_code} %{url_effective}" "${base}${route}")
+		code=${out%% *}
+		final=$(echo "${out#* }" | sed -E 's#https?://([^/]+).*#\1#')
+		if [ "$final" != "$host" ]; then
+			fail "GET $route redirected off-site to $final (login wall or wrong host)"
+		elif [ "$code" = "200" ]; then
 			pass "GET $route -> 200"
 		else
 			fail "GET $route -> $code (expected 200)"
