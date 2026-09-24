@@ -31,7 +31,9 @@ Information theory, developed by Claude Shannon in the 1940s, fundamentally asks
 
 The cornerstone concept is **entropy** - a measure of uncertainty or "surprise" in a system:
 
-$$H(X) = -\sum_{i} p(x_i) \log_2 p(x_i)$$
+$$
+H(X) = -\sum_{i} p(x_i) \log_2 p(x_i)
+$$
 
 Let's build intuition with Python:
 
@@ -153,7 +155,9 @@ print(f"Degree distribution entropy: {degree_entropy:.3f} bits")
 
 Bayesian statistics provides a framework for updating our beliefs as we gather evidence. The fundamental equation is **Bayes' theorem**:
 
-$$P(H|E) = \frac{P(E|H) \cdot P(H)}{P(E)}$$
+$$
+P(H|E) = \frac{P(E|H) \cdot P(H)}{P(E)}
+$$
 
 Where:
 - $P(H|E)$: Posterior probability (updated belief)

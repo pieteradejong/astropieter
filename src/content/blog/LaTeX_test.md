@@ -15,22 +15,32 @@ https://blog.alexafazio.dev/blog/render-latex-in-astro/
 
 
 Equality:
-$$a = b$$
+$$
+a = b
+$$
 
 Integral:
-$$\int_{-\infty}^{\infty} e^{-x^2} = \sqrt{\pi}$$
+$$
+\int_{-\infty}^{\infty} e^{-x^2} = \sqrt{\pi}
+$$
 
 Shannon's Entropy:
 
-$$H(x) = \mathbb{E}_{X ~ P}[I(x)] = -\mathbb{E}_{X ~ P}[log P(x)]$$
+$$
+H(x) = \mathbb{E}_{X \sim P}[I(x)] = -\mathbb{E}_{X \sim P}[\log P(x)]
+$$
 
 Sigmoid function:
 
-$$\frac{1}{1 + \exp{-x}}$$
+$$
+\frac{1}{1 + \exp{-x}}
+$$
 
 Euler's identity:
 
-$$e^{i\pi} = -1$$
+$$
+e^{i\pi} = -1
+$$
 
 Classic Greek alphabet:
 

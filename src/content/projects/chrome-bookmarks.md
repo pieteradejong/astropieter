@@ -2,7 +2,6 @@
 title: "Chrome Bookmarks Manager"
 description: "Full-stack bookmark analysis tool with Python FastAPI backend and React frontend for local Chrome bookmark management"
 techStack: ["Python", "FastAPI", "React", "TypeScript", "Mantine", "SQLite"]
-githubUrl: "https://github.com/pieteradejong/chrome-bookmarks"
 keyFeatures: [
   "Local Chrome bookmarks analysis with privacy-first approach",
   "Broken link detection with intelligent error categorization",
