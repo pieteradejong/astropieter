@@ -47,3 +47,8 @@ id_ed25519*
 # SiteGround and hosting credentials
 *.hosting
 hosting-config.*
+preview-terracotta/
+
+# Playwright output
+test-results/
+playwright-report/

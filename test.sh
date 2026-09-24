@@ -84,6 +84,65 @@ else
 	fail "npm audit reports $AUDIT_TOTAL vulnerabilities (run npm audit for details)"
 fi
 
+# Exact pins only (workspace rule): a caret range lets a fresh install pull a
+# different version than the one this suite last passed against.
+RANGED=$(node -e "const p=require('./package.json');const d={...p.dependencies,...p.devDependencies};console.log(Object.entries(d).filter(([,v])=>!/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(v)).map(([k,v])=>k+'@'+v).join(' '))")
+if [ -z "$RANGED" ]; then
+	pass "every dependency is pinned to an exact version"
+else
+	fail "dependency not pinned exactly: $RANGED"
+fi
+
+# What is on disk must be what package.json declares — otherwise every other
+# check in this suite is testing a different site than the one you think.
+DRIFT=$(node -e "const p=require('./package.json');const d={...p.dependencies,...p.devDependencies};const out=[];for(const [k,v] of Object.entries(d)){let i;try{i=require('./node_modules/'+k+'/package.json').version}catch(e){i='missing'}if(i!==v)out.push(k+' declared '+v+', installed '+i)}console.log(out.join('; '))")
+if [ -z "$DRIFT" ]; then
+	pass "installed versions match package.json"
+else
+	fail "node_modules out of sync (run npm install): $DRIFT"
+fi
+
+# npm ls exits non-zero on missing, invalid or unmet (non-optional) peer deps.
+if npm ls --all >/dev/null 2>&1; then
+	pass "dependency tree is consistent (npm ls)"
+else
+	fail "npm ls reports problems in the dependency tree (run npm ls --all)"
+fi
+
+# A dependency nothing imports is upgrade surface with no benefit, and its
+# version number misleads: bumping it changes nothing on the site. (katex and
+# @astrojs/react were both installed and unused until 2026-09.)
+UNUSED=""
+for dep in $(node -e "const p=require('./package.json');console.log(Object.keys({...p.dependencies,...p.devDependencies}).join(' '))"); do
+	if ! grep -rqE "(from|import)\s*['\"]$dep(/[^'\"]*)?['\"]" astro.config.mjs playwright.config.ts src tests 2>/dev/null; then
+		UNUSED="$UNUSED $dep"
+	fi
+done
+if [ -z "$UNUSED" ]; then
+	pass "every dependency is imported somewhere"
+else
+	fail "dependency never imported (remove it):$UNUSED"
+fi
+
+# The math pipeline: remark-math finds $…$ and $$…$$, rehype-katex renders
+# them. Drop either from the config and math silently becomes literal text.
+for plugin in remarkMath rehypeKatex; do
+	if grep -qE "(remark|rehype)Plugins:[^]]*\b$plugin\b" astro.config.mjs; then
+		pass "$plugin is wired into the markdown pipeline"
+	else
+		fail "$plugin is not in astro.config.mjs remark/rehype plugins — LaTeX will not render"
+	fi
+done
+
+# `$$x$$` on one line is *inline* math to remark-math. Display equations need
+# the delimiters on lines of their own. Code blocks are skipped.
+LONE=$(awk 'FNR==1{fence=0} /^[[:space:]]*(```|~~~)/{fence=!fence; next} !fence && /^[[:space:]]*\$\$.+\$\$[[:space:]]*$/{print FILENAME":"FNR}' src/content/blog/*.md src/content/blog/*.mdx 2>/dev/null)
+if [ -z "$LONE" ]; then
+	pass "display math uses \$\$ on their own lines"
+else
+	fail "single-line \$\$…\$\$ renders inline, not as display math: $(echo $LONE)"
+fi
+
 if [ -f src/content/config.ts ]; then
 	fail "legacy src/content/config.ts still present (should be src/content.config.ts)"
 else
@@ -190,6 +249,15 @@ for src_file in src/content/blog/*.md src/content/blog/*.mdx; do
 	fi
 done
 
+# Test fixtures are drafts; nothing from them may reach the production site,
+# its RSS feed or its sitemap.
+FIXTURE_LEAK=$(grep -rl "test-fixture" dist 2>/dev/null | head -3)
+if [ -z "$FIXTURE_LEAK" ]; then
+	pass "no test fixture leaked into the production build"
+else
+	fail "test fixture referenced in production build: $(echo $FIXTURE_LEAK)"
+fi
+
 for src_file in src/content/projects/*.md src/content/projects/*.mdx; do
 	[ -f "$src_file" ] || continue
 	slug=$(basename "$src_file" | sed -E 's/\.(md|mdx)$//')
@@ -243,6 +311,65 @@ if [ -f dist/blog/latex_test/index.html ]; then
 	fi
 else
 	skip "dist/blog/latex_test/index.html not found"
+fi
+
+# The markup comes from whichever katex rehype-katex resolves; the stylesheet
+# comes from a CDN URL in BaseHead. If the two versions differ, math renders
+# with the wrong spacing and fonts while every markup check still passes.
+RENDER_KATEX=$(node -e "console.log(require(require.resolve('katex/package.json',{paths:[require.resolve('rehype-katex')]})).version)" 2>/dev/null)
+KATEX_LINK=$(grep -o '<link[^>]*cdn.jsdelivr.net/npm/katex@[^>]*>' src/components/BaseHead.astro)
+CSS_KATEX=$(echo "$KATEX_LINK" | sed -nE 's#.*katex@([0-9.]+)/.*#\1#p')
+if [ -z "$KATEX_LINK" ]; then
+	fail "no KaTeX stylesheet link in BaseHead.astro"
+elif [ "$CSS_KATEX" = "$RENDER_KATEX" ]; then
+	pass "KaTeX stylesheet version ($CSS_KATEX) matches the renderer's katex ($RENDER_KATEX)"
+else
+	fail "KaTeX stylesheet is v$CSS_KATEX but rehype-katex renders with v$RENDER_KATEX — update the CDN URL and integrity hash in BaseHead.astro"
+fi
+
+KATEX_SRI=$(echo "$KATEX_LINK" | sed -nE 's#.*integrity="([^"]+)".*#\1#p')
+if [ -n "$KATEX_LINK" ] && [ -z "$KATEX_SRI" ]; then
+	fail "KaTeX CDN stylesheet has no integrity (SRI) attribute"
+elif [ -n "$KATEX_SRI" ]; then
+	KATEX_URL=$(echo "$KATEX_LINK" | sed -nE 's#.*href="([^"]+)".*#\1#p')
+	if [ "$OFFLINE" = "1" ]; then
+		skip "KaTeX stylesheet SRI hash check (--offline)"
+	else
+		# Hash the bytes straight from curl: capturing them in a variable first
+		# strips the trailing newline and changes the hash.
+		CSS_FILE=$(mktemp)
+		if ! curl -sfL --max-time 12 -o "$CSS_FILE" "$KATEX_URL" 2>/dev/null || [ ! -s "$CSS_FILE" ]; then
+			skip "KaTeX stylesheet SRI hash check (could not fetch $KATEX_URL)"
+		else
+			ACTUAL_SRI="sha384-$(openssl dgst -sha384 -binary "$CSS_FILE" | openssl base64 -A)"
+			if [ "$ACTUAL_SRI" = "$KATEX_SRI" ]; then
+				pass "KaTeX stylesheet SRI hash matches the CDN file"
+			else
+				fail "KaTeX stylesheet SRI hash does not match the CDN file — the browser will refuse to load it"
+			fi
+		fi
+		rm -f "$CSS_FILE"
+	fi
+fi
+
+if [ -f dist/blog/latex_test/index.html ]; then
+	if grep -q "cdn.jsdelivr.net/npm/katex@$RENDER_KATEX/" dist/blog/latex_test/index.html; then
+		pass "built math page links the matching KaTeX stylesheet"
+	else
+		fail "built math page does not link katex@$RENDER_KATEX stylesheet"
+	fi
+fi
+
+# The build must come from the Astro that is installed — catches a stale dist/
+# or a global astro shadowing the local one.
+ASTRO_INSTALLED=$(node -p "require('./node_modules/astro/package.json').version" 2>/dev/null)
+ASTRO_BUILT=$(grep -ohE '<meta name="generator" content="Astro v[^"]+"' dist/index.html 2>/dev/null | sed -E 's/.*Astro v//; s/"$//')
+if [ -z "$ASTRO_BUILT" ]; then
+	skip "no Astro generator meta in dist/index.html"
+elif [ "$ASTRO_BUILT" = "$ASTRO_INSTALLED" ]; then
+	pass "dist/ was built by the installed Astro v$ASTRO_INSTALLED"
+else
+	fail "dist/ was built by Astro v$ASTRO_BUILT but v$ASTRO_INSTALLED is installed"
 fi
 
 # ---------------------------------------------------------------------------
@@ -612,7 +739,7 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
 	# The preview-terracotta lesson: a gitignored directory holding real source
 	# is work that exists in exactly one place and is invisible to every tool.
 	SHADOW=$(git status --porcelain --ignored 2>/dev/null | awk '$1=="!!"{print $2}' \
-		| grep -vE '^(node_modules|dist|\.astro|\.DS_Store|\.env|\.deploy-env|deploy\.sh)' || true)
+		| grep -vE '^(node_modules|dist|\.astro|\.DS_Store|\.env|\.deploy-env|deploy\.sh|test-results|playwright-report)' || true)
 	for d in $SHADOW; do
 		if [ -d "$d" ] && [ -n "$(find "$d" -name '*.astro' -o -name '*.ts' 2>/dev/null | head -1)" ]; then
 			warn "ignored directory holds source and is not in git: $d"
@@ -741,6 +868,50 @@ if [ "$READY" = "1" ]; then
 	else
 		fail "draft post not reachable in dev mode -> $draft_code (expected 200)"
 	fi
+
+	# -----------------------------------------------------------------------
+	section "Content rendering (browser)"
+	# -----------------------------------------------------------------------
+	# tests/content.spec.ts drives headless Chrome against this dev server:
+	# Markdown/GFM constructs, LaTeX in .md and .mdx, the KaTeX stylesheet and
+	# fonts actually applied, phone-width overflow, and every blog post free of
+	# math errors, leaked LaTeX and console errors. Each test is one line here.
+	PW_JSON=$(mktemp)
+	BASE_URL="http://localhost:4322" PLAYWRIGHT_JSON_OUTPUT_NAME="$PW_JSON" \
+		npx playwright test --reporter=json >/dev/null 2>&1
+	PW_RESULTS=$(node -e "
+		let r; try { r = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); } catch { console.log('ERR\tno Playwright report'); process.exit(); }
+		if (r.errors?.length) { console.log('ERR\t' + r.errors[0].message.split('\n')[0]); }
+		const walk = (s, pre) => {
+			const name = [pre, s.title].filter(Boolean).join(' › ');
+			for (const sp of s.specs ?? []) for (const t of sp.tests) {
+				const res = t.results.at(-1) ?? {};
+				const ok = t.status === 'expected';
+				const why = ok ? '' : (res.errors ?? [res.error]).filter(Boolean).map(e => (e.message ?? '').replace(/\x1b\[[0-9;]*m/g, '').split('\n').find(l => l.trim()) ).join(' | ');
+				console.log((ok ? 'PASS' : 'FAIL') + '\t' + name + ' › ' + sp.title + (why ? ' — ' + why.trim() : ''));
+			}
+			for (const c of s.suites ?? []) walk(c, s.file ? '' : name);
+		};
+		(r.suites ?? []).forEach(s => walk(s, ''));
+	" "$PW_JSON")
+	rm -f "$PW_JSON"
+	if [ -z "$PW_RESULTS" ]; then
+		fail "browser tests produced no results (run: BASE_URL=http://localhost:4322 npx playwright test)"
+	fi
+	while IFS=$'\t' read -r verdict msg; do
+		[ -z "$verdict" ] && continue
+		case "$verdict" in
+			PASS) pass "$msg" ;;
+			FAIL) fail "$msg" ;;
+			ERR)
+				if echo "$msg" | grep -qiE "executable doesn't exist|distribution .* is not found|playwright install"; then
+					skip "browser tests: no Chrome found (set CHROME_PATH, or run npx playwright install chromium)"
+				else
+					fail "browser tests could not run: $msg"
+				fi
+				;;
+		esac
+	done <<< "$PW_RESULTS"
 else
 	fail "dev server did not respond on :4322 within 10s (see $DEV_LOG)"
 	SKIP_COUNT=$((SKIP_COUNT + 12))

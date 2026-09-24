@@ -104,7 +104,29 @@ Key development commands:
 
 ## Testing
 
-Run `./test.sh` for a comprehensive check before deploying: build health, dependency audit, content-collection/draft correctness, RSS feed validity, KaTeX rendering, and a live dev-server smoke test across all main routes. See [Changelog](#changelog) for what it covers in detail.
+Run `./test.sh` before deploying (`./test.sh --offline` skips the network checks). It covers dependency health (exact pins, installed = declared, no unused packages), the production build, drafts and RSS, KaTeX, theme and contrast, accessibility, SEO, outbound links, and a dev-server smoke test. Exits non-zero on any failure.
+
+Its browser section runs `tests/content.spec.ts` (Playwright, headless Chrome) against the dev server: every Markdown/GFM construct, LaTeX in `.md` and `.mdx`, the KaTeX stylesheet and fonts actually applied, no overflow at phone width, and every blog post free of math errors, leaked LaTeX and console errors. The fixtures are draft posts (`src/content/blog/test-fixture-*`), so they are never built for production. To run the browser tests alone, with a dev server already up:
+
+```bash
+BASE_URL=http://localhost:4321 npx playwright test
+```
+
+Playwright uses the installed Chrome (set `CHROME_PATH` if it is somewhere unusual); no browser download is needed.
+
+## Writing LaTeX
+
+Inline math: `$E = mc^2$`. Display math needs the `$$` on lines of their own:
+
+```markdown
+$$
+\int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi}
+$$
+```
+
+`$$x$$` on a single line renders as *inline* math; `test.sh` fails on it. A literal dollar sign is `\$`. Math works the same in `.mdx` posts.
+
+How it works: `remark-math` finds the math, `rehype-katex` renders it with its own bundled `katex`, and `BaseHead.astro` loads the matching KaTeX stylesheet from jsDelivr. When `rehype-katex` moves to a new katex, `test.sh` fails until the stylesheet URL and its `integrity` hash are updated to match.
 
 ## Deployment
 
@@ -137,6 +159,8 @@ chmod +x deploy.sh
 ├── public/               # Static assets
 ├── init.sh               # Initialization script
 ├── test.sh               # Comprehensive pre-deploy test suite
+├── tests/                # Playwright browser tests (content rendering)
+├── playwright.config.ts  # Playwright config (uses installed Chrome)
 ├── deploy.sh.example      # Deployment script template (copy to deploy.sh)
 ├── deploy.sh              # Deployment script — gitignored, per-machine copy
 └── DEPLOYMENT.md          # Full deployment setup instructions
@@ -200,6 +224,15 @@ Requirements/notes for upgrading Astro across major versions (last reviewed: Ast
 Recommended upgrade path: run `npx @astrojs/upgrade` to update Astro and official integrations together, then fix any compiler errors surfaced during build.
 
 ## Changelog
+
+### Dependency refresh and content tests (Sep 2026)
+
+- **Upgraded** `astro` 7.3.1 → 7.3.5, `@astrojs/mdx` 8.0.0 → 8.0.2, `@astrojs/markdown-remark` 7.3.0 → 7.3.1. Every dependency is now pinned exactly (no `^`).
+- **Removed unused `katex` and `@astrojs/react`** — nothing imported either; math is rendered by `rehype-katex`'s own bundled katex.
+- **KaTeX stylesheet fixed** — `BaseHead.astro` loaded the katex 0.15.1 stylesheet while math was rendered by 0.16.47. Now matched, with a verified SRI hash.
+- **Display math fixed** in `LaTeX_test.md` and the information-theory draft: single-line `$$…$$` had been rendering inline.
+- **Removed the `chrome-bookmarks` GitHub link** — the repo is private, so visitors got a 404.
+- **Added Playwright browser tests** (`tests/content.spec.ts`) and stronger dependency, math-pipeline and fixture-leak checks in `test.sh`.
 
 ### Astro 5 → 7 upgrade (Aug 2026)
 
