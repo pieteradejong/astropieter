@@ -52,3 +52,6 @@ preview-terracotta/
 # Playwright output
 test-results/
 playwright-report/
+
+# Vercel project link (vercel link)
+.vercel/

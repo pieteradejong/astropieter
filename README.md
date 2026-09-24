@@ -1,6 +1,6 @@
 # Pieter de Jong - Personal website
 
-Currently deployed at: https://pieterd38.sg-host.com/
+Live at: https://padj.vercel.app/
 
 **This is my main online presence**, aside from [my LinkedIn](https://www.linkedin.com/in/pieteradejong/) and [my GitHub](https://github.com/pieteradejong). The Internet is a large place, and standing out is both critical and hard. This is where I aim to do so.
 
@@ -17,21 +17,7 @@ Currently deployed at: https://pieterd38.sg-host.com/
 
 
 # Maintenance / deployment
-For hosting I use [Siteground](https://www.siteground.com/), and for DNS I use [iwantmyname](https://iwantmyname.com/). 
-
-I use the React-based `Astro.js` framework for development; the for web development standard process of `npm run astro dev` that monitors files for changes so you see all changes reflected immediately on `localhost`; and a custom `.sh` script to use `rsync` to build the site and sync all changes to my Siteground server. 
-
-
-## rsync script
-I run this `$ astrosync` from anywhere to build + sync my site to prod:
-
-```bash
-astrosync() {
-  cd <local_astropieter_dir>
-  npm run astro build
-  rsync -av --delete -e <ssh_key> <local_build_dir> <server_host>
-}
-```
+Built with [Astro](https://astro.build) and hosted on [Vercel](https://vercel.com). `npm run dev` serves the site on `localhost` with live reload; pushing to `main` deploys it. See [Deployment](#deployment).
 
 # TODO 
 Stuff I would like to add in the future:
@@ -130,20 +116,7 @@ How it works: `remark-math` finds the math, `rehype-katex` renders it with its o
 
 ## Deployment
 
-`deploy.sh` is **gitignored** and never committed — not because it holds secrets (it holds none), but so each machine keeps its own copy. Credentials live only in `.deploy-env`, which is also gitignored. See `DEPLOYMENT.md` for full setup instructions.
-
-1. Copy the templates and fill in your own values:
-```bash
-cp deploy.sh.example deploy.sh
-cp .deploy-env.example .deploy-env
-chmod +x deploy.sh
-```
-2. Run the deployment script:
-```bash
-./deploy.sh
-```
-
-`deploy.sh` is the single deploy path: it validates config, builds, aborts on any failure, then rsyncs `dist/` to the host. The `astrosync` shell function is a thin wrapper that calls it, so either command does the same safe thing.
+Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app. There is no deploy script. Vercel does not run the tests, so run `./test.sh` before pushing, and `./test.sh --live https://padj.vercel.app` afterwards to check what is being served. Rollback, configuration and plan limits: `DEPLOYMENT.md`.
 
 ## Project Structure
 
@@ -161,9 +134,8 @@ chmod +x deploy.sh
 ├── test.sh               # Comprehensive pre-deploy test suite
 ├── tests/                # Playwright browser tests (content rendering)
 ├── playwright.config.ts  # Playwright config (uses installed Chrome)
-├── deploy.sh.example      # Deployment script template (copy to deploy.sh)
-├── deploy.sh              # Deployment script — gitignored, per-machine copy
-└── DEPLOYMENT.md          # Full deployment setup instructions
+├── DEPLOYMENT.md          # Vercel hosting, rollback, limits
+└── DECISIONS.md           # Decision log (why Vercel, …)
 ```
 
 ## Content Pipeline

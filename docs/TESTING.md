@@ -1,7 +1,7 @@
 # Testing
 
-One entry point: `./test.sh`. Run it before every deploy — `deploy.sh` does not
-run it for you.
+One entry point: `./test.sh`. Run it before every push to `main` — pushing deploys,
+and Vercel does not run it for you.
 
 ```bash
 ./test.sh              # everything
@@ -78,7 +78,7 @@ since they never pass through `BaseHead` and the fix lives in the source file.
 a check rather than a note. Flags any shipped file over 1 MB, an oversized total
 build, and any Astro starter placeholder still shipping.
 
-**Repository hygiene** — `deploy.sh` gitignored, `.deploy-env` untracked,
+**Repository hygiene** — `.vercel/` gitignored, `site` not left on a dead host,
 LICENSE present, working tree clean, branch level with its remote, and **no
 ignored directory holding source that is not in git**. That last one is the
 `preview-terracotta/` lesson: a complete restyle lived in a gitignored folder,
@@ -103,8 +103,8 @@ returns 200, and confirms drafts *are* reachable in dev.
   artifact served verbatim; only its weight and metadata are checked, not its
   contents.
 - **Cross-browser and mobile rendering.**
-- **Anything about the live site.** All checks run against `dist/` and a local
-  dev server. Nothing verifies what SiteGround is actually serving.
+- **The live site, unless asked.** The default run checks `dist/` and a local dev
+  server. `./test.sh --live <url>` checks what Vercel is actually serving.
 
 ## Gotchas when editing this file
 

@@ -23,10 +23,7 @@ fi
 echo -e "${BLUE}Installing dependencies...${NC}"
 npm install
 
-# Make scripts executable
-chmod +x deploy.sh
-
 echo -e "${GREEN}Initialization complete!${NC}"
 echo -e "To start development, run: ${BLUE}npm run dev${NC}"
 echo -e "To build the site, run: ${BLUE}npm run build${NC}"
-echo -e "To deploy the site, run: ${BLUE}./deploy.sh${NC}" 
+echo -e "To deploy the site, push to main (Vercel builds it; see DEPLOYMENT.md)" 
