@@ -1,0 +1,7 @@
+name: gitleaks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  gitleaks:
+    uses: pieteradejong/dotfiles/.github/workflows/gitleaks-reusable.yml@main
