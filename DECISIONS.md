@@ -35,3 +35,21 @@ Reopen if an app needs an always-on process, which Vercel does not host.
 - Anonymous `curl https://padj.vercel.app/` → `<meta name="generator" content="Astro v7.3.5">`.
 - PARTIAL: a first pageview has not yet been confirmed in the Web Analytics dashboard (it
   lags). Recheck on the next visit to the dashboard.
+
+## 2. Analytics verification for #1 corrected: the API, not the script
+**Date:** 2026-09-25
+**Context:** #1's Verified line counted "`/_vercel/insights/script.js` is served" as analytics
+working. It is not proof: Vercel serves that script whether or not Web Analytics is enabled, and
+on 2026-09-24 at 18:35 EDT the API reported "Web Analytics is not enabled for this project" while
+that check passed. This entry supersedes #1's analytics line and resolves its PARTIAL item. The
+hosting decision in #1 stands.
+**Decision:** analytics counts as working only when the Web Analytics API returns data.
+`./test.sh --live` now queries it with `vercel api` (a window within the last 31 days, as Hobby
+only serves those, rounded to whole days) and fails on "not enabled". The script check stays as
+a separate, weaker signal.
+**Verified:**
+- Analytics was enabled in the dashboard around 19:00 EDT on 2026-09-24.
+- `vercel api "/v1/query/web-analytics/visits/aggregate?…&since=2026-09-24T00:00:00Z&until=2026-09-27T00:00:00Z&by=requestPath"`
+  at 07:59 EDT on 2026-09-25 → `{"requestPath": "/", "visitors": 1, "pageviews": 1}`.
+- `./test.sh --live https://padj.vercel.app` → `14 passed, 0 failed`, including
+  `✓ Web Analytics is enabled and queryable`.
