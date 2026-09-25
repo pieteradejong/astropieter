@@ -168,13 +168,32 @@ if [ -n "$LIVE_URL" ]; then
 		fail "canonical URL is $CANON, not on $LIVE_HOST — update site in astro.config.mjs"
 	fi
 
-	# Vercel serves the analytics script only once Web Analytics is enabled
-	# on the project; the <Analytics /> tag alone records nothing.
+	# Analytics needs the script served AND Web Analytics enabled on the
+	# project. Vercel serves the script either way, so a 200 alone proved
+	# nothing (it passed here while analytics was off); ask the API as well.
 	code=$(curl -s -o /dev/null --max-time 15 -w "%{http_code}" "$LIVE_URL/_vercel/insights/script.js")
 	if [ "$code" = "200" ]; then
 		pass "Vercel Web Analytics script is served"
 	else
-		fail "/_vercel/insights/script.js -> $code — enable Web Analytics on the Vercel project"
+		fail "/_vercel/insights/script.js -> $code"
+	fi
+	PROJECT_ID=$(node -p "require('./.vercel/project.json').projectId" 2>/dev/null)
+	TEAM_ID=$(node -p "require('./.vercel/project.json').orgId" 2>/dev/null)
+	if [ -z "$PROJECT_ID" ] || ! command -v vercel >/dev/null 2>&1; then
+		skip "Web Analytics enabled check (needs the vercel CLI and a vercel link)"
+	else
+		# Hobby only serves the last 31 days, and windows round to whole days, so
+		# ask for [30 days ago, tomorrow) — "until now" rounds down to midnight.
+		VA_SINCE=$(node -p "new Date(Date.now() - 30*864e5).toISOString().slice(0,10)")
+		VA_UNTIL=$(node -p "new Date(Date.now() + 864e5).toISOString().slice(0,10)")
+		VA=$(vercel api "/v1/query/web-analytics/visits/count?projectId=$PROJECT_ID&teamId=$TEAM_ID&since=${VA_SINCE}T00:00:00Z&until=${VA_UNTIL}T00:00:00Z" 2>&1 | sed 's/\x1b\[[0-9;]*m//g')
+		if echo "$VA" | grep -qi "not enabled"; then
+			fail "Web Analytics is not enabled on the Vercel project — nothing is recorded (dashboard: Analytics → Enable)"
+		elif echo "$VA" | grep -qE '"(count|total|visits|pageviews)"'; then
+			pass "Web Analytics is enabled and queryable"
+		else
+			skip "Web Analytics enabled check (unexpected API reply: $(echo "$VA" | tail -1 | cut -c1-80))"
+		fi
 	fi
 
 	section "Content rendering on the live site (browser)"
