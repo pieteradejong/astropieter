@@ -3,6 +3,8 @@
 # and posts the result as a comment on the open "Weekly link report" issue.
 # GitHub emails each comment to the repo owner; the job also fails when links
 # are broken, which sends GitHub's failed-run email.
+# LinkedIn answers every bot with 999, so it is excluded; a browser user-agent
+# avoids 403s from sites that block lychee's default one (e.g. genius.com).
 name: link-report
 on:
   schedule:
@@ -44,6 +46,8 @@ jobs:
             --max-retries 2
             --timeout 20
             --accept 200..=299,429
+            --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36'
+            --exclude '^https://([a-z]+\.)?linkedin\.com/'
             'dist/**/*.html'
             https://padj.vercel.app/
 
@@ -62,13 +66,13 @@ jobs:
             echo
             cat lychee-report.md
           } > body.md
-          num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title \
+          # List without --search: the search index lags, so a just-created issue is not found.
+          num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 200 --json number,title \
             --jq "map(select(.title == \"$title\")) | .[0].number // empty")
           if [ -z "$num" ]; then
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" \
-              --body "Each weekly run of \`.github/workflows/link-report.yml\` comments here. See DECISIONS.md #6."
-            num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title \
-              --jq "map(select(.title == \"$title\")) | .[0].number")
+            url=$(gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" \
+              --body "Each weekly run of \`.github/workflows/link-report.yml\` comments here. See DECISIONS.md #6.")
+            num=${url##*/}
           fi
           gh issue comment "$num" --repo "$GITHUB_REPOSITORY" --body-file body.md
 
