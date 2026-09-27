@@ -419,6 +419,30 @@ for src_file in src/content/projects/*.md src/content/projects/*.mdx; do
 	fi
 done
 
+# Demo flag (DECISIONS.md #3-#5): demoUrl is the only demo field, and the
+# projects page badges exactly the projects that list one.
+if grep -l '^deploymentUrl:' src/content/projects/*.md >/dev/null 2>&1; then
+	fail "deploymentUrl is retired — use demoUrl: $(grep -l '^deploymentUrl:' src/content/projects/*.md | tr '\n' ' ')"
+else
+	pass "no project uses the retired deploymentUrl field"
+fi
+if [ -f dist/projects/index.html ]; then
+	N_PROJECTS=$(ls src/content/projects/*.md src/content/projects/*.mdx 2>/dev/null | wc -l | tr -d ' ')
+	N_DEMO_SRC=$(grep -l '^demoUrl:' src/content/projects/*.md 2>/dev/null | wc -l | tr -d ' ')
+	N_BADGE_YES=$(grep -o 'demo-badge-yes' dist/projects/index.html | wc -l | tr -d ' ')
+	N_ITEMS=$(grep -oE 'data-demo="(yes|no)"' dist/projects/index.html | wc -l | tr -d ' ')
+	if [ "$N_BADGE_YES" = "$N_DEMO_SRC" ]; then
+		pass "projects page shows $N_BADGE_YES 'Live demo' badge(s), matching $N_DEMO_SRC demoUrl entries"
+	else
+		fail "projects page shows $N_BADGE_YES 'Live demo' badge(s) but $N_DEMO_SRC projects list a demoUrl"
+	fi
+	if [ "$N_ITEMS" = "$N_PROJECTS" ]; then
+		pass "every project card ($N_ITEMS) carries a data-demo flag"
+	else
+		fail "$N_ITEMS of $N_PROJECTS project cards carry a data-demo flag"
+	fi
+fi
+
 # ---------------------------------------------------------------------------
 section "RSS feed"
 # ---------------------------------------------------------------------------
@@ -934,9 +958,16 @@ section "Outbound link integrity"
 if [ "$OFFLINE" = "1" ]; then
 	skip "outbound link checks (--offline)"
 else
-	URLS=$(grep -rhoE '^(githubUrl|demoUrl|deploymentUrl):\s*"[^"]+"' src/content/projects/*.md \
+	URLS=$(grep -rhoE '^(githubUrl|demoUrl):\s*"[^"]+"' src/content/projects/*.md \
 		| sed 's/.*"\(.*\)"/\1/' | sort -u)
+	# A listed demo must work (DECISIONS.md #4): a demo that hangs fails, where a
+	# slow source link only warns.
+	DEMO_URLS=$(grep -rhoE '^demoUrl:\s*"[^"]+"' src/content/projects/*.md \
+		| sed 's/.*"\(.*\)"/\1/' | sort -u)
+	# Probe the network once up front: URLs are checked in sorted order, so a dead
+	# demo that sorts before the first reachable host must not read as "no network".
 	NET_OK=0
+	curl -s -o /dev/null --max-time 8 https://github.com 2>/dev/null && NET_OK=1
 	if [ -z "$URLS" ]; then
 		skip "no project URLs to check"
 	else
@@ -958,7 +989,11 @@ else
 						# answer". A demo link that hangs is a real defect — free-tier
 						# hosts cold-start slowly, and a visitor will not wait either.
 						if [ "$NET_OK" = "1" ]; then
-							warn "$url did not respond within 12s (cold start or down) — a demo link that hangs reads as broken"
+							if printf '%s\n' $DEMO_URLS | grep -qxF "$url"; then
+								fail "demo $url did not respond within 12s — a listed demo must work; remove its demoUrl"
+							else
+								warn "$url did not respond within 12s (cold start or down)"
+							fi
 						else
 							skip "$url (no network)"
 						fi

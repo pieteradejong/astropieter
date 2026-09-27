@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Default.astro';
 import Card from '../components/Card.astro';
 import Tag from '../components/Tag.astro';
+import DemoBadge from '../components/DemoBadge.astro';
 
 const allProjects = await getCollection('projects');
 
@@ -15,6 +16,10 @@ const projects = allProjects.sort((a, b) => {
 	}
 	return a.data.title.localeCompare(b.data.title);
 });
+
+// A project "has a demo" only if it lists a demoUrl; test.sh --live fails on a
+// dead one, so the badge can be trusted (DECISIONS.md #4, #5).
+const demoCount = projects.filter((p) => p.data.demoUrl).length;
 ---
 
 <Layout
@@ -24,8 +29,14 @@ const projects = allProjects.sort((a, b) => {
 	<div class="content-container">
 		<section class="projects-section">
 			<h2>Current Projects</h2>
+			<!-- Hidden until the script below runs, so without JS every card shows. -->
+			<div class="demo-filter" role="group" aria-label="Filter projects" hidden>
+				<button type="button" data-filter="all" aria-pressed="true">All ({projects.length})</button>
+				<button type="button" data-filter="demo" aria-pressed="false">With live demo ({demoCount})</button>
+			</div>
 			<div class="grid-container">
 				{projects.map((project) => (
+					<div class="project-item" data-demo={project.data.demoUrl ? 'yes' : 'no'}>
 					<Card 
 						title={project.data.title}
 						subtitle={project.data.description}
@@ -33,7 +44,10 @@ const projects = allProjects.sort((a, b) => {
 						showExpandButton={true}
 					>
 						<div class="project-content">
-							<!-- Tech stack - always visible -->
+							<!-- Demo status and tech stack - always visible -->
+							<div class="demo-status">
+								<DemoBadge hasDemo={Boolean(project.data.demoUrl)} />
+							</div>
 							<div class="tech-stack">
 								{project.data.techStack.map((tech) => (
 									<Tag text={tech} />
@@ -50,11 +64,6 @@ const projects = allProjects.sort((a, b) => {
 								{project.data.githubUrl && (
 									<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
 										Source Code →
-									</a>
-								)}
-								{project.data.deploymentUrl && (
-									<a href={project.data.deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-										Demo →
 									</a>
 								)}
 								{project.data.demoUrl && (
@@ -83,11 +92,41 @@ const projects = allProjects.sort((a, b) => {
 							</div>
 						</div>
 					</Card>
+					</div>
 				))}
 			</div>
 		</section>
 	</div>
 </Layout>
+
+<script>
+	// Demo filter (DECISIONS.md #5). State lives in ?demo=1 so a filtered view is linkable.
+	const filter = document.querySelector<HTMLElement>('.demo-filter');
+	const items = document.querySelectorAll<HTMLElement>('.project-item');
+	if (filter) {
+		const buttons = filter.querySelectorAll<HTMLButtonElement>('button[data-filter]');
+		const apply = (demoOnly: boolean) => {
+			items.forEach((item) => {
+				item.hidden = demoOnly && item.dataset.demo !== 'yes';
+			});
+			buttons.forEach((b) => {
+				b.setAttribute('aria-pressed', String((b.dataset.filter === 'demo') === demoOnly));
+			});
+		};
+		buttons.forEach((b) => {
+			b.addEventListener('click', () => {
+				const demoOnly = b.dataset.filter === 'demo';
+				apply(demoOnly);
+				const url = new URL(location.href);
+				if (demoOnly) url.searchParams.set('demo', '1');
+				else url.searchParams.delete('demo');
+				history.replaceState(null, '', url);
+			});
+		});
+		apply(new URLSearchParams(location.search).get('demo') === '1');
+		filter.hidden = false;
+	}
+</script>
 
 
 
@@ -106,6 +145,43 @@ const projects = allProjects.sort((a, b) => {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+	}
+
+	.demo-filter {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.demo-filter[hidden],
+	.project-item[hidden] {
+		display: none;
+	}
+
+	.demo-filter button {
+		font: inherit;
+		font-size: 0.95rem;
+		padding: 0.35em 0.9em;
+		background: var(--card-bg);
+		color: var(--secondary-text);
+		border: 1px solid var(--border);
+		cursor: pointer;
+	}
+
+	.demo-filter button[aria-pressed='true'] {
+		font-weight: 600;
+		color: var(--accent);
+		border-color: var(--accent);
+	}
+
+	.demo-filter button:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	.demo-status {
+		margin-bottom: 0.75rem;
 	}
 
 	.tech-stack {

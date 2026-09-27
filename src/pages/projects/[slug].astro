@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Default.astro';
 import Tag from '../../components/Tag.astro';
+import DemoBadge from '../../components/DemoBadge.astro';
 
 export async function getStaticPaths() {
 	const projects = await getCollection('projects');
@@ -12,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 const project = Astro.props;
-const { title, description, techStack, githubUrl, demoUrl, deploymentUrl, keyFeatures, technicalHighlights, impact, tags } = project.data;
+const { title, description, techStack, githubUrl, demoUrl, keyFeatures, technicalHighlights, impact, tags } = project.data;
 const { Content } = await render(project);
 ---
 
@@ -22,22 +23,20 @@ const { Content } = await render(project);
 			<h1>{title}</h1>
 			<p class="description">{description}</p>
 			
+			<div class="demo-status">
+				<DemoBadge hasDemo={Boolean(demoUrl)} />
+			</div>
 			<div class="tech-stack">
 				{techStack.map((tech) => (
 					<Tag text={tech} />
 				))}
 			</div>
 
-			{(githubUrl || deploymentUrl || demoUrl) && (
+			{(githubUrl || demoUrl) && (
 				<div class="project-links">
 					{githubUrl && (
 						<a href={githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
 							View Source Code →
-						</a>
-					)}
-					{deploymentUrl && (
-						<a href={deploymentUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
-							Demo →
 						</a>
 					)}
 					{demoUrl && (
@@ -108,6 +107,10 @@ const { Content } = await render(project);
 		font-size: 1.2rem;
 		line-height: 1.6;
 		margin: 0 0 1.5rem 0;
+	}
+
+	.demo-status {
+		margin-bottom: 0.75rem;
 	}
 
 	.tech-stack {

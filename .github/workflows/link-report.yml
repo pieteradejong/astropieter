@@ -1,0 +1,79 @@
+# Weekly broken-link report (DECISIONS.md #6).
+# Builds the site, checks every link in it plus the live homepage with lychee,
+# and posts the result as a comment on the open "Weekly link report" issue.
+# GitHub emails each comment to the repo owner; the job also fails when links
+# are broken, which sends GitHub's failed-run email.
+name: link-report
+on:
+  schedule:
+    - cron: '0 13 * * 1' # Mondays 13:00 UTC (09:00 EDT)
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: link-report
+  cancel-in-progress: false
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx astro build
+
+      - name: Check links
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          fail: false
+          jobSummary: true
+          output: lychee-report.md
+          args: >-
+            --no-progress
+            --root-dir ${{ github.workspace }}/dist
+            --max-retries 2
+            --timeout 20
+            --accept 200..=299,429
+            'dist/**/*.html'
+            https://padj.vercel.app/
+
+      - name: Post report to the weekly issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXIT_CODE: ${{ steps.lychee.outputs.exit_code }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Weekly link report"
+          if [ "$EXIT_CODE" = "0" ]; then status="✅ 0 broken links"; else status="❌ broken links found (lychee exit $EXIT_CODE)"; fi
+          {
+            echo "## $status — $(date -u +%Y-%m-%d)"
+            echo
+            echo "Run: $RUN_URL"
+            echo
+            cat lychee-report.md
+          } > body.md
+          num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title \
+            --jq "map(select(.title == \"$title\")) | .[0].number // empty")
+          if [ -z "$num" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" \
+              --body "Each weekly run of \`.github/workflows/link-report.yml\` comments here. See DECISIONS.md #6."
+            num=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "\"$title\" in:title" --json number,title \
+              --jq "map(select(.title == \"$title\")) | .[0].number")
+          fi
+          gh issue comment "$num" --repo "$GITHUB_REPOSITORY" --body-file body.md
+
+      - name: Fail on broken links
+        if: steps.lychee.outputs.exit_code != '0'
+        run: |
+          echo "::error::lychee found broken links — see the job summary or the weekly issue"
+          exit 1

@@ -1,0 +1,16 @@
+---
+// Whether a project has a working live demo. DECISIONS.md #5.
+import Tag from './Tag.astro';
+
+interface Props {
+    hasDemo: boolean;
+}
+
+const { hasDemo } = Astro.props;
+---
+
+<Tag
+    text={hasDemo ? 'Live demo' : 'Source only'}
+    variant={hasDemo ? 'accent' : 'default'}
+    className={hasDemo ? 'demo-badge demo-badge-yes' : 'demo-badge demo-badge-no'}
+/>

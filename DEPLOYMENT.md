@@ -37,3 +37,16 @@ The same thing is in the dashboard under the project's Deployments tab.
 
 Hobby (free) plan: personal, non-commercial use only. Move to Pro when anything hosted here
 starts serving paying users.
+
+## Link report
+
+A weekly GitHub Actions job (`.github/workflows/link-report.yml`, Mondays 13:00 UTC) builds the
+site and checks every link in it, plus the live homepage, with lychee. Why: `DECISIONS.md` #6.
+
+- **Where the report lands:** a comment on the open issue "Weekly link report". GitHub emails you
+  each comment. The job also fails when a link is broken, which sends GitHub's failed-run email.
+- **Run it now:** `gh workflow run link-report.yml && gh run watch`
+- **Noise:** a host that rejects bots can be excluded with `--exclude <regex>` in the workflow's
+  `args`.
+- **60-day rule:** GitHub disables scheduled workflows in a public repo after 60 days without a
+  commit. It emails a warning first, and any push re-enables the schedule.
