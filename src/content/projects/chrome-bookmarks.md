@@ -1,24 +1,23 @@
 ---
-title: "Chrome Bookmarks Manager"
-description: "Full-stack bookmark analysis tool with Python FastAPI backend and React frontend for local Chrome bookmark management"
-techStack: ["Python", "FastAPI", "React", "TypeScript", "Mantine", "SQLite"]
+title: "Chrome Bookmark Assistant"
+description: "A Chrome extension that finds broken bookmarks without flagging every login page and bot wall as dead"
+techStack: ["JavaScript", "Chrome Extensions (Manifest V3)", "Jest"]
 keyFeatures: [
-  "Local Chrome bookmarks analysis with privacy-first approach",
-  "Broken link detection with intelligent error categorization",
-  "Duplicate bookmark identification and cleanup suggestions",
-  "CLI and web interface for flexible bookmark management",
-  "Real-time bookmark statistics and usage pattern analysis"
+  "Checks every bookmark and sorts the results into broken, login-required and available",
+  "Scheduled background scans, with a toolbar badge when something new breaks",
+  "Review results in the popup and delete bookmarks one at a time or in bulk"
 ]
 technicalHighlights: [
-  "Clean architecture with separation of concerns",
-  "Multi-level caching strategy with 7-day TTL",
-  "Type-safe development with Python 3.9+ and TypeScript",
-  "Efficient in-memory processing for thousands of bookmarks",
-  "Comprehensive error handling and categorization system"
+  "Only 404, 410 and DNS failures count as broken; 401, 403, 429 and LinkedIn's 999 are treated as login walls, not dead links",
+  "Runs in a Manifest V3 service worker, with scans scheduled through the alarms API",
+  "Jest tests for the checker, scanner and tagger"
 ]
-impact: "Demonstrates full-stack development skills with focus on clean architecture, type safety, and privacy-conscious design for personal productivity tools."
-tags: ["full-stack", "fastapi", "react", "typescript", "data-analysis", "productivity", "privacy"]
+impact: "A naive link checker reports half of a bookmark list as broken. Telling a dead link from a login wall is what makes the result usable."
+tags: ["browser-extension", "productivity", "privacy"]
 status: "active"
+order: 5
+hero: "../../assets/projects/chrome-bookmarks.jpg"
+heroAlt: "Chrome Bookmark Assistant results: 1803 working, 92 needing review, 18 behind a login"
 ---
 
-A comprehensive bookmark management tool that analyzes local Chrome bookmarks through both CLI and web interfaces. Features broken link detection, duplicate identification, and usage analytics while maintaining complete privacy through local-only operation. 
+Started as a Python and React app that read Chrome's bookmarks file, then rebuilt as an extension so it can use the bookmarks API directly and run on a schedule. Everything runs locally in the browser. The source is private for now.

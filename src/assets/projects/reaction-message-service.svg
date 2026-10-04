@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img"><title>Pipeline: fans send emoji reactions to a Go service, which writes them to Kafka; Spark counts each emoji in 2-second windows and writes totals to a second Kafka topic; a Go broadcaster streams the totals to every viewer over Server-Sent Events.</title>
+<style>
+  .bg{fill:#FAF7F0} .lane{fill:#F2EDE3} .box{fill:#FDFBF6;stroke:#D9D0C1;stroke-width:2}
+  .hot{fill:#FDFBF6;stroke:#C15F3C;stroke-width:3}
+  .t{fill:#2B2724;font:600 30px -apple-system,'Helvetica Neue',Arial,sans-serif}
+  .s{fill:#6B635B;font:22px -apple-system,'Helvetica Neue',Arial,sans-serif}
+  .m{fill:#8F3E23;font:20px ui-monospace,Menlo,monospace}
+  .lab{fill:#6B635B;font:600 20px -apple-system,'Helvetica Neue',Arial,sans-serif;letter-spacing:.16em}
+  .ttl{fill:#2B2724;font:italic 44px Georgia,'Times New Roman',serif}
+  .a{stroke:#8F3E23;stroke-width:3;fill:none} .ah{fill:#8F3E23}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#1C1917} .lane{fill:#26221F} .box{fill:#232019;stroke:#3D3833} .hot{fill:#232019;stroke:#E08D6B}
+    .t{fill:#EDE6DA} .s,.lab{fill:#A39A8D} .m{fill:#F0AC8E} .ttl{fill:#EDE6DA}
+    .a{stroke:#F0AC8E} .ah{fill:#F0AC8E}
+  }
+</style><rect class="bg" width="1600" height="1000"/><text class="ttl" x="70" y="100">Live Emoji Reactions</text><rect class="lane" x="40" y="150" width="1520" height="330" rx="14"/><text class="lab" x="70" y="190">INGEST AND COUNT</text>
+<rect class="lane" x="40" y="570" width="1520" height="330" rx="14"/><text class="lab" x="70" y="610">FAN-OUT</text>
+<rect class="box" x="70" y="230" width="300" height="176" rx="10"/>
+<text class="t" x="220.0" y="280" text-anchor="middle">Fans</text>
+<text class="s" x="220.0" y="316" text-anchor="middle">tap an emoji</text>
+<text class="s" x="220.0" y="344" text-anchor="middle">during the game</text>
+<rect class="box" x="450" y="230" width="300" height="176" rx="10"/>
+<text class="t" x="600.0" y="280" text-anchor="middle">Go service</text>
+<text class="s" x="600.0" y="316" text-anchor="middle">retry with backoff</text>
+<text class="s" x="600.0" y="344" text-anchor="middle">+ jitter</text>
+<text class="m" x="600.0" y="388" text-anchor="middle">POST /reaction</text>
+<rect class="box" x="830" y="230" width="300" height="176" rx="10"/>
+<text class="t" x="980.0" y="280" text-anchor="middle">Kafka</text>
+<text class="s" x="980.0" y="316" text-anchor="middle">keyed by emoji</text>
+<text class="m" x="980.0" y="388" text-anchor="middle">emoji-submission</text>
+<rect class="hot" x="1210" y="230" width="300" height="176" rx="10"/>
+<text class="t" x="1360.0" y="280" text-anchor="middle">Spark</text>
+<text class="s" x="1360.0" y="316" text-anchor="middle">Structured Streaming</text>
+<text class="s" x="1360.0" y="344" text-anchor="middle">count per emoji</text>
+<text class="m" x="1360.0" y="388" text-anchor="middle">window: 2 s</text>
+<rect class="box" x="1210" y="650" width="300" height="176" rx="10"/>
+<text class="t" x="1360.0" y="700" text-anchor="middle">Kafka</text>
+<text class="s" x="1360.0" y="736" text-anchor="middle">running totals</text>
+<text class="m" x="1360.0" y="808" text-anchor="middle">emoji-counts</text>
+<rect class="box" x="830" y="650" width="300" height="176" rx="10"/>
+<text class="t" x="980.0" y="700" text-anchor="middle">Go broadcaster</text>
+<text class="s" x="980.0" y="736" text-anchor="middle">one channel</text>
+<text class="s" x="980.0" y="764" text-anchor="middle">per client</text>
+<text class="m" x="980.0" y="808" text-anchor="middle">GET /events</text>
+<rect class="box" x="450" y="650" width="300" height="176" rx="10"/>
+<text class="t" x="600.0" y="700" text-anchor="middle">Every viewer</text>
+<text class="s" x="600.0" y="736" text-anchor="middle">live counts</text>
+<text class="s" x="600.0" y="764" text-anchor="middle">in the browser</text>
+<path class="a" d="M370,318 L450,318"/>
+<path class="ah" d="M450,318 L435.6,325.0 L435.6,311.0 Z"/>
+<path class="a" d="M750,318 L830,318"/>
+<path class="ah" d="M830,318 L815.6,325.0 L815.6,311.0 Z"/>
+<path class="a" d="M1130,318 L1210,318"/>
+<path class="ah" d="M1210,318 L1195.6,325.0 L1195.6,311.0 Z"/>
+<path class="a" d="M1360.0,406 L1360.0,650"/>
+<path class="ah" d="M1360.0,650 L1353.0,635.6 L1367.0,635.6 Z"/>
+<path class="a" d="M1210,738 L1130,738"/>
+<path class="ah" d="M1130,738 L1144.4,731.0 L1144.4,745.0 Z"/>
+<path class="a" d="M830,738 L750,738"/>
+<path class="ah" d="M750,738 L764.4,731.0 L764.4,745.0 Z"/>
+<text class="m" x="790.0" y="724.0" text-anchor="middle">SSE</text>
+<text class="s" x="220.0" y="730" text-anchor="middle">all of it in</text><text class="s" x="220.0" y="760" text-anchor="middle">Docker Compose</text></svg>

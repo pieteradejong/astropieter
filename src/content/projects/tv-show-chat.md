@@ -1,26 +1,25 @@
 ---
 title: "TV Show Chat"
-description: "Semantic search and chat application for TV show content using vector embeddings and natural language queries"
-techStack: ["Python", "FastAPI", "React", "TypeScript", "Redis", "Sentence Transformers", "HuggingFace"]
+description: "Ask plain-English questions about all 144 episodes of Buffy the Vampire Slayer, answered by semantic search over episode embeddings"
+techStack: ["Python", "FastAPI", "ChromaDB", "Sentence Transformers", "React", "TypeScript"]
 githubUrl: "https://github.com/pieteradejong/tvshowchat"
 keyFeatures: [
-  "Natural language querying of Buffy the Vampire Slayer episodes",
-  "Semantic search using vector embeddings with all-MiniLM-L6-v2 model",
-  "Document-based storage with automatic backups and versioning",
-  "Real-time chat interface with WebSocket support",
-  "Comprehensive episode metadata including cast, production, and story elements"
+  "Natural-language search across all 7 seasons and 144 episodes",
+  "Series timeline and per-character views alongside the search results",
+  "A chat interface, still a prototype, on top of the search API"
 ]
 technicalHighlights: [
-  "Advanced vector search using Redis with cosine similarity matching",
-  "Web scraping pipeline for automated content collection from buffy.fandom.com",
-  "Modular architecture with clear separation of concerns",
-  "Performance-optimized embeddings (384 dimensions, <100ms response time)",
-  "Comprehensive health checks and automated testing framework"
+  "Episode data crawled from buffy.fandom.com into a file-based document store, which stays the canonical copy",
+  "ChromaDB is rebuilt from that store on first startup; it replaced an earlier Redis vector index",
+  "Embeddings from all-MiniLM-L6-v2 (384 dimensions), loaded only when first needed",
+  "The test script checks that the document store and ChromaDB agree on the episode count"
 ]
-impact: "Demonstrates advanced NLP and vector search capabilities combined with full-stack development, showcasing expertise in semantic search, data pipeline engineering, and modern web application architecture."
-tags: ["semantic-search", "vector-embeddings", "nlp", "fastapi", "react", "redis", "websockets", "data-pipeline"]
+impact: "Retrieval over a small, closed corpus that many people know well, so a wrong answer is easy to spot."
+tags: ["semantic-search", "vector-embeddings", "nlp", "data-pipeline"]
 status: "active"
-order: 1
+order: 2
+hero: "../../assets/projects/tv-show-chat.svg"
+heroAlt: "TV Show Chat pipeline: episode pages are crawled into a document store, embedded, and indexed in ChromaDB; each question is embedded and matched against that index"
 ---
 
-A sophisticated semantic search and chat application that allows users to interact with TV show content through natural language queries. Features advanced vector embeddings, real-time chat capabilities, and comprehensive episode analysis for Buffy the Vampire Slayer. 
+Ask about a plot point and get the matching episodes back, ranked by similarity. The pipeline crawls episode pages, stores each one as a document, embeds it, and serves similarity search through a FastAPI backend to a React front end.

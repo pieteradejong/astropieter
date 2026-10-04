@@ -1,25 +1,25 @@
 ---
-title: "Sports Game Sentiment Broadcast Service"
-description: "A Go-based microservice for real-time emoji reactions using Kafka for event streaming"
-techStack: ["Go", "Apache Kafka", "REST API", "Event-Driven"]
+title: "Live Emoji Reactions"
+description: "Fans send emoji reactions during a game; Kafka and Spark count them in 2-second windows, and the totals stream back to every viewer"
+techStack: ["Go", "Apache Kafka", "Apache Spark", "Server-Sent Events", "Docker Compose"]
 githubUrl: "https://github.com/pieteradejong/go-service"
 keyFeatures: [
-  "Real-time emoji reaction processing",
-  "Fault-tolerant message handling with retry mechanisms",
-  "Health monitoring endpoints",
-  "Event-driven architecture using Kafka",
-  "Production-grade error handling and logging"
+  "A Go service accepts reactions over HTTP and writes them to Kafka",
+  "Spark Structured Streaming counts each emoji per 2-second window",
+  "A second Go service reads the counts and pushes them to browsers over Server-Sent Events",
+  "A Python script simulates a crowd of users for load"
 ]
 technicalHighlights: [
-  "Implemented exponential backoff with jitter for reliable message delivery",
-  "Designed RESTful API with proper HTTP status codes and content types",
-  "Built with scalability in mind using message queue architecture",
-  "Structured logging and health check monitoring",
-  "Clean code organization with separation of concerns"
+  "Kafka writes retry with exponential backoff plus random jitter",
+  "Reactions are keyed by emoji, so each emoji's events stay in order within a partition",
+  "Docker Compose brings up ZooKeeper, Kafka, Spark and both services"
 ]
-impact: "Demonstrates practical implementation of distributed systems and event-driven architecture, showcasing production-ready microservice design"
-tags: ["microservices", "distributed-systems", "event-driven", "go", "kafka", "api-design"]
-status: "active"
+impact: "A small, complete streaming pipeline built to learn Go and Kafka: ingest, windowed aggregation, and fan-out to live clients."
+tags: ["distributed-systems", "event-driven", "streaming", "go", "kafka"]
+status: "completed"
+order: 4
+hero: "../../assets/projects/reaction-message-service.svg"
+heroAlt: "Live Emoji Reactions pipeline: a Go service writes reactions to Kafka, Spark counts them in 2-second windows, and a Go broadcaster streams totals to viewers over SSE"
 ---
 
-A Go-based microservice that processes real-time emoji reactions using Kafka for event streaming. This project showcases practical implementation of distributed systems and event-driven architecture, with a focus on production-ready microservice design. 
+Picture a stadium screen showing how the crowd feels in real time. Reactions go in through one Go service, Spark tallies them every two seconds, and a second Go service broadcasts the running counts to anyone watching.

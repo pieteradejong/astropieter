@@ -28,7 +28,7 @@ const blog = defineCollection({
 
 const projects = defineCollection({
 	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/projects' }),
-	schema: z.object({
+	schema: ({ image }) => z.object({
 		title: z.string(),
 		description: z.string(),
 		// Project-specific fields
@@ -44,7 +44,10 @@ const projects = defineCollection({
 		endDate: z.string().optional(),
 		status: z.enum(['active', 'completed', 'archived']).default('active'),
 		order: z.number().optional(), // Display order (lower numbers appear first)
-	}),
+		// Screenshot or diagram shown on the card and the detail page.
+		hero: image().optional(),
+		heroAlt: z.string().optional(),
+	}).refine((d) => !d.hero || d.heroAlt, { message: 'hero needs heroAlt', path: ['heroAlt'] }),
 });
 
 export const collections = {

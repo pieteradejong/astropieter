@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Default.astro';
 import Card from '../components/Card.astro';
 import Tag from '../components/Tag.astro';
@@ -44,6 +45,11 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 						showExpandButton={true}
 					>
 						<div class="project-content">
+							{project.data.hero && (
+								<a href={`/projects/${project.id}`} class="project-hero" tabindex="-1">
+									<Image src={project.data.hero} alt={project.data.heroAlt ?? ''} widths={[480, 800, 1200]} sizes="(max-width: 800px) 100vw, 800px" />
+								</a>
+							)}
 							<!-- Demo status and tech stack - always visible -->
 							<div class="demo-status">
 								<DemoBadge hasDemo={Boolean(project.data.demoUrl)} />
@@ -56,11 +62,9 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 
 							<!-- Project links - always visible -->
 							<div class="project-links">
-								{project.id !== 'python-react-base-app' && (
-									<a href={`/projects/${project.id}`} class="secondary-link">
-										View Details →
-									</a>
-								)}
+								<a href={`/projects/${project.id}`} class="secondary-link">
+									View Details →
+								</a>
 								{project.data.githubUrl && (
 									<a href={project.data.githubUrl} class="secondary-link" target="_blank" rel="noopener noreferrer">
 										Source Code →
@@ -182,6 +186,20 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 
 	.demo-status {
 		margin-bottom: 0.75rem;
+	}
+
+	.project-hero {
+		display: block;
+		border: 1px solid var(--border);
+		overflow: hidden;
+	}
+
+	.project-hero img {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
 	}
 
 	.tech-stack {

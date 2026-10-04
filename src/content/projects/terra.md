@@ -19,6 +19,9 @@ technicalHighlights: [
 impact: "A situational-awareness globe built from public data: where the internet physically runs, where seaborne trade squeezes, and what is moving right now."
 tags: ["three.js", "webgl", "shaders", "geospatial", "visualization", "infrastructure"]
 status: "active"
+order: 1
+hero: "../../assets/projects/terra.jpg"
+heroAlt: "Terra showing the North Atlantic from above the Arctic: the day side with clouds, the night side with city lights, and submarine cables in blue"
 ---
 
 A real-time model of Earth with the world's physical infrastructure drawn on top. The planet itself is shaded from physics — a ray-marched atmosphere gives the blue limb and the red terminator — and the layers above it come from public data: TeleGeography's cable map, EIA chokepoint flows, and, in local mode, live aircraft, ship and earthquake feeds.
