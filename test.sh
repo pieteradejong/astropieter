@@ -197,8 +197,9 @@ if [ -n "$LIVE_URL" ]; then
 	fi
 
 	section "Content rendering on the live site (browser)"
-	# Fixtures are drafts and never deployed, so only the every-post test applies.
-	run_browser_tests "$LIVE_URL" "Every blog post"
+	# Fixtures are drafts and never deployed, so only the every-post and
+	# projects tests apply.
+	run_browser_tests "$LIVE_URL" "Every blog post|Projects"
 	summary
 fi
 
@@ -441,7 +442,36 @@ if [ -f dist/projects/index.html ]; then
 	else
 		fail "$N_ITEMS of $N_PROJECTS project cards carry a data-demo flag"
 	fi
+	N_DETAILS=$(grep -oE 'href="/projects/[^"]+" class="secondary-link"' dist/projects/index.html | sort -u | wc -l | tr -d ' ')
+	if [ "$N_DETAILS" = "$N_PROJECTS" ]; then
+		pass "every project card links to its detail page"
+	else
+		fail "$N_DETAILS of $N_PROJECTS project cards link to their detail page"
+	fi
 fi
+
+# Hero images: each entry's hero is on its card and its detail page, with
+# alt text, served through astro:assets (rasters converted to WebP) rather
+# than as the original file.
+for src_file in src/content/projects/*.md src/content/projects/*.mdx; do
+	[ -f "$src_file" ] || continue
+	grep -q '^hero:' "$src_file" || continue
+	slug=$(basename "$src_file" | sed -E 's/\.(md|mdx)$//')
+	card=$(tr '\n' ' ' < dist/projects/index.html 2>/dev/null | grep -oE "href=\"/projects/$slug\" class=\"project-hero\"[^>]*> *<img[^>]*>")
+	detail=$(tr '\n' ' ' < "dist/projects/$slug/index.html" 2>/dev/null | grep -oE '<figure class="project-hero"[^>]*> *<img[^>]*>')
+	bad=""
+	for img in "$card" "$detail"; do
+		where=$([ "$img" = "$card" ] && echo card || echo "detail page")
+		if [ -z "$img" ]; then bad="$bad; no hero on the $where"; continue; fi
+		echo "$img" | grep -qE 'alt="[^"]+"' || bad="$bad; empty alt on the $where"
+		echo "$img" | grep -qE 'src="/_astro/[^"]+\.(webp|avif|svg)"' || bad="$bad; $where hero is not an optimized asset"
+	done
+	if [ -z "$bad" ]; then
+		pass "project '$slug' shows its hero on the card and the detail page"
+	else
+		fail "project '$slug' hero: ${bad#; }"
+	fi
+done
 
 # ---------------------------------------------------------------------------
 section "RSS feed"
@@ -761,8 +791,9 @@ for path in files:
         print(f'FAIL|{name}: empty body — the detail page would render blank')
 
     # A portfolio of visual work that ships no images shows the reader nothing.
-    if not re.search(r'^(hero|screenshots):', fm, re.M):
-        print(f'WARN|{name}: no hero or screenshots — the entry is text-only')
+    # Every entry has one since the hero field landed, so a new one must too.
+    if not re.search(r'^hero:', fm, re.M):
+        print(f'FAIL|{name}: no hero image — the entry is text-only')
 PYCONTENT
 )
 while IFS='|' read -r verdict msg; do
@@ -1048,11 +1079,12 @@ if [ "$READY" = "1" ]; then
 	# tests/content.spec.ts drives headless Chrome against this dev server:
 	# Markdown/GFM constructs, LaTeX in .md and .mdx, the KaTeX stylesheet and
 	# fonts actually applied, phone-width overflow, and every blog post free of
-	# math errors, leaked LaTeX and console errors. Each test is one line here.
+	# math errors, leaked LaTeX and console errors, and every project hero
+	# loading on the index and its detail page. Each test is one line here.
 	run_browser_tests "http://localhost:4322"
 else
 	fail "dev server did not respond on :4322 within 10s (see $DEV_LOG)"
-	SKIP_COUNT=$((SKIP_COUNT + 12))
+	SKIP_COUNT=$((SKIP_COUNT + 14))
 fi
 
 cleanup

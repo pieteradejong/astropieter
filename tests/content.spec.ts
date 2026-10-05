@@ -127,6 +127,47 @@ test.describe('MDX fixture', () => {
 	});
 });
 
+// Every image that decoded has a natural width; a broken src leaves it at 0.
+const brokenImages = (page: Page, selector: string) =>
+	page.locator(selector).evaluateAll((imgs) =>
+		(imgs as HTMLImageElement[]).filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.currentSrc || i.src),
+	);
+
+test.describe('Projects', () => {
+	test('every card hero loads, and the index fits a phone', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 800 });
+		const problems = await openClean(page, '/projects/');
+		const heroes = page.locator('.project-hero img');
+		expect(await heroes.count(), 'no hero images on /projects/').toBeGreaterThan(0);
+		// Card heroes are lazy; scroll each into view so it actually loads.
+		for (const img of await heroes.all()) {
+			await img.scrollIntoViewIfNeeded();
+			await expect(img).toHaveJSProperty('complete', true);
+		}
+		expect(await brokenImages(page, '.project-hero img')).toEqual([]);
+		const { scroll, client } = await page.evaluate(() => ({
+			scroll: document.documentElement.scrollWidth,
+			client: document.documentElement.clientWidth,
+		}));
+		expect(scroll, 'page is wider than the viewport').toBeLessThanOrEqual(client);
+		expect(problems).toEqual([]);
+	});
+
+	test('every detail page renders its hero with no console errors', async ({ page }) => {
+		const index = await (await page.request.get('/projects/')).text();
+		const hrefs = [...new Set([...index.matchAll(/href="(\/projects\/[^/"]+\/?)"/g)].map((m) => m[1]))];
+		expect(hrefs.length, 'no projects linked from /projects/').toBeGreaterThan(0);
+		for (const href of hrefs) {
+			const problems = await openClean(page, href);
+			const hero = page.locator('figure.project-hero img');
+			expect.soft(await hero.count(), `${href}: no hero`).toBe(1);
+			expect.soft(await brokenImages(page, 'figure.project-hero img'), `${href}: hero did not load`).toEqual([]);
+			expect.soft(problems, `${href}: console or network errors`).toEqual([]);
+			page.removeAllListeners();
+		}
+	});
+});
+
 test.describe('Every blog post', () => {
 	test('renders cleanly: no math errors, no leaked LaTeX, no console errors', async ({ page }) => {
 		// Read the index as HTML rather than a live page, so a dev-server reload
