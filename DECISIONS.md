@@ -413,4 +413,8 @@ Reopen if the site ever builds from something other than a git commit.
   pieteradejong/astropieter, production branch main`.
 - `./test.sh --offline` in a cleared environment → `176 passed, 0 failed, 9 warnings, 2 skipped`,
   including the nine new "Deployment pipeline" checks and the two Terra reduced-motion tests.
-- CI: NOT YET. Needs the push: `site / live` green with `✓ production serves origin/main`.
+- Push 4aabb1f: `site / tests` run 38639999743 `success` (2m28s); `site / live` run 38640032517
+  `success` (2m34s) with `✓ production serves origin/main (4aabb1f)`, `62 passed, 0 failed, 1
+  skipped` (the Vercel API checks need a CLI login the runner does not have).
+- Local, once production served the new stamp: `./test.sh --live https://padj.vercel.app` →
+  `64 passed, 0 failed, 0 warnings, 0 skipped`.
