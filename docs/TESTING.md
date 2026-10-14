@@ -41,7 +41,8 @@ no unused `@astrojs/tailwind`, no lowercase route handlers (`get` instead of
 **Production build** — exits clean, no `[ERROR]`, no deprecation warnings.
 
 **Build output** — every expected page exists; every published post and project
-has a detail page; every draft is *absent* from the production build.
+has a detail page; every draft is *absent* from the production build; the
+`build-commit` stamp in `dist/index.html` is HEAD.
 
 **RSS feed** — well-formed XML, no drafts, no `undefined` values.
 
@@ -93,6 +94,14 @@ ignored directory holding source that is not in git**. That last one is the
 in exactly one copy, invisible to every tool, for as long as it did because
 nothing looked.
 
+**Deployment pipeline** — static checks of the wiring that the first real CI runs
+got wrong (DECISIONS #11–#14): `ci.yml` exists, its live job accepts both names
+Vercel gives the GitHub environment and waits for a successful deployment, every
+job has a timeout, both `test.sh` modes are wired, `engines.node` and the CI Node
+major agree, third-party actions are pinned by SHA, `test.sh` itself starts the
+dev server with `--background`, and nothing that ships or that a reader follows
+names the retired SiteGround host.
+
 **Outbound link integrity** — every `githubUrl` and `demoUrl` in project
 frontmatter is fetched. Internal demos must exist as a real page in the build. A
 host that does not answer is distinguished from the network being down, because
@@ -102,8 +111,9 @@ a browser user-agent: 4xx/5xx fails, no answer warns, and the bot walls the week
 workflow excludes (LinkedIn, genius.com) are skipped here too. The weekly lychee
 job (`link-report.yml`) remains the backstop for every other page.
 
-**Dev server smoke test** — starts Astro on :4322, checks every main route
-returns 200, and confirms drafts *are* reachable in dev.
+**Dev server smoke test** — starts Astro on :4322 with `--background` (and fails
+if the command has not detached within 60 s, instead of hanging as it once did in
+CI), checks every main route returns 200, and confirms drafts *are* reachable in dev.
 
 **Browser tests** (Playwright on the installed Chrome, against that dev server):
 
@@ -120,9 +130,15 @@ returns 200, and confirms drafts *are* reachable in dev.
   closes it and restores focus; the name truncates on a 320px screen; the horizontal
   nav fits at 768, 900 and 1024px. Terra at 375px: the layer panel is behind a
   ≥44px Layers button and the chokepoint card is a bottom sheet below the title.
+  Terra under `prefers-reduced-motion`: auto orbit off and at most a few redraws a
+  second (the Terra layout tests run under that setting, because the full-rate
+  WebGL loop starves the main thread on a CI runner); without it, auto orbit on.
 
 Under `--live`, the content tests that need no fixtures and the whole mobile suite
-run against production.
+run against production, plus: every route answers, the canonical host, the
+`build-commit` stamp equals `origin/main` (a deploy that is missing, failed or
+still building is a failure; local work that is not live is a warning), the
+analytics script and API, and the Vercel project's link to this repo's `main`.
 
 ## What it does not cover
 
@@ -130,9 +146,9 @@ run against production.
   checks prove the right tokens ship, not that the layout is right.
 - **JavaScript behaviour.** The project-card expand/collapse is untested (the
   hamburger menu and the Terra layer toggle are).
-- **The terra page.** `public/terra/index.html` is a 5 MB self-contained
-  artifact served verbatim; only its weight and metadata are checked, not its
-  contents.
+- **The terra page's content.** `public/terra/index.html` is a self-contained
+  artifact served verbatim; its phone layout, layer toggle and reduced-motion mode
+  are tested, the globe itself is not.
 - **Cross-browser rendering.** Mobile layout is covered (above), but only in Chrome;
   Safari on iOS is not exercised. `./run.sh` serves on the LAN for a real-phone check.
 - **The live site, unless asked.** The default run checks `dist/` and a local dev

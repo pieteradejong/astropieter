@@ -15,6 +15,9 @@ interface Props {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
+
+// Injected by astro.config.mjs (vite.define); see the build stamp note there.
+const buildCommit = __BUILD_COMMIT__;
 ---
 
 <!-- Global Metadata -->
@@ -22,6 +25,7 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
+<meta name="build-commit" content={buildCommit} />
 
 <!-- Font preloads: the two faces above the fold on every page -->
 <link rel="preload" href="/fonts/source-serif-400.woff2" as="font" type="font/woff2" crossorigin />

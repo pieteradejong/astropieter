@@ -231,3 +231,39 @@ test.describe('Mobile: Terra', () => {
 		await expect(page.locator('#panelToggle')).toBeHidden();
 	});
 });
+
+// The globe redraws on every animation frame. Under prefers-reduced-motion it
+// redraws about four times a second with auto orbit off (DECISIONS #14); the
+// tests above depend on that, so it is checked on its own here. #clock is
+// rewritten every fourth frame, so counting its mutations measures the frame
+// rate: ~30 in two seconds at 60 fps, ~2 at the reduced rate.
+test.describe('Mobile: Terra reduced motion', () => {
+	const clockRewrites = (page: Page, ms: number) =>
+		page.evaluate(
+			(ms) =>
+				new Promise<number>((resolve) => {
+					let n = 0;
+					const obs = new MutationObserver(() => n++);
+					obs.observe(document.getElementById('clock')!, { childList: true, characterData: true, subtree: true });
+					setTimeout(() => {
+						obs.disconnect();
+						resolve(n);
+					}, ms);
+				}),
+			ms,
+		);
+
+	test('with reduced motion: auto orbit is off and the globe redraws a few times a second', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+		await open(page, '/terra/index.html', 1280);
+		await expect(page.locator('#tAuto')).not.toBeChecked();
+		const n = await clockRewrites(page, 2000);
+		expect(n, 'clock rewrites in 2s (full rate is ~30)').toBeLessThanOrEqual(6);
+	});
+
+	test('without reduced motion: auto orbit is on', async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'no-preference' });
+		await open(page, '/terra/index.html', 1280);
+		await expect(page.locator('#tAuto')).toBeChecked();
+	});
+});

@@ -275,11 +275,12 @@ Rejected:
   route renders or that a phone can use it.
 - Making the checks required on `main` (branch protection): GitHub-side setting, and EN-3 in the
   workspace TODO is still Pieter's call.
-**Verified:** NOT YET. The push of 36f3abd on 2026-10-14 produced a Ready Vercel deployment and
-`./test.sh --live https://padj.vercel.app` → `60 passed, 0 failed` locally, but `site / tests`
-(run 38603520687) was cancelled at the 20-minute timeout (#12) and `site / live` was skipped
-(#13). Still needs: a green `site / tests` on a push commit and a green `site / live` after the
-deployment (`gh run list --workflow ci.yml`), and the README badges resolving.
+**Verified:** 2026-10-14, on the third push. The first (36f3abd) produced a Ready Vercel deployment
+and `./test.sh --live https://padj.vercel.app` → `60 passed, 0 failed` locally, but `site / tests`
+(run 38603520687) was cancelled at the 20-minute timeout (#12) and `site / live` was skipped (#13).
+The second (05b7e25) ran both to the end; each failed on one Terra test (#14). The third (387593a):
+`gh run list --workflow ci.yml` → `site` push run 38638470496 `success` (1m43s) and `site`
+deployment_status run 38638495290 `success` (1m48s). Both checks show green on the commit.
 
 ## 11. The old SiteGround address is left to lapse; Vercel is the only production
 **Date:** 2026-10-14
@@ -328,7 +329,8 @@ Rejected:
   `Stop: astro dev stop`, and `curl http://localhost:4323/` → 200.
 - Same environment, `./test.sh --offline` → `164 passed, 0 failed, 9 warnings, 2 skipped`
   (the two skips are the network sections `--offline` turns off).
-- CI: NOT YET. Needs the next push's `site / tests` to finish green.
+- CI: push 387593a → `site / tests` run 38638470496 `success` in 1m43s; the smoke test and the
+  browser suites ran on the runner.
 
 ## 13. `site / live` accepts the environment names `Production` and `Production – padj`
 **Date:** 2026-10-14
@@ -345,7 +347,8 @@ Rejected:
 **Verified:**
 - `gh api 'repos/pieteradejong/astropieter/deployments?per_page=3' -q '.[] | .environment'` →
   `Production` for 36f3abd; `Production – padj` and `Production – sovereign-data-centers` for 3621d24.
-- CI: NOT YET. Needs the next push's `site / live` to run and finish green.
+- CI: pushes 05b7e25 and 387593a each produced a GitHub deployment `Production`, and `site / live`
+  ran on both (runs 38636383406, 38638495290) instead of being skipped; the second is `success`.
 
 ## 14. Terra honours reduced motion, and its browser tests run under it
 **Date:** 2026-10-14
@@ -377,4 +380,37 @@ setting on; 4 fps was chosen so drags still respond.
 - `CHROME_PATH=<bundled chromium> npx playwright test -g Terra` → `6 passed (7.2s)`, the 375px
   test 4.9 s (13.5 s before).
 - `./test.sh --offline` in a cleared environment → `164 passed, 0 failed, 9 warnings, 2 skipped`.
-- CI: NOT YET. Needs the next push's `site / tests` and `site / live` green.
+- CI: push 387593a → `site / tests` 38638470496 `success`, `site / live` 38638495290 `success`;
+  the Terra 375px test passed in both.
+
+## 15. Every page is stamped with its commit, and `--live` compares it with `origin/main`
+**Date:** 2026-10-14
+**Context:** Two finished commits (ba48af8, 36f3abd) sat unpushed for a session while `./test.sh`
+was green: "branch is level with its remote" only warns, by design, because the suite runs before
+the push. Nothing compared what production serves with what the repo holds; the gap was found by
+hand (`vercel ls` plus `git status -sb`). Pieter: "ensure to capture everything in a comprehensive
+test.sh or other testing methods".
+**Decision:** `astro.config.mjs` defines `__BUILD_COMMIT__` from `VERCEL_GIT_COMMIT_SHA` (set by
+Vercel at build time) or `git rev-parse HEAD`, and `BaseHead.astro` emits it as
+`<meta name="build-commit">`. `./test.sh` checks the built stamp is HEAD. `./test.sh --live` fails
+when production's stamp differs from `origin/main` (`git ls-remote`) and warns when local HEAD is
+not what production serves. The `live` CI job runs the same check after every deployment, so a
+push whose build failed, or a deployment that never happened, is a red check.
+Rejected:
+- Comparing the `last-modified` header or Vercel's deployment list: says when, not what, and the
+  deployment list needs the CLI and a login that the `live` job does not have.
+- Making the unpushed-commits warning a failure: the suite is meant to run before the push, so
+  "ahead of origin" is its normal state.
+- Exposing the commit on a `/version` route: one more unlisted page to keep out of the sitemap,
+  for information a meta tag carries on every page.
+Reopen if the site ever builds from something other than a git commit.
+**Verified:**
+- `npm run build` locally → `dist/index.html` contains `<meta name="build-commit" content="<HEAD>">`,
+  and `./test.sh` → `✓ build-commit stamp is HEAD`.
+- `./test.sh --live https://padj.vercel.app` before this change was deployed → `63 passed, 1 failed`,
+  the failure being `✗ no build-commit stamp on https://padj.vercel.app/` (production still served
+  387593a, which predates the stamp), and `✓ Vercel project is linked to github
+  pieteradejong/astropieter, production branch main`.
+- `./test.sh --offline` in a cleared environment → `176 passed, 0 failed, 9 warnings, 2 skipped`,
+  including the nine new "Deployment pipeline" checks and the two Terra reduced-motion tests.
+- CI: NOT YET. Needs the push: `site / live` green with `✓ production serves origin/main`.

@@ -168,6 +168,27 @@ if [ -n "$LIVE_URL" ]; then
 		fail "canonical URL is $CANON, not on $LIVE_HOST — update site in astro.config.mjs"
 	fi
 
+	# The build stamp says which commit production serves. Two finished commits
+	# once sat unpushed for a session while this suite was green (DECISIONS
+	# #15), so production lagging origin/main is a failure here, and local work
+	# that is not what production serves is a warning.
+	LIVE_COMMIT=$(curl -s --max-time 15 "$LIVE_URL/" | grep -oE '<meta name="build-commit" content="[0-9a-f]{40}"' | sed -E 's/.*content="([0-9a-f]+)"/\1/')
+	REMOTE_MAIN=$(git ls-remote --quiet origin refs/heads/main 2>/dev/null | cut -f1)
+	[ -n "$REMOTE_MAIN" ] || REMOTE_MAIN=$(git rev-parse origin/main 2>/dev/null)
+	if [ -z "$LIVE_COMMIT" ]; then
+		fail "no build-commit stamp on $LIVE_URL/ — BaseHead.astro must emit <meta name=\"build-commit\">"
+	elif [ -z "$REMOTE_MAIN" ]; then
+		skip "production commit ${LIVE_COMMIT:0:7} vs origin/main (origin/main not known here)"
+	elif [ "$LIVE_COMMIT" = "$REMOTE_MAIN" ]; then
+		pass "production serves origin/main (${LIVE_COMMIT:0:7})"
+	else
+		fail "production serves ${LIVE_COMMIT:0:7} but origin/main is ${REMOTE_MAIN:0:7} — deploy missing, failed or still building"
+	fi
+	LOCAL_HEAD=$(git rev-parse HEAD 2>/dev/null)
+	if [ -n "$LIVE_COMMIT" ] && [ -n "$LOCAL_HEAD" ] && [ "$LOCAL_HEAD" != "$LIVE_COMMIT" ]; then
+		warn "local HEAD ${LOCAL_HEAD:0:7} is not what production serves — unpushed or undeployed work"
+	fi
+
 	# Analytics needs the script served AND Web Analytics enabled on the
 	# project. Vercel serves the script either way, so a 200 alone proved
 	# nothing (it passed here while analytics was off); ask the API as well.
@@ -193,6 +214,18 @@ if [ -n "$LIVE_URL" ]; then
 			pass "Web Analytics is enabled and queryable"
 		else
 			skip "Web Analytics enabled check (unexpected API reply: $(echo "$VA" | tail -1 | cut -c1-80))"
+		fi
+
+		# Push-to-deploy only holds while the project is linked to this repo's
+		# main branch. In October a second project was briefly linked to the
+		# repo too (DECISIONS #13); this reads the link back from Vercel.
+		LINK=$(vercel api "/v9/projects/$PROJECT_ID?teamId=$TEAM_ID" 2>/dev/null | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const l=JSON.parse(d).link||{};console.log([l.type,l.org,l.repo,l.productionBranch].join(' '))}catch(e){console.log('err')}})")
+		if [ "$LINK" = "github pieteradejong astropieter main" ]; then
+			pass "Vercel project is linked to github pieteradejong/astropieter, production branch main"
+		elif [ "$LINK" = "err" ] || [ -z "$LINK" ]; then
+			skip "Vercel project link check (API reply not understood)"
+		else
+			fail "Vercel project link is '$LINK', expected 'github pieteradejong astropieter main' — pushes will not deploy"
 		fi
 	fi
 
@@ -390,6 +423,18 @@ for f in "${EXPECTED_FILES[@]}"; do
 		fail "$f missing"
 	fi
 done
+
+# The build stamp (astro.config.mjs → BaseHead.astro). Locally it must be HEAD;
+# on Vercel it is VERCEL_GIT_COMMIT_SHA. `--live` compares it with origin/main.
+BUILT_COMMIT=$(grep -oE '<meta name="build-commit" content="[0-9a-f]{40}"' dist/index.html | sed -E 's/.*content="([0-9a-f]+)"/\1/')
+EXPECT_COMMIT="${VERCEL_GIT_COMMIT_SHA:-$(git rev-parse HEAD 2>/dev/null)}"
+if [ -z "$BUILT_COMMIT" ]; then
+	fail "dist/index.html carries no build-commit stamp (40-hex <meta name=\"build-commit\">)"
+elif [ "$BUILT_COMMIT" = "$EXPECT_COMMIT" ]; then
+	pass "build-commit stamp is HEAD (${BUILT_COMMIT:0:7})"
+else
+	fail "build-commit stamp is ${BUILT_COMMIT:0:7}, HEAD is ${EXPECT_COMMIT:0:7}"
+fi
 
 # Every non-draft blog post and every project should get a detail page
 for src_file in src/content/blog/*.md src/content/blog/*.mdx; do
@@ -1001,6 +1046,76 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+section "Deployment pipeline"
+# ---------------------------------------------------------------------------
+# What the first real CI runs taught (DECISIONS #11-#14): everything that made
+# them hang, skip or fail is pinned here so it cannot come back unnoticed.
+
+CI_YML=.github/workflows/ci.yml
+if [ -f "$CI_YML" ]; then
+	pass "$CI_YML present"
+	# Vercel names the GitHub environment `Production` with one linked project
+	# and `Production – <project>` with several; the live job must accept both.
+	if grep -q "environment == 'Production'" "$CI_YML" && grep -q "environment == 'Production – padj'" "$CI_YML"; then
+		pass "ci.yml live job accepts both Vercel environment names"
+	else
+		fail "ci.yml live job must accept environment 'Production' and 'Production – padj' (DECISIONS #13)"
+	fi
+	if grep -q "deployment_status.state == 'success'" "$CI_YML"; then
+		pass "ci.yml live job waits for a successful deployment_status"
+	else
+		fail "ci.yml live job does not require deployment_status.state == 'success'"
+	fi
+	CI_JOBS=$(awk '/^jobs:/{f=1;next} f && /^  [a-z_-]+:$/{n++} END{print n+0}' "$CI_YML")
+	CI_TIMEOUTS=$(grep -c 'timeout-minutes:' "$CI_YML")
+	if [ "$CI_JOBS" -gt 0 ] && [ "$CI_JOBS" = "$CI_TIMEOUTS" ]; then
+		pass "every ci.yml job has a timeout-minutes ($CI_JOBS)"
+	else
+		fail "ci.yml: $CI_JOBS job(s) but $CI_TIMEOUTS timeout-minutes — a hung job must fail, not run to GitHub's 6h cap"
+	fi
+	if grep -q 'test.sh --offline' "$CI_YML" && grep -q 'test.sh --live' "$CI_YML"; then
+		pass "ci.yml runs test.sh --offline on push and test.sh --live after deploy"
+	else
+		fail "ci.yml must run ./test.sh --offline (tests job) and ./test.sh --live (live job)"
+	fi
+	ENGINES_NODE=$(node -p "(require('./package.json').engines||{}).node||''" 2>/dev/null)
+	CI_NODE=$(grep -oE 'node-version: *[0-9]+' "$CI_YML" | head -1 | grep -oE '[0-9]+$')
+	if [ -n "$ENGINES_NODE" ] && [ "${ENGINES_NODE%%.*}" = "$CI_NODE" ]; then
+		pass "package.json engines ($ENGINES_NODE) and ci.yml node-version ($CI_NODE) agree; engines also wins on Vercel"
+	else
+		fail "package.json engines '$ENGINES_NODE' and ci.yml node-version '$CI_NODE' disagree — CI and Vercel would build on different Node majors"
+	fi
+else
+	fail "$CI_YML missing — the site's health is a GitHub check (DECISIONS #10)"
+fi
+
+# Third-party actions pinned by commit SHA (supply-chain policy). Reusable
+# workflows from this account's own repos may track a branch.
+UNPINNED=$(grep -hE '^\s*-?\s*uses:' .github/workflows/*.yml 2>/dev/null | grep -vE '@[0-9a-f]{40}' | grep -vE 'uses: *(\./|pieteradejong/)' || true)
+if [ -z "$UNPINNED" ]; then
+	pass "every third-party action in .github/workflows is pinned by commit SHA"
+else
+	fail "unpinned action(s): $(echo "$UNPINNED" | sed -E 's/^\s*-?\s*uses: *//' | tr '\n' ' ')"
+fi
+
+# This script itself: the dev server must be started detached, or the suite
+# blocks forever on a runner (it did; DECISIONS #12).
+if grep -q 'npx astro dev --background --port' test.sh; then
+	pass "test.sh starts the dev server with --background"
+else
+	fail "test.sh must start the dev server with 'npx astro dev --background --port …' (DECISIONS #12)"
+fi
+
+# The retired SiteGround host (DECISIONS #11) may be named in the decision log
+# and the deployment doc, nowhere that ships or that a reader follows.
+OLD_HOST_REFS=$(grep -rlE 'sg-host|siteground' src public astro.config.mjs README.md CLAUDE.md 2>/dev/null || true)
+if [ -z "$OLD_HOST_REFS" ]; then
+	pass "no reference to the retired SiteGround host in src/, public/, config, README or CLAUDE.md"
+else
+	fail "retired SiteGround host referenced in: $(echo $OLD_HOST_REFS) (DECISIONS #11)"
+fi
+
+# ---------------------------------------------------------------------------
 section "Outbound link integrity"
 # ---------------------------------------------------------------------------
 # A dead source link on a project entry is worse than no link. This section is
@@ -1098,7 +1213,20 @@ section "Dev server smoke test"
 npx astro dev stop >/dev/null 2>&1
 
 DEV_LOG=$(mktemp)
-npx astro dev --background --port 4322 > "$DEV_LOG" 2>&1
+npx astro dev --background --port 4322 > "$DEV_LOG" 2>&1 &
+DEV_START_PID=$!
+# `--background` returns once the server is up. If the command is still
+# running after 60s it did not detach, and the suite would hang (it did, in
+# CI: DECISIONS #12). Fail instead.
+for _ in $(seq 1 120); do
+	kill -0 "$DEV_START_PID" 2>/dev/null || break
+	sleep 0.5
+done
+if kill -0 "$DEV_START_PID" 2>/dev/null; then
+	kill "$DEV_START_PID" 2>/dev/null
+	fail "astro dev did not return within 60s — it must detach with --background (DECISIONS #12)"
+fi
+wait "$DEV_START_PID" 2>/dev/null
 
 READY=0
 for _ in $(seq 1 20); do

@@ -56,6 +56,19 @@ live.
   `stop`.
 
 ### Added
+- **Build stamp.** Every page carries `<meta name="build-commit">` (Vercel's commit SHA, or
+  `git rev-parse HEAD` locally). `./test.sh` checks the build is stamped with HEAD; `./test.sh
+  --live` fails when production does not serve `origin/main` and warns when local HEAD is not what
+  production serves (DECISIONS #15).
+- **Deployment pipeline checks** in `test.sh`: `ci.yml` present, its live job accepts both Vercel
+  environment names and waits for a successful `deployment_status`, every job has a timeout, both
+  `test.sh` modes are wired, `engines.node` and CI's `node-version` agree, third-party actions are
+  pinned by SHA, the dev server is started with `--background`, and nothing in `src/`, `public/`,
+  config, README or CLAUDE.md names the retired SiteGround host. Under `--live`, the Vercel project
+  must be linked to `pieteradejong/astropieter` on `main`.
+- `test.sh` fails instead of hanging when `astro dev` does not detach within 60 s.
+- Browser tests for Terra's reduced-motion mode: auto orbit off and at most a few redraws a second
+  under `prefers-reduced-motion`, auto orbit on without it.
 - `.github/workflows/ci.yml` (DECISIONS #10): `site / tests` runs `./test.sh --offline` on every
   push and pull request; `site / live` runs `./test.sh --live https://padj.vercel.app` after Vercel
   reports a successful production deployment (and on demand with a URL). README badges for the
