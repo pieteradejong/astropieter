@@ -22,9 +22,10 @@ import profileImage from '../assets/pieter-de-jong-300.png';
                 <div class="profile-info">
                     <h2>Pieter de Jong</h2>
                     <a href="/contact" class="button-link">Contact</a>
-                    <a href="https://www.linkedin.com/in/pieteradejong/" target="_blank" rel="noopener noreferrer" class="accent-link">LinkedIn</a>
-                    <a href="https://github.com/pieteradejong" target="_blank" rel="noopener noreferrer" class="accent-link">GitHub</a>
-                    
+                    <div class="profile-links">
+                        <a href="https://www.linkedin.com/in/pieteradejong/" target="_blank" rel="noopener noreferrer" class="accent-link">LinkedIn</a>
+                        <a href="https://github.com/pieteradejong" target="_blank" rel="noopener noreferrer" class="accent-link">GitHub</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,12 +81,29 @@ import profileImage from '../assets/pieter-de-jong-300.png';
         display: flex;
         flex-direction: column;
         align-items: center;
+        gap: var(--pub-space-3);
     }
 
     .profile-info h2 {
         margin: 0;
         font-size: var(--font-size-h2);
         color: var(--primary-text);
+    }
+
+    .profile-info .button-link {
+        padding: 0.6em 1.5em;
+    }
+
+    /* The two profile links sit side by side in the label face, like the
+       nav, instead of stacking as two serif lines under the button. */
+    .profile-links {
+        display: flex;
+        gap: var(--pub-space-4);
+        font-family: var(--pub-font-meta);
+        font-size: var(--pub-size-contents);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: var(--pub-track-meta);
     }
 
     /* Tablet Layout */

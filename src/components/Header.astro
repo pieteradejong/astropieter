@@ -117,6 +117,11 @@ header {
 	position: relative;
 	width: 100%;
 }
+/* The nav gets a wider column than the 720px prose measure, so six links fit
+   on one row at desktop widths instead of wrapping Contact onto a second. */
+header .content-container {
+	max-width: 960px;
+}
 
 /* Mobile Header Layout */
 .mobile-header-left {
@@ -254,20 +259,29 @@ header {
 		justify-content: center;
 		position: static;
 		background: none;
+		border: none; /* the dropdown's box is a phone-only thing */
 		box-shadow: none;
 		padding: 0;
-		gap: 0.25rem 1rem;
+		gap: 0.25rem 0.5rem;
 		width: 100%;
 	}
 	.nav-menu a {
 		display: inline-block;
 		width: auto;
 		min-height: 0;
-		padding: 0.15em 1em 0.25em;
+		padding: 0.15em 0.6em 0.25em;
 		font-size: var(--pub-size-contents);
+		white-space: nowrap; /* "Reading and Lyrics" never breaks inside */
 	}
 	.mobile-profile-name {
 		display: none;
+	}
+}
+/* Desktop (≥ 1024px): every link on one row, no wrapping. */
+@media (min-width: 1024px) {
+	.nav-menu {
+		flex-wrap: nowrap;
+		gap: 0.25rem 1rem;
 	}
 }
 .hamburger-icon {

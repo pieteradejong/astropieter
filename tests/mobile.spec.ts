@@ -169,6 +169,15 @@ test.describe('Mobile: navigation', () => {
 		await expect(page.locator('.mobile-section-label')).toBeHidden();
 	});
 
+	for (const width of [1024, 1280]) {
+		test(`nav links sit on one row at ${width}px`, async ({ page }) => {
+			await open(page, '/', width);
+			const tops = await page.locator('#mainNav a').evaluateAll((as) => as.map((a) => Math.round(a.getBoundingClientRect().top)));
+			expect(tops.length).toBeGreaterThanOrEqual(6);
+			expect(new Set(tops).size, `link tops ${tops.join(',')}`).toBe(1);
+		});
+	}
+
 	for (const width of [768, 900, 1024]) {
 		test(`horizontal nav at ${width}px shows every link without overflow`, async ({ page }) => {
 			await open(page, '/', width);

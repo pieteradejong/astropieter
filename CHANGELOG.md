@@ -31,6 +31,13 @@ live.
   They now stack above the bio.
 
 ### Changed
+- **Desktop nav on one row.** The header's column is 960px wide (the prose measure stays 720px),
+  link padding and gaps are tighter, labels never break inside, and from 1024px the row cannot
+  wrap; Contact no longer drops to a second line. The phone dropdown's box border no longer shows
+  on desktop. `tests/mobile.spec.ts` asserts one row at 1024 and 1280px (DECISIONS #16).
+- **Homepage profile block.** Name, Contact button and the LinkedIn/GitHub links are spaced on
+  the house scale, the button has real padding, and the two links sit side by side in the label
+  face instead of stacking as two serif lines.
 - **Mobile layout pass** (DECISIONS #8). One phone breakpoint (`≤767px`) replaces the mix of
   375/480/768/1023. The blanket `div { overflow-x: auto }` rule is gone; code, tables and display
   math scroll inside their own box and long words wrap. Nav dropdown items, footer links, project

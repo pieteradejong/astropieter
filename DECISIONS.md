@@ -418,3 +418,21 @@ Reopen if the site ever builds from something other than a git commit.
   skipped` (the Vercel API checks need a CLI login the runner does not have).
 - Local, once production served the new stamp: `./test.sh --live https://padj.vercel.app` →
   `64 passed, 0 failed, 0 warnings, 0 skipped`.
+
+## 16. The header gets a 960px column; the prose measure stays 720px
+**Date:** 2026-10-14
+**Context:** On desktop the six nav links wrapped, with Contact alone on a second row, because the
+header shared the page's 720px `.content-container` and the tracked uppercase labels plus 1em
+padding do not fit in it. Pieter: "this one is on two lines, it needs to be on one (desktop)".
+**Decision:** `header .content-container` is 960px wide; link padding 0.6em and a 0.5rem gap from
+768px; `white-space: nowrap` on labels; `flex-wrap: nowrap` from 1024px. The 720px measure for
+`main` is unchanged. The dropdown's box border is phone-only.
+Rejected:
+- Shrinking the label size or tracking until six fit in 720px: the labels are the system's one
+  sans role and already at its smallest readable size.
+- Dropping or renaming "Reading and Lyrics": content decision, not a layout fix.
+- Letting the nav wrap by design: a centred orphan under five links reads as a mistake.
+Reopen if a seventh nav item is added; at 960px there is room for one, not two.
+**Verified:** `npx playwright test -g nav` → `8 passed`, including the new `nav links sit on one
+row at 1024px / 1280px`; screenshots at 768, 1024 and 1280px show one row. `./test.sh --offline`
+in a cleared environment → `178 passed, 0 failed, 9 warnings, 2 skipped`.
