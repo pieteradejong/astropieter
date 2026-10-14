@@ -555,6 +555,19 @@ $('speed').addEventListener('click', e => {
 // ---------- Frame loop ----------
 const ray = new THREE.Raycaster(), Y = new THREE.Vector3(0, 1, 0);
 let last = performance.now(), cloudAngle = 0, uiTick = 0;
+
+// Reduced motion: no auto orbit, and the scene redraws a few times a second
+// instead of every frame. The OS setting is the reason; it also keeps the main
+// thread free for assistive tech and for headless browsers on slow machines.
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const applyReducedMotion = () => {
+  if (!reducedMotion.matches) return;
+  ctl.auto = false;
+  $('tAuto').checked = false;
+};
+applyReducedMotion();
+reducedMotion.addEventListener('change', applyReducedMotion);
+const nextFrame = () => reducedMotion.matches ? setTimeout(() => requestAnimationFrame(frame), 250) : requestAnimationFrame(frame);
 const fmtDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
 function resize() {
@@ -566,7 +579,7 @@ function resize() {
 }
 
 function frame(now) {
-  requestAnimationFrame(frame);
+  nextFrame();
   const dt = Math.min((now - last) / 1000, 0.1); last = now;
   resize();
 

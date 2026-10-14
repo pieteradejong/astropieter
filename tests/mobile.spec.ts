@@ -184,7 +184,16 @@ test.describe('Mobile: navigation', () => {
 });
 
 test.describe('Mobile: Terra', () => {
+	// The globe redraws every animation frame. With software WebGL on a CI
+	// runner that starves the main thread and every click or bounding box takes
+	// seconds, so the page's reduced-motion mode (a few redraws a second, no
+	// auto orbit) is what these tests run under. slow() triples the timeout.
+	test.beforeEach(async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: 'reduce' });
+	});
+
 	test('at 375px the layer panel is behind a Layers button and the card never covers the title', async ({ page }) => {
+		test.slow();
 		await open(page, '/terra/index.html', 375);
 		const panel = page.locator('#panel');
 		const toggle = page.locator('#panelToggle');

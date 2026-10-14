@@ -8,6 +8,10 @@ live.
 ## [Unreleased]
 
 ### Fixed
+- The Terra demo (`public/terra/index.html`) now honours `prefers-reduced-motion: reduce`: no auto
+  orbit, and about four redraws a second instead of one per animation frame. Its browser tests run
+  under that setting; on the CI runner's software WebGL the full-rate loop starved the main thread
+  and the 375px test timed out (DECISIONS #14).
 - `test.sh` started the dev server in the foreground and only passed when an AI agent was the
   parent process (Astro backgrounds on agent detection); in CI it blocked until the 20-minute
   timeout. The server is now started with `astro dev --background` (DECISIONS #12).

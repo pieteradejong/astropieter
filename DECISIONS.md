@@ -346,3 +346,35 @@ Rejected:
 - `gh api 'repos/pieteradejong/astropieter/deployments?per_page=3' -q '.[] | .environment'` →
   `Production` for 36f3abd; `Production – padj` and `Production – sovereign-data-centers` for 3621d24.
 - CI: NOT YET. Needs the next push's `site / live` to run and finish green.
+
+## 14. Terra honours reduced motion, and its browser tests run under it
+**Date:** 2026-10-14
+**Context:** With #12 and #13 in place, both GitHub checks ran to the end and failed on one test
+each: "Mobile: Terra › at 375px the layer panel is behind a Layers button" timed out on
+`locator.click` after 30 s (runs 38636353396 and 38636383406). Reproduced with Playwright's bundled
+Chromium on this Mac: the test passes but takes 13 s, and every step after load is slow (a bounding
+box ~0.8 s, a click ~1.5 s). The cause is the page, not the test: `public/terra/index.html` renders
+a post-processed WebGL frame on every animation frame, which on the runner's 2 vCPU with software
+WebGL leaves no idle frames for Playwright's actionability checks.
+**Decision:** the page honours `prefers-reduced-motion: reduce`: auto orbit is off and the scene
+redraws about four times a second (`setTimeout` 250 ms before the next `requestAnimationFrame`)
+instead of every frame. The Terra tests emulate that preference (`page.emulateMedia`) and the 375px
+test is marked `test.slow()` (90 s). Measured with the bundled Chromium: steps after load drop from
+seconds to milliseconds; the test goes from 13 s to 5 s.
+Rejected:
+- Only raising the timeout or using `click({ force: true })`: masks a page that saturates the main
+  thread, and would still be fragile on a slower runner.
+- Skipping the Terra tests in CI: the mobile layout of the demo is exactly what #8 added them for.
+- Rendering on demand (only when state changes): the right end state, but a larger change to the
+  frame loop, hooks and cable animations than this fix needs.
+Reopen if the reduced-motion frame rate makes the globe feel broken for users who have the OS
+setting on; 4 fps was chosen so drags still respond.
+**Verified:**
+- `node` script with the bundled Chromium, 375px, `emulateMedia({ reducedMotion: 'reduce' })`:
+  goto 3.3 s, then toggle visible +136 ms, click +35 ms, panel visible +1 ms, two bounding boxes
+  +6 ms; `#tAuto.checked` → false. Same steps without reduced motion: 3.7 s, then +0.8 s, +1.5 s,
+  +0.3 s, +2.4 s.
+- `CHROME_PATH=<bundled chromium> npx playwright test -g Terra` → `6 passed (7.2s)`, the 375px
+  test 4.9 s (13.5 s before).
+- `./test.sh --offline` in a cleared environment → `164 passed, 0 failed, 9 warnings, 2 skipped`.
+- CI: NOT YET. Needs the next push's `site / tests` and `site / live` green.
