@@ -8,6 +8,9 @@ live.
 ## [Unreleased]
 
 ### Fixed
+- `test.sh` started the dev server in the foreground and only passed when an AI agent was the
+  parent process (Astro backgrounds on agent detection); in CI it blocked until the 20-minute
+  timeout. The server is now started with `astro dev --background` (DECISIONS #12).
 - Four "View on Amazon" links on `/reading/` pointed at pages that no longer exist (404); replaced
   with the publisher ISBN product pages. A dead link to a third-party blog was removed from the
   LaTeX test post. The weekly link report had failed every run since 2026-09-27 on these.
@@ -38,6 +41,12 @@ live.
 - `/blog/latex_test/` is a draft (rendering test, not an essay). `/press/`, `/software/` and `/qr/`
   are built but excluded from the sitemap (DECISIONS #9).
 - `.github/workflows/link-report.yml` excludes `genius.com` (403 bot wall in CI, 200 in a browser).
+- `site / live` (`ci.yml`) was skipped on the first real deployment: Vercel names the GitHub
+  environment `Production`, not `Production – padj`, once only one project is linked. The job
+  now accepts both names.
+- `DEPLOYMENT.md` records the retired SiteGround address (serves a June 2025 build until the plan
+  ends in November 2026; nothing deploys there), the Node version precedence on Vercel, and the
+  one-deployment-per-push check.
 - `init.sh` checks Node ≥ 22.12, installs with `npm ci`, creates `.env` from `.env.example` and
   reports whether a Chrome for the browser tests was found. `run.sh` gained `build`, `preview` and
   `stop`.

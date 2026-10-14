@@ -26,6 +26,9 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
 - **Projects: `demoUrl` is the only demo field** (`deploymentUrl` is retired, DECISIONS #3). Only
   list a demo that works: `test.sh` fails on a dead one (#4). The "Live demo" / "Source only"
   badge and the `/projects` filter derive from it (#5).
+- `test.sh` starts the dev server with `astro dev --background` and stops it with `astro dev stop`.
+  Keep the flag: without it Astro only backgrounds when an AI agent is the parent process, so the
+  suite passes from Claude Code and hangs in CI (DECISIONS #12).
 - Browser tests use an installed Chrome (`playwright.config.ts`). On this Mac it is at
   `/Applications/Chrome.app`, not the default path. No Playwright browser download is needed.
 - `public/terra/` is a static page outside Astro: no footer, no analytics, no meta description.

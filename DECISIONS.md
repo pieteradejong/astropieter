@@ -157,8 +157,12 @@ Reopen if the report becomes noise (tune `--accept` or exclude flaky hosts) or i
 moves off GitHub.
 Known limit: GitHub disables scheduled workflows in a public repo after 60 days without a
 commit. It emails a warning first, and one push re-enables the schedule.
-**Verified:** NOT YET. Needs the first run (`gh workflow run link-report.yml`) to succeed, the
-issue to get its first comment, and the notification email to arrive.
+**Verified:** 2026-10-14, after the link fixes of ba48af8 were pushed. `gh workflow run
+link-report.yml` → run 38605109476 `completed success` in 29s (`gh run list --workflow
+link-report.yml --limit 1`). The three scheduled runs before it (2026-09-28, 10-05, 10-12) had
+failed on dead Amazon links and the genius.com 403, which that commit fixes and excludes.
+Issue #2 "Weekly link report" got the run's comment at 17:15:52Z. Notification email: not checked
+from here.
 
 ## 7. QR code for sharing the site: one static SVG at `/qr/`
 **Date:** 2026-10-14
@@ -271,7 +275,74 @@ Rejected:
   route renders or that a phone can use it.
 - Making the checks required on `main` (branch protection): GitHub-side setting, and EN-3 in the
   workspace TODO is still Pieter's call.
-**Verified:** NOT YET. Needs the push: `site / tests` green on the push commit, then a Vercel
-production deployment followed by a green `site / live` run (`gh run list --workflow ci.yml`), and
-the badges in the README resolving. Local stand-in: `./test.sh --offline` → see the session's
-closing summary.
+**Verified:** NOT YET. The push of 36f3abd on 2026-10-14 produced a Ready Vercel deployment and
+`./test.sh --live https://padj.vercel.app` → `60 passed, 0 failed` locally, but `site / tests`
+(run 38603520687) was cancelled at the 20-minute timeout (#12) and `site / live` was skipped
+(#13). Still needs: a green `site / tests` on a push commit and a green `site / live` after the
+deployment (`gh run list --workflow ci.yml`), and the README badges resolving.
+
+## 11. The old SiteGround address is left to lapse; Vercel is the only production
+**Date:** 2026-10-14
+**Context:** Pieter reported that "production" at `https://pieterd38.sg-host.com/` still showed the
+old style. That address is the SiteGround host retired in #1; it still serves a build from
+2025-06-17 (Astro 5.8, pre-restyle) because the cancelled plan runs until November 2026. The
+restyled site has been live on Vercel since September. Pieter: "i have already cancelled my
+siteground by november ... lets focus on vercel".
+**Decision:** nothing is deployed to SiteGround again and no redirect is installed there. The
+address expires with the plan. `DEPLOYMENT.md` § Old host records this; external links that still
+point at it (profiles, signatures, printed QR codes) are repointed to https://padj.vercel.app by
+Pieter before November.
+Rejected:
+- Redeploying the current build to SiteGround: restores the rsync path removed in 17dc0d6 and
+  keeps two production hosts for a few weeks, for an address nobody should keep using.
+- Uploading an `.htaccess` redirect to padj.vercel.app: needs SSH or dashboard access to an
+  account that is going away, and the plan ends in weeks anyway.
+Reopen if the SiteGround plan is renewed, or if a custom domain is bought (then `site`,
+`public/qr.svg` and the canonical URL move together, see #7).
+**Verified:**
+- `curl -sI https://pieterd38.sg-host.com/` → `last-modified: Tue, 17 Jun 2025`; the body carries
+  `generator" content="Astro v5.8.0"` and no `data-pub-theme`.
+- `curl -s https://padj.vercel.app/` → `data-pub-theme="terracotta"`, `Astro v7.3.5`.
+- `grep -rn sg-host src public docs` → no reference; only #1 names it.
+
+## 12. The dev server in `test.sh` is started with an explicit `--background`
+**Date:** 2026-10-14
+**Context:** The first real `site / tests` run (#10) was cancelled at its 20-minute timeout, stuck
+at "Dev server smoke test" (run 38603520687). `test.sh` launched `npx astro dev --port 4322` in the
+foreground, relying on a comment that "Astro's dev server now self-daemonizes". It does not: Astro 7
+backgrounds only with `--background`, or when `am-i-vibing` detects an AI agent as the parent
+process. Every local run had been started from Claude Code, so the suite passed here and blocked on
+the runner.
+**Decision:** `npx astro dev --background --port 4322`. The flag is the documented behaviour, works
+in a plain shell and in CI, and keeps the existing teardown (`astro dev stop` in `cleanup`).
+Rejected:
+- Setting `ASTRO_DEV_BACKGROUND=1` or faking an agent environment: undocumented switches.
+- `npx astro dev &` with a PID kill: Astro's lock file would still see a running server, and
+  `astro dev stop` is what the script and `run.sh stop` already use.
+- Running the browser tests against `astro preview` of the build instead: dev mode is what the
+  draft-post check exercises.
+**Verified:**
+- Reproduced in a cleared environment (`env -i` with only PATH and HOME):
+  `timeout 15 npx astro dev --port 4323` → exit 124, still in the foreground after 15 s.
+- Same environment with the flag: `npx astro dev --background --port 4323` returns, prints
+  `Stop: astro dev stop`, and `curl http://localhost:4323/` → 200.
+- Same environment, `./test.sh --offline` → `164 passed, 0 failed, 9 warnings, 2 skipped`
+  (the two skips are the network sections `--offline` turns off).
+- CI: NOT YET. Needs the next push's `site / tests` to finish green.
+
+## 13. `site / live` accepts the environment names `Production` and `Production – padj`
+**Date:** 2026-10-14
+**Context:** On the first deployment after #10 was pushed, the `live` job was skipped (run
+38603552773). Its filter required `github.event.deployment.environment == 'Production – padj'`,
+copied from October's deployment events. Vercel names the GitHub environment `Production` while one
+project is linked to the repo and `Production – <project>` when several are; a second project had
+been linked on 2026-10-04/05 and has since been relinked, so the name changed back.
+**Decision:** match either name. Any other environment is still ignored.
+Rejected:
+- Matching on `startsWith(environment, 'Production')`: would run against a stray project's deploy.
+- Matching on `environment_url`: the per-deployment URL is not the production alias, and the job
+  checks https://padj.vercel.app regardless.
+**Verified:**
+- `gh api 'repos/pieteradejong/astropieter/deployments?per_page=3' -q '.[] | .environment'` →
+  `Production` for 36f3abd; `Production – padj` and `Production – sovereign-data-centers` for 3621d24.
+- CI: NOT YET. Needs the next push's `site / live` to run and finish green.

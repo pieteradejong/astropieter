@@ -53,8 +53,8 @@ skip() { echo -e "  ${YELLOW}-${NC} $1 (skipped)"; SKIP_COUNT=$((SKIP_COUNT + 1)
 section() { echo -e "\n${BLUE}== $1 ==${NC}"; }
 
 cleanup() {
-	# Astro's dev server self-daemonizes (detaches from the launching shell), so
-	# it must be torn down via `astro dev stop`, not by killing a wrapper PID.
+	# The dev server runs as a detached background process (`--background`),
+	# so it must be torn down via `astro dev stop`, not by killing a wrapper PID.
 	npx astro dev stop >/dev/null 2>&1
 }
 trap cleanup EXIT
@@ -1090,12 +1090,15 @@ fi
 section "Dev server smoke test"
 # ---------------------------------------------------------------------------
 
-# Astro's dev server now self-daemonizes; make sure no stale instance from a
-# previous run is holding the port before starting a fresh one.
+# Start the dev server as a background process with an explicit flag. Astro 7
+# only backgrounds on its own when it detects an AI agent as the parent
+# process (am-i-vibing); in a plain shell or on a CI runner `astro dev` stays
+# in the foreground and this script would block until the job timeout. Stop
+# any stale instance holding the port first.
 npx astro dev stop >/dev/null 2>&1
 
 DEV_LOG=$(mktemp)
-npx astro dev --port 4322 > "$DEV_LOG" 2>&1
+npx astro dev --background --port 4322 > "$DEV_LOG" 2>&1
 
 READY=0
 for _ in $(seq 1 20); do

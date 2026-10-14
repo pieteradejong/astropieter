@@ -35,6 +35,22 @@ The same thing is in the dashboard under the project's Deployments tab.
 - **Analytics:** Vercel Web Analytics (cookie-less), via `<Analytics />` in `Footer.astro`.
   The static `public/terra/` page does not render the footer, so it is not counted.
 - **Local link:** `vercel link` writes `.vercel/` (gitignored), which only the CLI needs.
+- **Node version:** the Vercel project setting is 24.x, but `package.json` `engines` (22.x) takes
+  precedence on Vercel, so builds run on 22, the same as CI. Change `engines` to move both.
+- **One deployment per push.** Each push to `main` should create exactly one GitHub deployment.
+  Vercel names its environment `Production` while one project is linked to the repo and
+  `Production – <project>` when several are. On 2026-10-04/05 a second Vercel project was briefly
+  linked and deployed every push too; it has since been relinked. The `live` job in `ci.yml`
+  accepts `Production` and `Production – padj` and ignores any other name. Check with
+  `gh api 'repos/pieteradejong/astropieter/deployments?per_page=3' -q '.[].environment'`.
+
+## Old host
+
+`https://pieterd38.sg-host.com/` is the retired SiteGround address (`DECISIONS.md` #1). It still
+answers with a build from June 2025 (Astro 5.8, the pre-restyle look) and will until the cancelled
+SiteGround plan ends in November 2026. Nothing deploys there and nothing should: the rsync path
+was removed in September 2026 (commit 17dc0d6). Anything outside the repo that still links to it
+(profiles, signatures, printed QR codes) should point at https://padj.vercel.app instead.
 
 ## Plan limits
 

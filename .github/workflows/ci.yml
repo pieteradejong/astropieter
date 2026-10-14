@@ -52,13 +52,15 @@ jobs:
       - run: ./test.sh --offline
 
   live:
-    # Only the real site. The repo may be linked to more than one Vercel
-    # project; a status from any other environment is ignored.
+    # Only the real site. Vercel names the GitHub environment `Production`
+    # when one project is linked to the repo and `Production – <project>`
+    # when several are, so accept both forms for padj and ignore the rest.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'deployment_status' &&
        github.event.deployment_status.state == 'success' &&
-       github.event.deployment.environment == 'Production – padj')
+       (github.event.deployment.environment == 'Production' ||
+        github.event.deployment.environment == 'Production – padj'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
