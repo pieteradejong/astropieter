@@ -45,9 +45,11 @@ const { title, subtitle, href, className = '', showExpandButton = false } = Astr
         transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .card:hover {
-        transform: translateY(-1px);
-        border-color: var(--pub-accent);
+    @media (hover: hover) {
+        .card:hover {
+            transform: translateY(-1px);
+            border-color: var(--pub-accent);
+        }
     }
 
     .card-link {
@@ -77,8 +79,8 @@ const { title, subtitle, href, className = '', showExpandButton = false } = Astr
         padding: 0.25rem;
         margin-left: 1rem;
         transition: all 0.2s ease;
-        min-width: 32px;
-        min-height: 32px;
+        min-width: 44px;
+        min-height: 44px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -86,10 +88,12 @@ const { title, subtitle, href, className = '', showExpandButton = false } = Astr
         flex-shrink: 0;
     }
 
-    .expand-button:hover {
-        background-color: var(--footer-bg);
-        color: var(--non-link-text);
-        transform: translateY(-1px);
+    @media (hover: hover) {
+        .expand-button:hover {
+            background-color: var(--footer-bg);
+            color: var(--non-link-text);
+            transform: translateY(-1px);
+        }
     }
 
     .expand-button:active {
@@ -108,7 +112,7 @@ const { title, subtitle, href, className = '', showExpandButton = false } = Astr
         font-size: 0.9rem;
     }
 
-    @media (max-width: 375px) {
+    @media (max-width: 767px) {
         .card {
             padding: 1rem;
         }

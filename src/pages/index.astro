@@ -8,8 +8,7 @@ import profileImage from '../assets/pieter-de-jong-300.png';
 	title="Software Engineer and Mathematician"
 	description="Homepage of Pieter de Jong, Software Engineer and Mathematician"
 >
-<main>
-    <div class="bio-container">
+<div class="bio-container">
         <div class="bio-left">
             <div class="profile-image-container">
                 <Image 
@@ -18,6 +17,7 @@ import profileImage from '../assets/pieter-de-jong-300.png';
                     class="profile-image"
                     width={300}
                     height={300}
+                    loading="eager"
                 />
                 <div class="profile-info">
                     <h2>Pieter de Jong</h2>
@@ -41,7 +41,6 @@ import profileImage from '../assets/pieter-de-jong-300.png';
         </p>
         </div>
     </div>
-</main>
 
 <style>
     .bio-container {
@@ -101,7 +100,8 @@ import profileImage from '../assets/pieter-de-jong-300.png';
         }
     }
 
-    /* Mobile Layout */
+    /* Mobile Layout: the photo, name and contact links stay, smaller and
+       stacked, instead of disappearing. */
     @media (max-width: 767px) {
         .bio-container {
             flex-direction: column;
@@ -110,92 +110,34 @@ import profileImage from '../assets/pieter-de-jong-300.png';
         }
 
         .bio-left {
-            display: none;
-        }
-
-        .bio-right {
+            flex: none;
             max-width: 100%;
             width: 100%;
-            margin: 0;
-            padding: 0;
-            margin-top: var(--spacing-unit);
+        }
+
+        .profile-image-container {
+            width: 120px;
+            margin: 0 auto var(--spacing-unit);
         }
 
         .profile-info {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
             align-items: center;
+            gap: 0.5rem 1.25rem;
+            margin-top: 0;
+        }
+
+        .profile-info h2 {
+            flex-basis: 100%;
             text-align: center;
         }
-    }
-</style>
 
-<style>
-    .bio-container {
-        display: flex;
-        gap: var(--spacing-xl);
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
-    .bio-left {
-        flex: 0 0 min(33.333%, 300px);
-        max-width: min(33.333%, 300px);
-    }
-
-    .bio-right {
-        flex: 1;
-        min-width: 0; /* Prevents flex item from overflowing */
-    }
-
-    .profile-image-container {
-        margin-bottom: var(--spacing-large);
-        width: 100%;
-    }
-
-    .profile-image {
-        width: 100%;
-        height: auto;
-        border-radius: 50%;
-        aspect-ratio: 1;
-        object-fit: cover;
-        border: var(--pub-rule-hair) solid var(--pub-rule);
-    }
-
-    .profile-info {
-        text-align: center;
-        margin-top: var(--spacing-unit);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .profile-info h2 {
-        margin: 0;
-        font-size: var(--font-size-h2);
-        color: var(--primary-text);
-    }
-
-    /* Tablet Layout */
-    @media (max-width: 1023px) {
-        .bio-container {
-            gap: var(--spacing-large);
-        }
-
-        .bio-left {
-            flex: 0 0 min(40%, 250px);
-            max-width: min(40%, 250px);
-        }
-    }
-
-    /* Mobile Layout */
-    @media (max-width: 767px) {
-        .bio-container {
-            flex-direction: column;
+        .profile-info a {
+            display: inline-flex;
             align-items: center;
-            gap: var(--spacing-large);
-        }
-
-        .bio-left {
-            display: none;
+            min-height: 44px;
         }
 
         .bio-right {

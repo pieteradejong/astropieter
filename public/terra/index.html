@@ -40,7 +40,7 @@
   #panel hr { border: 0; border-top: 1px solid var(--line); margin: 2px 0; }
   #panel .note { color: var(--muted); font-size: 10px; letter-spacing: 0.04em; }
 
-  #panel { max-height: calc(100vh - 120px); overflow-y: auto; scrollbar-width: thin; }
+  #panel { max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px); overflow-y: auto; scrollbar-width: thin; }
   #panel .sec { color: var(--muted); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; }
   #panel label .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 8px; vertical-align: 1px; }
   #panel label span.lbl { display: flex; align-items: center; }
@@ -66,13 +66,35 @@
   #card p.alt em { color: var(--ink); font-style: normal; }
   #card .tag { display: inline-block; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #9ee8ff; border: 1px solid rgba(120,220,255,0.3); border-radius: 3px; padding: 1px 6px; margin-bottom: 8px; }
   #card .src { color: var(--muted); font-size: 9.5px; }
-  #card button { position: absolute; top: 10px; right: 10px; background: none; border: 0; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+  #card button { position: absolute; top: 0; right: 0; width: 44px; height: 44px; background: none; border: 0; color: var(--muted); font: inherit; font-size: 18px; cursor: pointer; }
   #card button:focus-visible { outline: 2px solid var(--accent); }
   #hint { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; transition: opacity 1s; }
   #hint.gone { opacity: 0; }
   #loading { position: fixed; inset: 0; display: grid; place-items: center; background: var(--bg); color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-size: 10.5px; z-index: 5; transition: opacity .8s; }
   #loading.gone { opacity: 0; pointer-events: none; }
-  @media (max-width: 720px) { #hint, #readout { display: none; } #title h1 { font-size: 30px; } }
+  /* Layers toggle: only shown on phones, where the panel starts collapsed. */
+  #panelToggle { display: none; position: fixed; right: 12px; bottom: 12px; z-index: 4; min-width: 44px; min-height: 44px; padding: 0 14px; font: inherit; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; backdrop-filter: blur(8px); cursor: pointer; }
+  #panelToggle:focus-visible { outline: 2px solid var(--accent); }
+  @media (max-width: 720px) {
+    body { font-size: 13px; }
+    #hint, #readout { display: none; }
+    #title h1 { font-size: 30px; }
+    #title .sub, #panel .note, #panel .status, #panel .sec, #card .fig span, #card .tag, #card .src, #tip .m, .lab, .lab.port, #loading { font-size: 12px; }
+    #tip { font-size: 12px; max-width: calc(100vw - 16px); }
+    #card p { font-size: 13px; }
+    #card .share { font-size: 12px; }
+    /* The card becomes a bottom sheet: never over the title, scrolls if tall. */
+    #card { top: auto; right: 0; bottom: 0; left: 0; width: auto; max-height: 45vh; max-height: 45dvh; overflow-y: auto; border-radius: 6px 6px 0 0; padding-right: 48px; }
+    /* The panel is collapsed behind the Layers button and opens as a sheet. */
+    #panelToggle { display: inline-flex; align-items: center; justify-content: center; }
+    #panel { display: none; right: 0; bottom: 0; left: 0; border-radius: 6px 6px 0 0; max-height: 70vh; max-height: 70dvh; padding-bottom: 64px; }
+    #panel.open { display: flex; }
+    #panel label { min-height: 36px; }
+    #panel .speed button { padding: 8px 12px; font-size: 12px; min-height: 36px; }
+    #panel input[type=checkbox] { width: 34px; height: 20px; border-radius: 10px; }
+    #panel input[type=checkbox]::after { width: 14px; height: 14px; }
+    #panel input[type=checkbox]:checked::after { transform: translateX(14px); }
+  }
   @media (prefers-reduced-motion: reduce) { #hint, #loading { transition: none; } }
 </style>
 
@@ -125,6 +147,7 @@
 <div id="labels"></div>
 <div id="tip" hidden></div>
 <div id="card" hidden></div>
+<button id="panelToggle" aria-controls="panel" aria-expanded="false">Layers</button>
 <div id="hint">drag to orbit · scroll to zoom</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
@@ -772,8 +795,7 @@ function showCard(c) {
 const tip = document.getElementById('tip');
 const pick = new THREE.Raycaster(); pick.params.Line.threshold = 0.006;
 let lastPick = 0;
-canvas.addEventListener('pointermove', e => {
-  if (ctl.dragging || performance.now() - lastPick < 60) return; lastPick = performance.now();
+function pickAt(e) {
   if (!cableLayer.lines.visible) { tip.hidden = true; cableLayer.highlight(-1); return; }
   pick.setFromCamera(mouse, camera);
   // only accept a cable hit if nothing on the globe is closer (the line sits just above the surface)
@@ -785,9 +807,33 @@ canvas.addEventListener('pointermove', e => {
   cableLayer.highlight(ci);
   tip.innerHTML = `<b>${c.n}</b><br><span class="m">${[c.rfs && 'RFS ' + c.rfs, c.len].filter(Boolean).join(' · ')}</span>` + (c.own ? `<br><span class="m">${c.own}</span>` : '');
   tip.hidden = false;
-  tip.style.left = Math.min(e.clientX + 14, innerWidth - 300) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  // Keep the tip on screen: clamp to the viewport after it has a width.
+  const tw = tip.offsetWidth || 280, th = tip.offsetHeight || 40;
+  tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tw - 8)) + 'px';
+  tip.style.top = Math.max(8, Math.min(e.clientY + 14, innerHeight - th - 8)) + 'px';
+}
+// Mouse: hover picks. Touch has no hover, so a tap (pointer travelled < 6px) picks instead.
+canvas.addEventListener('pointermove', e => {
+  if (ctl.dragging || performance.now() - lastPick < 60) return; lastPick = performance.now();
+  pickAt(e);
+});
+let tapX = 0, tapY = 0;
+canvas.addEventListener('pointerdown', e => { tapX = e.clientX; tapY = e.clientY; });
+canvas.addEventListener('pointerup', e => {
+  if (e.pointerType === 'mouse' || Math.hypot(e.clientX - tapX, e.clientY - tapY) > 6) return;
+  mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+  pickAt(e);
 });
 canvas.addEventListener('pointerleave', () => { tip.hidden = true; cableLayer.highlight(-1); });
+
+// Phones: the layer panel is a sheet behind the Layers button.
+const panelEl = document.getElementById('panel'), panelToggle = document.getElementById('panelToggle');
+panelToggle.addEventListener('click', () => {
+  const open = panelEl.classList.toggle('open');
+  panelToggle.setAttribute('aria-expanded', String(open));
+  panelToggle.textContent = open ? 'Close' : 'Layers';
+});
+if (matchMedia('(pointer: coarse)').matches) document.getElementById('hint').textContent = 'drag to orbit · pinch to zoom';
 
 // ---------- Live feeds (aircraft, vessels, earthquakes) ----------
 // Served by server.py when the page is opened from http://localhost — the hosted copy has no network, so these stay dark.

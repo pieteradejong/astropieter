@@ -21,25 +21,8 @@ const { title = 'Default page title', description = 'Default page description' }
 				font-size: var(--font-size-h1);
 			}
 
-			main {
-				width: min(100% - 2 * var(--spacing-unit), 1200px);
-				margin: var(--spacing-unit) auto;
-				padding: 0 var(--spacing-unit);
-			}
-
-			@media (max-width: 768px) {
-				main {
-					padding: 0 var(--spacing-unit);
-				}
-			}
-
-			@media (max-width: 375px) {
-				.title {
-					margin: var(--spacing-unit) 0;
-					padding: var(--spacing-unit) 0;
-				}
-			}
-
+			/* The one page container. --spacing-unit already scales with the
+			   viewport, so no breakpoint overrides are needed here. */
 			main.content-container {
 				width: 100%;
 				max-width: 720px;
@@ -48,12 +31,6 @@ const { title = 'Default page title', description = 'Default page description' }
 				background: none;
 				color: var(--primary-text);
 				flex: 1 0 auto;
-			}
-
-			@media (max-width: 375px) {
-				main.content-container {
-					padding: 0 var(--spacing-unit);
-				}
 			}
 		</style>
 	</head>

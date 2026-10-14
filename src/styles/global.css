@@ -88,8 +88,12 @@ textarea {
 input {
 	font-size: 16px;
 }
+/* A wide table scrolls inside its own box instead of widening the page. */
 table {
-	width: 100%;
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	border-collapse: collapse;
 }
 img {
 	max-width: 100%;
@@ -106,6 +110,8 @@ pre {
 	font-family: var(--pub-font-mono);
 	background-color: var(--pub-paper-2);
 	border-left: var(--pub-rule-quote) solid var(--pub-rule);
+	max-width: 100%;
+	overflow-x: auto;
 }
 pre > code {
 	all: unset;
@@ -204,16 +210,8 @@ header {
 	border-bottom: var(--pub-rule-hair) solid var(--pub-rule);
 }
 
-/* Navigation Styles */
-nav .internal-links {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    gap: 1rem;
-    padding: 0.15rem 0;
-    flex-wrap: wrap;
-}
-
+/* Navigation Styles — layout and breakpoints live in Header.astro; only the
+   type and the active/focus treatment are global. */
 nav a {
     padding: 0.15em 1em;
     color: var(--accent);
@@ -245,34 +243,7 @@ nav a.active::after {
     background-color: var(--pub-accent);
 }
 
-@media (max-width: 768px) {
-    nav .internal-links {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        padding: 0.1rem 0;
-    }
-    nav a {
-        padding: 0.1em 0.8em;
-        font-size: 1em;
-    }
-}
-
-@media (max-width: 375px) {
-    nav .internal-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-    }
-    nav a {
-        font-size: 1em;
-        padding: 0.5em 0;
-        width: 100%;
-        text-align: center;
-    }
-}
-
-nav a:focus {
+nav a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
     background: var(--pub-paper-2);
@@ -310,6 +281,7 @@ html, body {
 }
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -403,7 +375,6 @@ nav a {
 
 nav a:hover {
     color: var(--pub-accent-deep);
-    font-weight: bold;
 }
 
 nav a.active {
@@ -436,37 +407,41 @@ nav a.active {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: var(--spacing-large);
     width: 100%;
 }
 
-@media (max-width: 375px) {
-    main {
-        padding: 0 var(--spacing-unit);
-    }
-    
+/* One phone breakpoint, shared with Header.astro: ≤767px is a phone. */
+@media (max-width: 767px) {
     .grid-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
-    body {
-        font-size: 1.1rem;
-    }
-    .footer-section {
-        margin-bottom: 2.5rem;
-    }
-    .button-link, .footer-section a, nav a {
+    .button-link {
         min-height: 44px;
-        line-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
-.content-container, main, section, article, div {
-  max-width: 100vw;
-  overflow-x: auto;
+/* Overflow: fix the element, not the page. Long words and URLs wrap; code,
+   tables and display math scroll inside their own box (see pre/table above
+   and .katex-display below). html/body overflow-x:hidden above stays as the
+   last line of defence, and tests/mobile.spec.ts measures scrollWidth so a
+   regression still shows. */
+main, article, .prose {
+  overflow-wrap: anywhere;
 }
-img, video {
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25em 0;
+}
+img, video, svg {
   max-width: 100%;
   height: auto;
+}
+img, video {
   display: block;
 }

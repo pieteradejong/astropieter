@@ -49,15 +49,18 @@ git clone https://github.com/yourusername/astropieter.git
 cd astropieter
 ```
 
-2. Run the initialization script:
+2. Run the initialization script (checks Node ≥ 22.12, `npm ci`, creates `.env` from
+   `.env.example`, looks for a Chrome for the browser tests):
 ```bash
-chmod +x init.sh
 ./init.sh
 ```
 
 3. Start the development server:
 ```bash
-npm run dev
+./run.sh            # dev server on http://localhost:4321/, also reachable from a phone on the same Wi-Fi
+./run.sh build      # production build
+./run.sh preview    # serve dist/
+./run.sh stop       # stop the background dev server
 ```
 
 ## Local Development
@@ -83,6 +86,11 @@ npm run dev
 
 The site will be available at `http://localhost:4321` (or another port if 4321 is in use).
 
+Unlisted pages, built but kept out of the nav and the sitemap: `/qr/` (a QR code for the site, to
+open on a phone and hold up; the SVG is `public/qr.svg`, regenerate it with
+`qrencode -t SVG -l M -m 2 -o public/qr.svg '<site url>'` if the domain changes), `/press/` and
+`/software/` (unfinished).
+
 Key development commands:
 - `npm run dev` - Start development server with hot reloading (Astro 7 runs this as a background daemon — manage it with `npx astro dev status` / `stop` / `logs`)
 - `npm run build` - Build the site for production
@@ -90,9 +98,9 @@ Key development commands:
 
 ## Testing
 
-Run `./test.sh` before deploying (`./test.sh --offline` skips the network checks). It covers dependency health (exact pins, installed = declared, no unused packages), the production build, drafts and RSS, KaTeX, theme and contrast, accessibility, SEO, outbound links, and a dev-server smoke test. Exits non-zero on any failure.
+Run `./test.sh` before deploying (`./test.sh --offline` skips the network checks). It covers dependency health (exact pins, installed = declared, no unused packages), the production build, drafts and RSS, KaTeX, theme and contrast, accessibility, SEO, outbound links (project links plus every link on `/reading/` and `/about/`), and a dev-server smoke test. Exits non-zero on any failure. Details: `docs/TESTING.md`.
 
-Its browser section runs `tests/content.spec.ts` (Playwright, headless Chrome) against the dev server: every Markdown/GFM construct, LaTeX in `.md` and `.mdx`, the KaTeX stylesheet and fonts actually applied, no overflow at phone width, and every blog post free of math errors, leaked LaTeX and console errors. The fixtures are draft posts (`src/content/blog/test-fixture-*`), so they are never built for production. To run the browser tests alone, with a dev server already up:
+Its browser section runs two Playwright suites (headless, installed Chrome) against the dev server. `tests/content.spec.ts`: every Markdown/GFM construct, LaTeX in `.md` and `.mdx`, the KaTeX stylesheet and fonts actually applied, and every blog post free of math errors, leaked LaTeX and console errors; its fixtures are draft posts (`src/content/blog/test-fixture-*`), never built for production. `tests/mobile.spec.ts`: every route at 320, 375 and 414px with no horizontal overflow, no text under 12px, ≥44px nav/footer/form controls, ≥16px inputs, the hamburger menu, the horizontal nav at 768–1024px, and the Terra demo's phone layout. To run the browser tests alone, with a dev server already up:
 
 ```bash
 BASE_URL=http://localhost:4321 npx playwright test
@@ -127,15 +135,18 @@ Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app.
 │   ├── content/          # Content collections: blog/ and projects/ (markdown/MDX)
 │   ├── content.config.ts # Content collection schemas (Content Layer API)
 │   ├── layouts/          # Page layouts
-│   ├── pages/            # Astro pages
-│   └── styles/           # Global styles
-├── public/               # Static assets
-├── init.sh               # Initialization script
+│   ├── pages/            # Astro pages (qr.astro, press.astro, software.astro are unlisted)
+│   └── styles/           # Global styles and the pub-* design tokens
+├── public/               # Static assets (qr.svg, terra/ standalone demo)
+├── docs/                 # TESTING.md, CONTENT-REVIEW.md (open content items)
+├── init.sh               # First-time setup
+├── run.sh                # dev | build | preview | stop
 ├── test.sh               # Comprehensive pre-deploy test suite
-├── tests/                # Playwright browser tests (content rendering)
+├── tests/                # Playwright: content.spec.ts, mobile.spec.ts
 ├── playwright.config.ts  # Playwright config (uses installed Chrome)
-├── DEPLOYMENT.md          # Vercel hosting, rollback, limits
-└── DECISIONS.md           # Decision log (why Vercel, …)
+├── CHANGELOG.md          # What changed, per session
+├── DEPLOYMENT.md         # Vercel hosting, rollback, limits
+└── DECISIONS.md          # Decision log (why Vercel, …)
 ```
 
 ## Content Pipeline
@@ -197,31 +208,7 @@ Recommended upgrade path: run `npx @astrojs/upgrade` to update Astro and officia
 
 ## Changelog
 
-### Dependency refresh and content tests (Sep 2026)
-
-- **Upgraded** `astro` 7.3.1 → 7.3.5, `@astrojs/mdx` 8.0.0 → 8.0.2, `@astrojs/markdown-remark` 7.3.0 → 7.3.1. Every dependency is now pinned exactly (no `^`).
-- **Removed unused `katex` and `@astrojs/react`** — nothing imported either; math is rendered by `rehype-katex`'s own bundled katex.
-- **KaTeX stylesheet fixed** — `BaseHead.astro` loaded the katex 0.15.1 stylesheet while math was rendered by 0.16.47. Now matched, with a verified SRI hash.
-- **Display math fixed** in `LaTeX_test.md` and the information-theory draft: single-line `$$…$$` had been rendering inline.
-- **Removed the `chrome-bookmarks` GitHub link** — the repo is private, so visitors got a 404.
-- **Added Playwright browser tests** (`tests/content.spec.ts`) and stronger dependency, math-pipeline and fixture-leak checks in `test.sh`.
-
-### Astro 5 → 7 upgrade (Aug 2026)
-
-Upgraded the site from Astro 5.15.5 to 7.2.2 via `npx @astrojs/upgrade`, then resolved every breaking change it surfaced:
-
-- **Removed `@astrojs/tailwind`** — it was an unused dependency (never imported in `astro.config.mjs`, no Tailwind config or `@tailwind` usage anywhere) and the sole blocker preventing `npm install` from resolving cleanly against Astro 7.
-- **Content collections migrated to the Content Layer API** — moved `src/content/config.ts` → `src/content.config.ts`, added `glob()` loaders per collection (`astro/loaders`), switched schema imports to `astro/zod`. The legacy config format was hard-removed in Astro v6.
-- **`entry.slug` → `entry.id`, `entry.render()` → `render(entry)`** — Content Layer API entries no longer expose `.slug` or a `.render()` method. Updated every usage across blog/project detail pages, `rss.xml.js`, `blog/index.astro`, `projects.astro`, `BlogPost.astro`, `SeriesNav.astro`, and `utils/series.ts`.
-- **Markdown pipeline** — moved `remarkPlugins`/`rehypePlugins` (used for KaTeX via `remark-math` + `rehype-katex`) into `unified({...})` from the new `@astrojs/markdown-remark` package, since Astro v7 replaced the default markdown pipeline.
-- **CSS media queries fixed** — `@media (max-width: var(--mobile-cutoff))` and similar are invalid CSS (custom properties aren't allowed in media-query conditions). The stricter LightningCSS minifier bundled with Astro 7 now hard-fails the build on this instead of silently ignoring it. Replaced with literal breakpoint values (`375px`, `768px`) in `global.css` and 6 components — this also fixed several responsive breakpoints that were silently dead before (the media queries never matched anything).
-- **`rss.xml.js` fixed** — the endpoint handler was `export function get()` (lowercase), which Astro no longer recognizes as a route handler (must be `GET`); the feed was silently broken. Also added draft-post filtering to the feed, since drafts were leaking into RSS even though they were correctly excluded from the blog index.
-- **`npm audit fix`** — resolved a moderate (`mdast-util-to-hast`) and a high (`sharp`/libvips) vulnerability pulled in transitively by the upgraded packages. 0 vulnerabilities remain.
-- **Local pre-commit hook fixed** (`.git/hooks/pre-commit`, not tracked in git) — it used to `grep` staged filenames for the substring `deploy.sh`, which false-positived on deleting `deploy.sh` from tracking and on unrelated files like `deploy.sh.example`. Rewrote it to exact-match filenames and to only check added/modified files, not deletions.
-- **Added `test.sh`** — a comprehensive test suite covering: Node/dependency health, `npm audit`, production build correctness (no errors/warnings), presence of every expected page, correct draft-post inclusion/exclusion, RSS feed validity (well-formed XML, no drafts, no `undefined` fields), KaTeX rendering, and a live dev-server smoke test across all main routes (Astro 7's `astro dev` now self-daemonizes in the background, managed via `astro dev status`/`stop`/`logs` — the script accounts for this).
-- **Deploy script separated from templates** — `deploy.sh` (real SSH credentials) is now gitignored and kept local-only; `deploy.sh.example`, `.deploy-env.example`, and `DEPLOYMENT.md` are the checked-in, credential-free templates.
-
-Verified with a clean `npm run build`, `./test.sh` (52/52 checks passing), and manual route checks in both dev and production builds.
+See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Customization
 
@@ -232,7 +219,7 @@ All styles use CSS variables defined in `src/styles/global.css`. Key variables:
 - `--non-link-text`: Color for non-interactive text
 - `--card-bg`: Background color for cards
 - `--border`: Border color
-- `--mobile-cutoff`: Breakpoint for mobile devices
+- Breakpoints: one phone breakpoint, `max-width: 767px` (and `min-width: 768px` for the horizontal nav). `--spacing-unit` scales the gutters, so pages rarely need their own media queries.
 
 ## Contributing
 

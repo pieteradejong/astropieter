@@ -24,12 +24,16 @@ const variantClasses = {
         display: inline-block;
         padding: 0.25em 0.75em;
         font-family: var(--pub-font-meta);
-        font-size: var(--pub-size-blurb);
+        font-size: 0.8rem; /* floor: 12px tags were the smallest text on the site */
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: var(--pub-track-label);
         line-height: 1.4;
         white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
     }
 
     .tag-default {
@@ -56,10 +60,4 @@ const variantClasses = {
         border: var(--pub-rule-hair) solid var(--pub-rule);
     }
 
-    @media (max-width: 375px) {
-        .tag {
-            font-size: 0.8rem;
-            padding: 0.2em 0.6em;
-        }
-    }
 </style> 

@@ -1,14 +1,17 @@
 ---
 // Cookie-less page-view analytics. Lives here, not in BaseHead: it renders a
 // custom element, which would end <head> early and push the meta tags into <body>.
+// Production only: in dev the component fetches a debug script from a Vercel
+// CDN on every page, which records nothing and only adds a third-party request
+// the browser tests then depend on.
 import Analytics from '@vercel/analytics/astro';
 
 const today = new Date();
 ---
 
-<Analytics />
+{import.meta.env.PROD && <Analytics />}
 
-<footer style="width: 100%;">
+<footer>
 	<div class="content-container">
 		<div class="footer-content">
 			<div class="footer-section">
@@ -56,22 +59,19 @@ const today = new Date();
 	.content-container {
 		max-width: var(--content-max-width, 900px);
 		margin: 0 auto;
-		padding-left: 1.5rem;
-		padding-right: 1.5rem;
+		padding-left: var(--spacing-unit);
+		padding-right: var(--spacing-unit);
 	}
 	.footer-content {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
-		gap: 0.5em;
+		gap: 1.5rem;
 		max-width: var(--content-max-width, 900px);
 		margin: 0 auto;
 		align-items: flex-start;
 	}
 	.footer-section {
-		flex: 1 1 0;
-		min-width: 90px;
-		max-width: 100px;
-		margin-right: 3em;
+		min-width: 0; /* the grid gap spaces the columns; no fixed column cap */
 	}
 	.footer-section h3.section-header {
 		color: var(--non-link-text);
@@ -83,10 +83,14 @@ const today = new Date();
 		display: flex;
 		flex-direction: column;
 	}
+	/* Every footer link is a ≥44px tap target at every width. */
 	.footer-section a:not(.button-link) {
-		padding: 0.0625rem 0;
+		padding: 0.5rem 0;
+		min-height: 44px;
+		box-sizing: border-box;
 		text-decoration: none;
-		display: block;
+		display: flex;
+		align-items: center;
 	}
 	.footer-section a:not(.button-link):hover {
 		text-decoration: underline;
@@ -107,7 +111,9 @@ const today = new Date();
 	.footer-section .quick-links a.button-link {
 		margin-top: 0.25rem;
 		padding: 0.5em 0.75em;
-		display: inline-block;
+		min-height: 44px;
+		display: inline-flex;
+		align-items: center;
 		text-align: center;
 		width: fit-content;
 	}
@@ -128,24 +134,10 @@ const today = new Date();
 	.footer-bottom p {
 		margin: 0;
 	}
-	@media (max-width: 768px) {
+	@media (max-width: 767px) {
 		.footer-content {
 			grid-template-columns: 1fr 1fr;
-			gap: 0.75rem;
-			width: 100%;
-			max-width: var(--content-max-width, 900px);
-			margin: 0 auto;
-		}
-		.footer-section {
-			width: 100%;
-			margin-bottom: 0.5rem;
-			margin-right: 0;
-		}
-		.footer-section > div {
-			align-items: flex-start;
-		}
-		.footer-bottom {
-			padding: 1rem 0 0;
+			gap: 1rem;
 		}
 	}
 
@@ -156,16 +148,13 @@ const today = new Date();
 			gap: 1rem;
 		}
 		.footer-section {
-			margin-bottom: 1rem;
-			margin-right: 0;
-			max-width: none;
+			margin-bottom: 0.5rem;
 		}
 		.footer-section h3.section-header {
 			font-size: 1.2rem;
-			margin-bottom: 0.5rem;
+			margin-bottom: 0.25rem;
 		}
 		.footer-section a:not(.button-link) {
-			padding: 0.25rem 0;
 			font-size: 1rem;
 		}
 		.interests span {

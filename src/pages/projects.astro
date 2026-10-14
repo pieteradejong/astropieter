@@ -27,7 +27,7 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 	title="Projects"
 	description="Software engineering and applied mathematics projects"
 >
-	<div class="content-container">
+	<div class="page-body">
 		<section class="projects-section">
 			<h2>Current Projects</h2>
 			<!-- Hidden until the script below runs, so without JS every card shows. -->
@@ -158,6 +158,10 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 		margin-bottom: 1.5rem;
 	}
 
+	.project-item {
+		min-width: 0;
+	}
+
 	.demo-filter[hidden],
 	.project-item[hidden] {
 		display: none;
@@ -241,7 +245,8 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 
 	.project-links {
 		display: flex;
-		gap: 1rem;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
 		margin-top: 1rem;
 	}
 
@@ -249,12 +254,14 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
+		min-height: 44px;
 	}
 
-	/* Force single column for projects page */
+	/* Force single column for projects page. minmax(0, 1fr), not 1fr: a bare 1fr
+	   has a min-content floor, and the card's floor was wider than a phone. */
 	.grid-container {
 		display: grid;
-		grid-template-columns: 1fr !important;
+		grid-template-columns: minmax(0, 1fr) !important;
 		gap: var(--spacing-large);
 		width: 100%;
 	}

@@ -22,7 +22,7 @@ const posts = allPosts
 	title=""
 	description="Blog posts by Pieter de Jong"
 >
-	<div class="content-container">
+	<div class="page-body">
 		<div class="blog-intro">
 			<!-- <h1>Blog Posts</h1> -->
 			<p>
@@ -139,7 +139,7 @@ const posts = allPosts
 	}
 
 	.draft-badge {
-		font-size: 0.7rem;
+		font-size: 0.75rem; /* 12px floor for phone legibility */
 		padding: 0.2rem 0.5rem;
 		background: var(--pub-paper-2);
 		color: var(--pub-accent-deep);

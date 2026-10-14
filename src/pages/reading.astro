@@ -8,7 +8,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 	title="My Reading"
 	description="A collection of books I've read, am reading, and aspire to read - from technical to philosophical."
 >
-	<div class="content-container">
+	<div class="page-body">
 		<div class="reading-intro">
 			<h3>Why read?</h3>
 			<p>
@@ -72,7 +72,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 							<span class="book-genre">Humanity, Morality, Religion</span>
 						</div>
 						<div class="book-actions">
-							<a href="https://www.amazon.com/Jesus-Personality-Theory-Exploring-Five-Factor/dp/0830827685" 
+							<a href="https://www.amazon.com/dp/0830819258" 
 							   target="_blank" 
 							   rel="noopener noreferrer" 
 							   class="tertiary-link">
@@ -94,7 +94,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 							<span class="book-genre">Health & Exercise</span>
 						</div>
 						<div class="book-actions">
-							<a href="https://www.amazon.com/Physics-Resistance-Exercise-Doug-Brignole/dp/1734073001" 
+							<a href="https://www.amazon.com/dp/1606794973" 
 							   target="_blank" 
 							   rel="noopener noreferrer" 
 							   class="tertiary-link">
@@ -123,7 +123,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 							<span class="book-score">My Score: 80%</span>
 						</div>
 						<div class="book-actions">
-							<a href="https://www.amazon.com/Nuclear-War-History-Worlds-Powerful/dp/0316413733" 
+							<a href="https://www.amazon.com/dp/0593476093" 
 							   target="_blank" 
 							   rel="noopener noreferrer" 
 							   class="tertiary-link">
@@ -242,7 +242,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 							<span class="book-genre">Humanities</span>
 						</div>
 						<div class="book-actions">
-							<a href="https://www.amazon.com/stores/Fyodor-Dostoevsky/author/B000AQ6LWY" 
+							<a href="https://www.amazon.com/Fyodor-Dostoevsky/e/B000AQ6LWY" 
 							   target="_blank" 
 							   rel="noopener noreferrer" 
 							   class="tertiary-link">
@@ -399,9 +399,11 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		transition: transform 0.2s, border-color 0.2s;
 	}
 
-	.book-card:hover {
-		transform: translateY(-1px);
-		border-color: var(--pub-accent);
+	@media (hover: hover) {
+		.book-card:hover {
+			transform: translateY(-1px);
+			border-color: var(--pub-accent);
+		}
 	}
 
 	.book-header {
@@ -487,7 +489,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		margin-bottom: 0.5rem;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 767px) {
 		.book-sharing {
 			flex-direction: column;
 			align-items: center;
@@ -525,9 +527,11 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		max-height: none;
 	}
 
-	.lyric-card:hover {
-		transform: translateY(-1px);
-		border-color: var(--pub-accent);
+	@media (hover: hover) {
+		.lyric-card:hover {
+			transform: translateY(-1px);
+			border-color: var(--pub-accent);
+		}
 	}
 
 	.lyric-header {
@@ -570,7 +574,7 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		margin-top: 1rem;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 767px) {
 		.lyric-card {
 			padding: 1.25rem;
 		}
@@ -588,5 +592,12 @@ import bookSharingPhoto from "../assets/book_sharing_feynman.jpg";
 		overflow: visible !important;
 		max-height: none !important;
 		height: auto !important;
+	}
+	/* Book and lyric action links are tap targets, not inline prose links. */
+	.book-actions a,
+	.lyric-actions a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
 	}
 </style>

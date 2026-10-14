@@ -28,7 +28,8 @@ Eleven sections, ~93 passing checks.
 
 **Environment** — Node ≥ 22.12 (Astro 7's floor), `node_modules` present.
 
-**Dependency health** — `npm audit` clean, no legacy `src/content/config.ts`,
+**Dependency health** — `npm audit` with nothing moderate or worse (low advisories with
+no non-breaking fix warn; today that is `katex` via `rehype-katex` 7), no legacy `src/content/config.ts`,
 no unused `@astrojs/tailwind`, no lowercase route handlers (`get` instead of
 `GET`, which silently broke RSS once), no `var()` inside a `@media` condition
 (invalid CSS that LightningCSS now hard-errors on).
@@ -40,7 +41,9 @@ has a detail page; every draft is *absent* from the production build.
 
 **RSS feed** — well-formed XML, no drafts, no `undefined` values.
 
-**KaTeX** — the LaTeX post actually renders `class="katex"` markup.
+**KaTeX** — a published post that uses math actually renders `class="katex"` markup, and
+the CDN stylesheet version matches the renderer's katex. With no published math post (the
+LaTeX test post is a draft) this warns; the browser fixtures still cover the pipeline.
 
 **Theme integrity** — the section that keeps the design system honest. The
 shipped CSS bundle must contain *no color outside the sixteen terracotta tokens*
@@ -71,7 +74,8 @@ visible form field has a label.
 
 **Metadata and SEO** — canonical URLs all point at the configured host; every
 Astro page has a title and description; Open Graph and Twitter card tags;
-sitemap generated. Pages served verbatim from `public/` are checked separately,
+sitemap generated, with the unlisted pages (`/press/`, `/software/`, `/qr/`) kept
+out of it and still built. Pages served verbatim from `public/` are checked separately,
 since they never pass through `BaseHead` and the fix lives in the source file.
 
 **Payload weight** — the README calls loading speed a top priority, so weight is
@@ -85,24 +89,48 @@ ignored directory holding source that is not in git**. That last one is the
 in exactly one copy, invisible to every tool, for as long as it did because
 nothing looked.
 
-**Outbound link integrity** — every `githubUrl`, `demoUrl` and `deploymentUrl`
-in project frontmatter is fetched. Internal demos must exist as a real page in
-the build. A host that does not answer is distinguished from the network being
-down, because a demo link that hangs reads to a visitor exactly like one that
-is broken.
+**Outbound link integrity** — every `githubUrl` and `demoUrl` in project
+frontmatter is fetched. Internal demos must exist as a real page in the build. A
+host that does not answer is distinguished from the network being down, because
+a demo link that hangs reads to a visitor exactly like one that is broken. Then
+every absolute link on the built `/reading/` and `/about/` pages is fetched with
+a browser user-agent: 4xx/5xx fails, no answer warns, and the bot walls the weekly
+workflow excludes (LinkedIn, genius.com) are skipped here too. The weekly lychee
+job (`link-report.yml`) remains the backstop for every other page.
 
 **Dev server smoke test** — starts Astro on :4322, checks every main route
 returns 200, and confirms drafts *are* reachable in dev.
+
+**Browser tests** (Playwright on the installed Chrome, against that dev server):
+
+- `tests/content.spec.ts` — every Markdown/GFM construct, inline and display math in
+  `.md` and `.mdx`, the KaTeX stylesheet and fonts actually applied, project heroes
+  loading, and every post free of math errors, leaked LaTeX and console or network
+  errors. Fixtures are draft posts, never built for production.
+- `tests/mobile.spec.ts` — every main route at 320, 375 and 414px: the page is no
+  wider than the viewport and no element sticks out past the right edge (code,
+  tables and display math may scroll inside their own box); no visible text under
+  12px; nav, footer, form buttons and button-links ≥44px tall, form fields ≥40px,
+  prose links ≥24px; inputs ≥16px so iOS does not zoom. The hamburger opens a menu
+  of full-width ≥44px links directly under the header, moves focus in, and Escape
+  closes it and restores focus; the name truncates on a 320px screen; the horizontal
+  nav fits at 768, 900 and 1024px. Terra at 375px: the layer panel is behind a
+  ≥44px Layers button and the chokepoint card is a bottom sheet below the title.
+
+Under `--live`, the content tests that need no fixtures and the whole mobile suite
+run against production.
 
 ## What it does not cover
 
 - **Visual regression.** Nothing renders the page and looks at it. The theme
   checks prove the right tokens ship, not that the layout is right.
-- **JavaScript behaviour.** The project-card expand/collapse is untested.
+- **JavaScript behaviour.** The project-card expand/collapse is untested (the
+  hamburger menu and the Terra layer toggle are).
 - **The terra page.** `public/terra/index.html` is a 5 MB self-contained
   artifact served verbatim; only its weight and metadata are checked, not its
   contents.
-- **Cross-browser and mobile rendering.**
+- **Cross-browser rendering.** Mobile layout is covered (above), but only in Chrome;
+  Safari on iOS is not exercised. `./run.sh` serves on the LAN for a real-phone check.
 - **The live site, unless asked.** The default run checks `dist/` and a local dev
   server. `./test.sh --live <url>` checks what Vercel is actually serving.
 

@@ -1,7 +1,7 @@
 ---
 title: "Chrome Bookmark Assistant"
 description: "A Chrome extension that finds broken bookmarks without flagging every login page and bot wall as dead"
-techStack: ["JavaScript", "Chrome Extensions (Manifest V3)", "Jest"]
+techStack: ["JavaScript", "Chrome Extension (MV3)", "Jest"]
 keyFeatures: [
   "Checks every bookmark and sorts the results into broken, login-required and available",
   "Scheduled background scans, with a toolbar badge when something new breaks",

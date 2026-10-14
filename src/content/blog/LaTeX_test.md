@@ -1,17 +1,16 @@
 ---
 title: 'LaTeX test'
 description: 'Testing whether LaTeX mathematical markup works in an Astro blog post.'
-hook: 'Hook getting you to read this!'
 pubDate: 'Oct. 30 2023'
 tags: ['all', 'math']
+# Unlisted: a rendering test, not an essay. Browser fixtures and test.sh exercise KaTeX.
+draft: true
 ---
-**What:** LaTeX is a markup language for mathematical notation, uniquitous in academia and beyond.
+**What:** LaTeX is a markup language for mathematical notation, ubiquitous in academia and beyond.
 
-**Why:** The examples below show how math can be readibly displayed using LaTeX, as opposed to awkwardly inserting images, or using English-alphabet characters to describe things.
+**Why:** The examples below show how math can be readably displayed using LaTeX, as opposed to awkwardly inserting images, or using English-alphabet characters to describe things.
 
-**How:** I learned LaTeX notation in high school and University, as do most. And for this website, this blog post explains how: 
-
-https://blog.alexafazio.dev/blog/render-latex-in-astro/
+**How:** I learned LaTeX notation in high school and University, as do most. On this site, `remark-math` and `rehype-katex` render it.
 
 
 Equality:

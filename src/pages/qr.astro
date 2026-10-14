@@ -1,0 +1,60 @@
+---
+// Share-in-person page: a QR code for the site, meant to be opened on a phone
+// and held up. Unlisted (not in the nav, excluded from the sitemap in
+// astro.config.mjs). The SVG is static: public/qr.svg, generated once with
+// `qrencode -t SVG -l M -m 2 -o public/qr.svg 'https://padj.vercel.app/'`.
+// Regenerate it if the site moves to another domain (CLAUDE.md § Gotchas).
+import Layout from '../layouts/Default.astro';
+const url = 'https://padj.vercel.app/';
+const shown = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<Layout title="Scan to open this site" description="QR code that opens padj.vercel.app">
+	<div class="qr-page">
+		<a class="qr-frame" href={url} aria-label="Open the homepage">
+			<img src="/qr.svg" alt={`QR code for ${url}`} width="420" height="420" decoding="async" />
+		</a>
+		<p class="qr-url">{shown}</p>
+		<p class="qr-hint">Open this page on your phone and hold it up. Scanning opens the homepage.</p>
+	</div>
+</Layout>
+
+<style>
+	.qr-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: 1rem;
+		padding: 1rem 0 2rem;
+	}
+	.qr-frame {
+		display: block;
+		width: min(80vw, 420px);
+		aspect-ratio: 1;
+		padding: 0.75rem;
+		box-sizing: border-box;
+		background: var(--pub-paper);
+		border: var(--pub-rule-hair) solid var(--pub-rule);
+	}
+	.qr-frame img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		/* The SVG paints its own white ground (qrencode's first <rect>), so the
+		   code stays dark-on-light under the dark palette too. */
+	}
+	.qr-url {
+		font-family: var(--pub-font-meta);
+		font-size: clamp(1.25rem, 5vw, 1.75rem);
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+	.qr-hint {
+		color: var(--secondary-text);
+		margin: 0;
+		max-width: 36ch;
+	}
+</style>

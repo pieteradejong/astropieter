@@ -1,13 +1,21 @@
-#!/bin/sh
-# Run this script to start the Astro project locally
-# Installs dependencies if needed, then starts the dev server on all interfaces
+#!/usr/bin/env bash
+# Start the dev server. First run: ./init.sh (toolchain check, npm ci, .env).
+#   ./run.sh            dev server on http://localhost:4321/ (all interfaces, so a phone on the
+#                       same Wi-Fi can open it for a real mobile check)
+#   ./run.sh build      production build into dist/
+#   ./run.sh preview    serve dist/ locally
+#   ./run.sh stop       stop the dev server (Astro 7's dev server is a background daemon;
+#                       `npx astro dev status|logs` also work)
+set -euo pipefail
+cd "$(dirname "$0")"
 
-set -e
+[ -d node_modules ] || { echo "node_modules missing — running ./init.sh first"; ./init.sh; }
 
-if [ ! -d node_modules ]; then
-  echo "Installing dependencies..."
-  npm install
-fi
-
-echo "Starting Astro dev server on all interfaces (http://localhost:4321/)..."
-npm run dev -- --host 
+case "${1:-dev}" in
+	dev)     echo "Dev server on http://localhost:4321/ (and on this machine's LAN address)"
+	         exec npm run dev -- --host ;;
+	build)   exec npm run build ;;
+	preview) exec npm run preview ;;
+	stop)    exec npx astro dev stop ;;
+	*)       echo "usage: ./run.sh [dev|build|preview|stop]" >&2; exit 2 ;;
+esac

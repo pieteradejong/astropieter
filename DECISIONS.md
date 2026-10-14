@@ -159,3 +159,87 @@ Known limit: GitHub disables scheduled workflows in a public repo after 60 days 
 commit. It emails a warning first, and one push re-enables the schedule.
 **Verified:** NOT YET. Needs the first run (`gh workflow run link-report.yml`) to succeed, the
 issue to get its first comment, and the notification email to arrive.
+
+## 7. QR code for sharing the site: one static SVG at `/qr/`
+**Date:** 2026-10-14
+**Context:** Pieter wants the easiest way to show a QR code that opens the site when meeting
+someone. Requirements: works on his own phone with no app, nothing to type, no new moving parts.
+**Decision:** `public/qr.svg`, generated once with `qrencode` (libqrencode 4.1.1 from Homebrew, a
+system tool, not a project dependency) for `https://padj.vercel.app/`, shown on an unlisted page
+`src/pages/qr.astro` with the URL printed underneath. The fixed `width`/`height` were stripped from
+the SVG so it scales to `min(80vw, 420px)`; the SVG paints its own white ground so it scans under
+the dark palette. The page is out of the nav and the sitemap (#9); the way to use it is to bookmark
+`/qr/` on the phone. If the domain changes, regenerate the file (CLAUDE.md § Gotchas).
+Rejected:
+- An npm QR library at build time: a dependency, with install scripts to vet, for a one-off.
+- A client-side QR script: JavaScript on a page whose whole content is one image.
+- A third-party QR image API (`api.qrserver.com` and the like): every page view tells a third party
+  the URL, and the code disappears if the service does.
+- Nothing in the site, use the phone's share sheet: differs per OS version and is a fiddle in the
+  moment.
+**Verified:**
+- `zbarimg` on a QuickLook render of `public/qr.svg` → `QR-Code:https://padj.vercel.app/`.
+- `./test.sh` → `✓ GET /qr/ -> 200`, `✓ unlisted pages (/press/ /software/ /qr/) are out of the
+  sitemap`, `✓ unlisted page still builds: /qr/`; `tests/mobile.spec.ts` passes `/qr/` at 320, 375
+  and 414px (no overflow, no text under 12px).
+
+## 8. Overflow on phones: fix the element, test every route, no page-level hack
+**Date:** 2026-10-14
+**Context:** `global.css` carried `.content-container, main, section, article, div { max-width:
+100vw; overflow-x: auto }`. It kept the page from scrolling sideways by turning every block into
+its own scroll container, so a too-wide element got a local scrollbar nobody noticed, `overflow-y`
+computed to `auto` everywhere, and any future `position: sticky` would have broken. The only mobile
+test covered two pages. Meanwhile the post-body rules in `BlogPost.astro` never reached rendered
+Markdown (scoped styles do not match `<Content />` output), five pages doubled the gutter by
+reusing `.content-container` inside the layout, three nested a second `<main>`, the About timeline
+kept a 110px gutter at every width, the project grid's `1fr` min-content floor was wider than a
+phone, and breakpoints disagreed (375/480/767/768/1023).
+**Decision:**
+- Targeted overflow rules: `pre`, `table` and `.katex-display` scroll inside their own box;
+  `main, article, .prose { overflow-wrap: anywhere }` wraps long words and URLs; `img, video, svg {
+  max-width: 100% }`. `html, body { overflow-x: hidden }` stays as the last line of defence only.
+- One phone breakpoint, `max-width: 767px` (`min-width: 768px` for the horizontal nav).
+  `--spacing-unit` already scales gutters, so pages drop their own 375/480px rules.
+- `tests/mobile.spec.ts` runs every main route at 320, 375 and 414px: `scrollWidth <= clientWidth`
+  and no visible element past the right edge (scroll containers excepted), no text under 12px,
+  ≥44px nav/footer/form controls, ≥16px inputs, plus the hamburger, the horizontal nav and Terra's
+  phone layout. It also runs under `./test.sh --live`.
+- Post-body styles live in a `<style is:global>` block in `BlogPost.astro`.
+Rejected:
+- Keeping the blanket rule and adding the test on top: the rule hides exactly what the test looks
+  for inside any `div`.
+- `overflow-x: clip` on body only: same symptom-hiding, one level up.
+- Per-page breakpoints as before: six values that never agreed, and dead rules nobody could tell
+  from live ones.
+**Verified:**
+- `./test.sh` → `171 passed, 0 failed, 9 warnings` (was 118 passing before this session; the new
+  mobile suite adds 44 checks).
+- Mutation test on `/about/` at 375px: a `600px`-wide div fails the test naming the element
+  (`div#MUT1 right=612`); a 140-character unbroken word alone passes (wrapped by `overflow-wrap`).
+  File restored afterwards.
+- Built `dist/blog/why-blog/index.html`: `.prose` element rules now ship unscoped and apply to the
+  Markdown `<p>`/`<pre>` elements.
+- Terra at 375px (Playwright): `#panel` hidden until the 44px `#panelToggle`; a shown `#card` sits
+  below `#title`; no text under 12px.
+
+## 9. Unlisted pages: out of the sitemap, kept in the build
+**Date:** 2026-10-14
+**Context:** `/press/` (one paragraph) and `/software/` (three, with a commented-out nav link) are
+unfinished and linked from nowhere, yet sat in the sitemap. `/blog/latex_test/` was a published
+KaTeX rendering test with typos and a dead link, and the second of only two posts on the blog
+index. `/qr/` (#7) is a utility page that should not rank.
+**Decision:** `sitemap({ filter })` in `astro.config.mjs` drops `/press/`, `/software/` and `/qr/`;
+the files stay and the routes still build and return 200. `LaTeX_test.md` is `draft: true` (and
+loses the schema-unknown `hook:` field). `test.sh` fails if an unlisted page appears in
+`dist/sitemap-*.xml` or stops building, and its KaTeX dist check now warns instead of failing when
+no published post uses math (the browser fixtures cover the pipeline).
+Rejected:
+- Deleting press and software: Pieter wants to finish them (docs/CONTENT-REVIEW.md).
+- Linking them in the nav as they are: thin pages in the main navigation.
+- Keeping latex_test public with the typos fixed: a test page is not an essay, and the blog's
+  second entry should be one.
+**Verified:**
+- `grep -c 'press/\|software/\|qr/' dist/sitemap-0.xml` → `0`; `ls dist/blog/latex_test` → no such
+  file; `dist/press/index.html`, `dist/software/index.html`, `dist/qr/index.html` exist.
+- `./test.sh` → `✓ unlisted pages (/press/ /software/ /qr/) are out of the sitemap`, three
+  `✓ unlisted page still builds`, `! no published post exercises KaTeX in the build`.

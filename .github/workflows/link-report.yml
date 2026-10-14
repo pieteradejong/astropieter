@@ -3,8 +3,10 @@
 # and posts the result as a comment on the open "Weekly link report" issue.
 # GitHub emails each comment to the repo owner; the job also fails when links
 # are broken, which sends GitHub's failed-run email.
-# LinkedIn answers every bot with 999, so it is excluded; a browser user-agent
-# avoids 403s from sites that block lychee's default one (e.g. genius.com).
+# LinkedIn answers every bot with 999 and genius.com answers CI with 403 even
+# behind a browser user-agent (both are bot walls, not broken links), so both
+# are excluded. The user-agent still avoids 403s from sites that only block
+# lychee's default one.
 name: link-report
 on:
   schedule:
@@ -48,6 +50,7 @@ jobs:
             --accept 200..=299,429
             --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36'
             --exclude '^https://([a-z]+\.)?linkedin\.com/'
+            --exclude '^https://genius\.com/'
             'dist/**/*.html'
             https://padj.vercel.app/
 
