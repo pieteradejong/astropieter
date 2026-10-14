@@ -9,11 +9,14 @@ Push to `main`. Vercel builds (`astro build`, Node 22.x from `package.json` `eng
 publishes `dist/` as the production deployment. There is no deploy script and nothing to run
 locally. Other branches and pull requests get preview URLs.
 
-Vercel does not run `./test.sh`, so run it before pushing. After a deploy, check what is
-actually being served:
+Vercel does not run `./test.sh`, so run it before pushing. GitHub runs it after: the `site`
+workflow (`.github/workflows/ci.yml`) runs `./test.sh --offline` on the push and, when Vercel
+reports the production deployment, `./test.sh --live https://padj.vercel.app` against the served
+site. Both show as checks on the commit. To check a deployment by hand:
 
 ```bash
 ./test.sh --live https://padj.vercel.app
+gh workflow run ci.yml -f url=https://padj.vercel.app && gh run watch
 ```
 
 ## Rollback

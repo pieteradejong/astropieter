@@ -13,12 +13,16 @@ npm run dev                                  # dev server with live reload
 ./init.sh                                    # fresh clone: toolchain check, npm ci, .env, Chrome check
 ./run.sh [dev|build|preview|stop]            # dev server reachable from a phone on the same Wi-Fi
 gh workflow run link-report.yml              # weekly broken-link report, on demand
+gh workflow run ci.yml -f url=https://padj.vercel.app   # live check of production, on demand
+gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / tests, site / live
 ```
 
 ## Gotchas
 
 - **Pushing `main` is a production deploy.** Vercel builds on push, and it does not run
-  `./test.sh`. Run the suite first.
+  `./test.sh`. Run the suite first. GitHub then runs it too (`ci.yml`, DECISIONS #10): `tests` on
+  the push (`--offline`, Playwright's own Chromium) and `live` against padj.vercel.app after Vercel's
+  `deployment_status`. A red `live` means visitors see a broken site: `vercel rollback`.
 - **Projects: `demoUrl` is the only demo field** (`deploymentUrl` is retired, DECISIONS #3). Only
   list a demo that works: `test.sh` fails on a dead one (#4). The "Live demo" / "Source only"
   badge and the `/projects` filter derive from it (#5).

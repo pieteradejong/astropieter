@@ -1,5 +1,7 @@
 # Pieter de Jong - Personal website
 
+[![site tests](https://github.com/pieteradejong/astropieter/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/pieteradejong/astropieter/actions/workflows/ci.yml) [![security](https://github.com/pieteradejong/astropieter/actions/workflows/security.yml/badge.svg)](https://github.com/pieteradejong/astropieter/actions/workflows/security.yml) [![weekly links](https://github.com/pieteradejong/astropieter/actions/workflows/link-report.yml/badge.svg)](https://github.com/pieteradejong/astropieter/actions/workflows/link-report.yml)
+
 Live at: https://padj.vercel.app/
 
 **This is my main online presence**, aside from [my LinkedIn](https://www.linkedin.com/in/pieteradejong/) and [my GitHub](https://github.com/pieteradejong). The Internet is a large place, and standing out is both critical and hard. This is where I aim to do so.
@@ -124,7 +126,7 @@ How it works: `remark-math` finds the math, `rehype-katex` renders it with its o
 
 ## Deployment
 
-Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app. There is no deploy script. Vercel does not run the tests, so run `./test.sh` before pushing, and `./test.sh --live https://padj.vercel.app` afterwards to check what is being served. Rollback, configuration and plan limits: `DEPLOYMENT.md`.
+Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app. There is no deploy script. Vercel does not run the tests, so run `./test.sh` before pushing. On GitHub, `.github/workflows/ci.yml` then runs `./test.sh --offline` on the push (the **site / tests** check) and, once Vercel reports the production deployment, `./test.sh --live https://padj.vercel.app` against what is actually served (the **site / live** check). Both must be green for the site to count as working. Rollback, configuration and plan limits: `DEPLOYMENT.md`.
 
 ## Project Structure
 

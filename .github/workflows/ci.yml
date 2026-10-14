@@ -1,0 +1,90 @@
+# Site checks (DECISIONS.md #10). Two jobs, two green ticks on the repo:
+#
+#   tests  — on every push and pull request: ./test.sh --offline in a clean
+#            Linux checkout (build, drafts, RSS, theme, contrast, a11y, SEO,
+#            weight, hygiene, dev-server smoke test, and the Playwright content
+#            and mobile suites in Playwright's own Chromium). The network
+#            sections (outbound links, KaTeX SRI fetch) are left to the weekly
+#            link report and to the local run, so this job never fails on a
+#            third party.
+#   live   — after Vercel reports a successful production deployment of the
+#            `padj` project: ./test.sh --live against https://padj.vercel.app,
+#            which checks every route, the canonical host, the analytics
+#            script and the browser suites against what visitors actually get.
+#            It can also be run by hand against any URL.
+#
+# Vercel does not run test.sh; this is what makes "the site works" a status
+# on GitHub instead of a statement.
+name: site
+on:
+  push:
+    branches: [main]
+  pull_request:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Deployed site to check (live job only)'
+        required: false
+        default: 'https://padj.vercel.app'
+permissions:
+  contents: read
+concurrency:
+  group: site-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # No system Chrome on the runner: playwright.config.ts falls back to
+      # Playwright's own Chromium when none of its known paths exist.
+      - run: npx playwright install --with-deps chromium
+      - run: ./test.sh --offline
+
+  live:
+    # Only the real site. The repo may be linked to more than one Vercel
+    # project; a status from any other environment is ignored.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production – padj')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.url || 'https://padj.vercel.app' }}
+      DEPLOY_URL: ${{ github.event.deployment_status.environment_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Test the commit that was deployed, not whatever main is now.
+          ref: ${{ github.event.deployment.sha || github.sha }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Wait for the deployment to answer
+        run: |
+          for url in "$DEPLOY_URL" "$SITE_URL"; do
+            [ -n "$url" ] || continue
+            for i in $(seq 1 12); do
+              code=$(curl -s -o /dev/null -L --max-time 15 -w '%{http_code}' "$url/" || echo 000)
+              echo "$url -> $code"
+              [ "$code" = "200" ] && break
+              sleep 10
+            done
+          done
+      - run: ./test.sh --live "$SITE_URL"

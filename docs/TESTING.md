@@ -1,7 +1,11 @@
 # Testing
 
 One entry point: `./test.sh`. Run it before every push to `main` — pushing deploys,
-and Vercel does not run it for you.
+and Vercel does not run it for you. GitHub does, after the fact: `.github/workflows/ci.yml`
+runs `./test.sh --offline` on every push and pull request (check **site / tests**) and
+`./test.sh --live https://padj.vercel.app` once Vercel reports the production deployment
+(check **site / live**). The network-dependent sections stay out of the push check so a
+third-party outage cannot turn the repo red; the weekly link report covers them.
 
 ```bash
 ./test.sh              # everything

@@ -43,6 +43,10 @@ live.
   `stop`.
 
 ### Added
+- `.github/workflows/ci.yml` (DECISIONS #10): `site / tests` runs `./test.sh --offline` on every
+  push and pull request; `site / live` runs `./test.sh --live https://padj.vercel.app` after Vercel
+  reports a successful production deployment (and on demand with a URL). README badges for the
+  three workflows.
 - `/qr/`: a QR code for the site to show on a phone (DECISIONS #7). `public/qr.svg` is static,
   generated once with `qrencode`.
 - `tests/mobile.spec.ts`: every route at 320/375/414px with no horizontal overflow, no text under

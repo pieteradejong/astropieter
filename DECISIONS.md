@@ -243,3 +243,35 @@ Rejected:
   file; `dist/press/index.html`, `dist/software/index.html`, `dist/qr/index.html` exist.
 - `./test.sh` → `✓ unlisted pages (/press/ /software/ /qr/) are out of the sitemap`, three
   `✓ unlisted page still builds`, `! no published post exercises KaTeX in the build`.
+
+## 10. The site's health is a GitHub check, not a statement
+**Date:** 2026-10-14
+**Context:** Pieter asked for checkmarks on the GitHub repo showing the website fully works. Until
+now `./test.sh` only ran when someone ran it, Vercel never runs it, and the only checks on a commit
+were the security workflow, Vercel's own build status and the weekly link job. "171 passed" in a
+terminal is not visible to anyone else and says nothing about what visitors get.
+**Decision:** `.github/workflows/ci.yml`, two jobs, both pinned by SHA and `contents: read`:
+- `tests`: on push to `main` and on pull requests, `npm ci --ignore-scripts`, Playwright's own
+  Chromium (`playwright.config.ts` already falls back to it when no Chrome path exists), then
+  `./test.sh --offline`. The network sections (outbound links, KaTeX SRI fetch, Web Analytics API)
+  stay out, so a third-party outage cannot fail the push check; the weekly link report owns links.
+- `live`: on Vercel's `deployment_status` success for the environment `Production – padj` only
+  (the repo also receives statuses from a second, misconfigured Vercel project, TODO.md), checks
+  out the deployed commit, waits for the deployment URL and the alias to answer, then runs
+  `./test.sh --live https://padj.vercel.app`: every route, canonical host, analytics script, and
+  the browser suites (content and mobile) against the served site. Also runnable by hand with a
+  URL (`workflow_dispatch`).
+- README carries the badges for `site`, `security` and `link-report`.
+Rejected:
+- Running the full networked suite on push: Amazon and similar hosts answer CI runners
+  unpredictably; the push check would go red for reasons unrelated to the commit.
+- A cron that checks production every hour: noise without a cause to attach it to; the
+  deployment event is the moment that matters, and the weekly link job already covers drift.
+- Vercel's own build check as "the site works": it proves the build command exited 0, not that a
+  route renders or that a phone can use it.
+- Making the checks required on `main` (branch protection): GitHub-side setting, and EN-3 in the
+  workspace TODO is still Pieter's call.
+**Verified:** NOT YET. Needs the push: `site / tests` green on the push commit, then a Vercel
+production deployment followed by a green `site / live` run (`gh run list --workflow ci.yml`), and
+the badges in the README resolving. Local stand-in: `./test.sh --offline` → see the session's
+closing summary.
