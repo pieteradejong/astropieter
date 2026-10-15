@@ -31,6 +31,7 @@ live.
   They now stack above the bio.
 
 ### Changed
+- `./run.sh test [flags]` delegates to `./test.sh`; `--help` on all three scripts prints the header before anything installs; `test.sh` runs under `/usr/bin/env bash` and is shellcheck-clean (repo-standards § Scripts).
 - **Desktop nav on one row.** The header's column is 960px wide (the prose measure stays 720px),
   link padding and gaps are tighter, labels never break inside, and from 1024px the row cannot
   wrap; Contact no longer drops to a second line. The phone dropdown's box border no longer shows

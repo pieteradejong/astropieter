@@ -6,8 +6,13 @@
 #   ./run.sh preview    serve dist/ locally
 #   ./run.sh stop       stop the dev server (Astro 7's dev server is a background daemon;
 #                       `npx astro dev status|logs` also work)
+#   ./run.sh test …     run ./test.sh with the given flags (e.g. --offline)
 set -euo pipefail
 cd "$(dirname "$0")"
+case "${1:-}" in
+	-h|--help|help) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+	test)           shift; exec ./test.sh "$@" ;;
+esac
 
 [ -d node_modules ] || { echo "node_modules missing — running ./init.sh first"; ./init.sh; }
 
@@ -17,5 +22,5 @@ case "${1:-dev}" in
 	build)   exec npm run build ;;
 	preview) exec npm run preview ;;
 	stop)    exec npx astro dev stop ;;
-	*)       echo "usage: ./run.sh [dev|build|preview|stop]" >&2; exit 2 ;;
+	*)       echo "usage: ./run.sh [dev|build|preview|stop|test|help]" >&2; exit 2 ;;
 esac

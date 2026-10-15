@@ -4,6 +4,7 @@
 # Safe to re-run. Nothing here needs the network beyond `npm ci`.
 set -euo pipefail
 cd "$(dirname "$0")"
+case "${1:-}" in -h|--help) sed -n '2,4p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
 
 GREEN='\033[0;32m'; BLUE='\033[0;34m'; RED='\033[0;31m'; NC='\033[0m'
 say()  { printf '%b\n' "${BLUE}$1${NC}"; }

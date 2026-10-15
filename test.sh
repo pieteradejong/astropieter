@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Comprehensive test suite for the astropieter Astro site.
 #
 # Covers: environment and dependency health, production build integrity,
@@ -19,7 +19,8 @@
 #                  host, analytics, browser rendering of every post)
 
 set -uo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
+case "${1:-}" in -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -865,6 +866,7 @@ section "Accessibility"
 # ---------------------------------------------------------------------------
 
 MISSING_ALT=0
+# shellcheck disable=SC2044 # dist/ paths are generated, never contain spaces
 for f in $(find dist -name '*.html' 2>/dev/null); do
 	# <img> tags with no alt attribute at all
 	n=$(grep -o '<img[^>]*>' "$f" 2>/dev/null | grep -cv 'alt=' || true)
@@ -915,6 +917,7 @@ fi
 NO_DESC=0
 NO_TITLE=0
 STATIC_NO_DESC=""
+# shellcheck disable=SC2044 # dist/ paths are generated, never contain spaces
 for f in $(find dist -name 'index.html' 2>/dev/null); do
 	if grep -q 'name="generator" content="Astro' "$f"; then
 		# Rendered through BaseHead — metadata is ours to get right.
@@ -1031,6 +1034,7 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
 		warn "$UNCOMMITTED uncommitted change(s) — not live until committed and pushed to main"
 	fi
 
+	# shellcheck disable=SC1083 # @{u} is git's upstream shorthand, not a brace expression
 	AHEAD=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo 0)
 	if [ "$AHEAD" = "0" ]; then
 		pass "branch is level with its remote"
