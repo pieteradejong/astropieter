@@ -465,3 +465,35 @@ Rejected:
 - Register: the main table of `repos.md` has 136 rows of equal width after the column was added
   (`awk -F'|' ... | sort -u` → one value, `10`).
 - `/bin/bash -n test.sh` parses under bash 3.2.
+
+## 18. The portfolio vet is a script in this repo that reads the filesystem and `gh`, and records judgments only in the private register
+**Date:** 2026-10-16
+**Context:** The register's `Portfolio` column (#17) was seeded from the five existing pages;
+127 rows said `—` by default. Vetting about 130 directories by hand each time is not
+repeatable, and nothing existing emits one row per repo with the signals the showcase musts
+need: `dotaudit` records findings only, the GitHub baseline register holds aggregates.
+**Decision:** `scripts/vet-projects.sh`, read-only toward every project, scores each directory
+under `~/dev/projects` on 8 mechanical musts behind a gate (third-party, satellite, retired,
+take-home, archived, must-stay-private), using one `gh repo list` call for GitHub metadata.
+Output goes to `~/dev/audit-reports/`, mode 600, and the script refuses a git repo as output
+directory. The lists that are judgments arrive as environment variables, so the public script
+names no repo it has an opinion about. The qualitative read and its verdicts are recorded in
+the dated report and the private register; `docs/PORTFOLIO.md` § Vetting the pool documents the
+method only.
+Rejected:
+- A `dotaudit` module: that tool records problems, not a per-repo profile, and its repo's
+  README says audit tooling is moving out of dotfiles.
+- A one-off script: the column has to be re-measured as projects change.
+- Verdicts in this repo: it is public; "not ready" judgments about named repos belong in the
+  private register (D9 of the workspace design decisions).
+**Verified:**
+- First run 2026-10-16: 138 rows (103 repos, 4 nested, 31 not-git); gate hits 53 (31 not-git,
+  8 third-party, 5 must-stay-private, 4 satellite, 2 retired, 2 archived, 1 take-home); 85
+  scored, range 1/8 to 8/8; both files `stat -f %Lp` → `600`; `git -C ~/dev/audit-reports
+  rev-parse` fails, so the output is outside git.
+- Spot-check against `gh repo view` and `git log -1` on tvshowchat, games (`cnc-web`),
+  go-service, eu27-data-sovereignty, transcriptions (`private-llm`): visibility, license and
+  last-commit agree. A first run read CI as absent on repos with workflows; fixed (the `ls`
+  over two globs failed when `.yaml` matched nothing) and re-run before the numbers above.
+- `/bin/bash -n scripts/vet-projects.sh` parses; `--help` exits 0.
+- `./test.sh` (full suite) after adding the script and docs: `185 passed, 0 failed, 10 warnings`.

@@ -25,6 +25,10 @@ the GitHub profile and the other satellite repos must say) are in [`docs/PORTFOL
 # Maintenance / deployment
 Built with [Astro](https://astro.build) and hosted on [Vercel](https://vercel.com). `npm run dev` serves the site on `localhost` with live reload; pushing to `main` deploys it. See [Deployment](#deployment).
 
+`./scripts/vet-projects.sh` scores every project under `~/dev/projects` against the showcase
+musts in `docs/PORTFOLIO.md` § Vetting the pool and writes a report to `~/dev/audit-reports/`
+(read-only toward the projects; `--help` for options).
+
 # TODO 
 Stuff I would like to add in the future:
 * Top priorities: content, quality, and loading speed.
@@ -147,6 +151,7 @@ Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app.
 ├── docs/                 # PORTFOLIO.md (the portfolio rules), TESTING.md, CONTENT-REVIEW.md (open content items)
 ├── init.sh               # First-time setup
 ├── run.sh                # dev | build | preview | stop
+├── scripts/              # vet-projects.sh: scores ~/dev/projects against docs/PORTFOLIO.md
 ├── test.sh               # Comprehensive pre-deploy test suite
 ├── tests/                # Playwright: content.spec.ts, mobile.spec.ts
 ├── playwright.config.ts  # Playwright config (uses installed Chrome)

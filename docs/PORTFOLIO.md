@@ -71,6 +71,8 @@ decided, the page stays.
 
 ## Publishing a project
 
+0. Pick from the vetted list (§ Vetting the pool): the private register says which repos are
+   `candidate` and what each still lacks.
 1. The repo meets Tier A. If it is going public for this, run the go-public checklist
    (`security-and-privacy.md` §5) first. New repos start private.
 2. Write `src/content/projects/<slug>.md` against the schema; put the hero in
@@ -115,6 +117,40 @@ register.
 | `pieteradejong.github.io` | Placeholder Pages site | Redirect to padj or delete. No action yet. |
 | `personal_style` | Editorial design kit (markdown to PDF and site) | Not a portfolio surface. |
 | pieter.am, peter.am | none | Not registered or not resolving. The site is padj until a domain decision exists. Then: regenerate `public/qr.svg` (`../DECISIONS.md` #7), update the profile README, LinkedIn and this table. |
+
+## Vetting the pool
+
+Which projects could get a page next is measured, then read, then recorded. The rubric is the
+"must" list above; nothing here adds a rule.
+
+**1. Mechanical pass:** `./scripts/vet-projects.sh` (read-only; `--help` lists the options).
+It walks every directory under `~/dev/projects` (nested repos one level down included), asks
+`gh` once for visibility, description and license, and writes
+`~/dev/audit-reports/portfolio-vet-<date>.{tsv,md}`, mode 600, outside any git repo. Each row
+gets a gate and a score.
+
+- *Gate*, any one excludes the row with its reason: third-party remote or `fork:` in the
+  dotaudit skiplist, this site and its satellite repos, retired, take-home, archived on GitHub,
+  must stay private. The judgment lists (must stay private, retired) are passed in as
+  `VET_NEVER` and `VET_RETIRED`; the script carries no opinions about named repos.
+- *Score*, `n/8`, one point per mechanical must: README of 40+ lines with a first paragraph,
+  GitHub description, LICENSE on disk, CI, tests (`test.sh` or `tests/`), a commit in the last
+  12 months, 10+ commits, something visual or deployable (images, `vercel.json`, `.vercel/`,
+  `Dockerfile`). Known blind spot: housekeeping commits make a dormant repo look recent; the
+  read corrects for that.
+
+**2. Qualitative read** of every scored row whose register shape is not exercise, notes, empty
+or file: README, docs, decision and changelog files, tree, images. No `.env`, key, database or
+data file is opened and nothing is executed. Each repo gets a one-sentence `description`, an
+`impact` candidate, visual and demo potential, the gaps against the musts, risks (private data
+adjacent, third-party content, content Pieter must decide on, dead links) and a verdict:
+**ready** · **ready once public** · **near** (at most two fixable gaps) · **long shot** ·
+**no** · **already shown**.
+
+**3. Recording:** verdicts and gaps go into the dated report (point in time) and into the
+private register's `Portfolio` column and vetting table (living state). The next pages to
+write, with their gap lists, go to the workspace `TODO.md`. This public doc records the method
+only. First run: 2026-10-16.
 
 ## Changing these rules
 
