@@ -436,3 +436,32 @@ Reopen if a seventh nav item is added; at 960px there is room for one, not two.
 **Verified:** `npx playwright test -g nav` → `8 passed`, including the new `nav links sit on one
 row at 1024px / 1280px`; screenshots at 768, 1024 and 1280px show one row. `./test.sh --offline`
 in a cleared environment → `178 passed, 0 failed, 9 warnings, 2 skipped`.
+
+## 17. Portfolio rules live in this repo; per-repo status lives in the private register
+**Date:** 2026-10-16
+**Context:** The rules for the online portfolio were scattered: showcase requirements in the
+`pieteram` notes repo (a planned pieter.am site that never existed), demo and page rules in
+entries #3–#5 and #9 here, nothing anywhere about the GitHub profile README, the public repo
+listing or the other satellite repos. The portfolio is the whole public presence, not just this
+site, and it needed one place that a reader of this repo would find.
+**Decision:** `docs/PORTFOLIO.md` holds the doctrine: surfaces, showcase criteria, the publish
+checklist, content and voice rules, satellite repo policy. It is public, so it holds rules only.
+Which repo is shown, source-only or a candidate is recorded in the private workspace register
+(`repos.md`, column `Portfolio`), never here. `./test.sh` checks what it can of the criteria
+and now warns when a project entry has no `githubUrl`. `pieteram` is folded in and archived.
+Rejected:
+- `dotfiles/docs/`: fails that repo's own scope test (restore the machine, or someone would copy
+  it), and the security material there is already being moved out for the same reason.
+- A new private repo for the rules and the status together: one more repo for one file, and the
+  rules would then live apart from the site they govern.
+- Making this repo private so the status could live next to the rules: switches off GitHub
+  secret scanning and push protection (free only for public repos on a personal account) and
+  retracts nothing, since everything here has been public since the first push.
+**Verified:**
+- `./test.sh` (full suite, with network) after the change: `184 passed, 0 failed, 11 warnings`,
+  exit 0; the new warning fired once, for `chrome-bookmarks.md: no githubUrl`.
+- Every path cited in `docs/PORTFOLIO.md` exists (`test -e` over the extracted paths), and every
+  `DECISIONS` number cited is ≤ 17.
+- Register: the main table of `repos.md` has 136 rows of equal width after the column was added
+  (`awk -F'|' ... | sort -u` → one value, `10`).
+- `/bin/bash -n test.sh` parses under bash 3.2.

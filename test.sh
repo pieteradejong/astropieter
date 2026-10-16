@@ -850,6 +850,12 @@ for path in files:
     # Every entry has one since the hero field landed, so a new one must too.
     if not re.search(r'^hero:', fm, re.M):
         print(f'FAIL|{name}: no hero image — the entry is text-only')
+
+    # A shown project links its source (docs/PORTFOLIO.md § Showcase criteria).
+    # A warning, not a failure: one entry is a recorded exception while its
+    # repo is private, and the rule is Pieter's to settle, not the suite's.
+    if not re.search(r'^githubUrl:', fm, re.M):
+        print(f'WARN|{name}: no githubUrl — a shown project links its source; record the exception in docs/PORTFOLIO.md')
 PYCONTENT
 )
 while IFS='|' read -r verdict msg; do

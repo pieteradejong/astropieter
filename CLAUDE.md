@@ -1,7 +1,8 @@
 # CLAUDE.md — astropieter
 
 Personal site (Astro, fully static) at https://padj.vercel.app. Decisions: `DECISIONS.md`. Hosting
-and deploy: `DEPLOYMENT.md`.
+and deploy: `DEPLOYMENT.md`. Portfolio rules (what is shown, how a project is published, the
+satellite repos): `docs/PORTFOLIO.md`.
 
 ## Commands
 

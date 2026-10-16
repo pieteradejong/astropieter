@@ -64,6 +64,12 @@ live.
   `stop`.
 
 ### Added
+- **Portfolio rules in one place: `docs/PORTFOLIO.md`.** Surfaces, showcase criteria (folded in from the
+  retired `pieteram` notes), the publish checklist, content and voice rules, and the satellite repo
+  policy. Pointers from `CLAUDE.md` and `README.md`; per-repo status lives in the private workspace
+  register (DECISIONS #17).
+- `./test.sh` warns when a project entry has no `githubUrl` (a shown project links its source;
+  the one current exception is recorded in `docs/PORTFOLIO.md`). A warning, not a failure.
 - **Build stamp.** Every page carries `<meta name="build-commit">` (Vercel's commit SHA, or
   `git rev-parse HEAD` locally). `./test.sh` checks the build is stamped with HEAD; `./test.sh
   --live` fails when production does not serve `origin/main` and warns when local HEAD is not what

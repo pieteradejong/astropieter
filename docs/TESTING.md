@@ -70,9 +70,11 @@ non-text threshold instead.
 
 **Project content quality** — reads each entry's frontmatter and body and
 reports filler phrasing ("demonstrates", "showcasing", "comprehensive",
-"ability to build" …), thin descriptions, empty bodies, and entries with no
-image. The banned list was built from phrases actually present in this repo,
-not from a style guide.
+"ability to build" …), thin descriptions, empty bodies, entries with no
+image, and entries with no `githubUrl` (a warning: the showcase rules in
+`PORTFOLIO.md` say a shown project links its source, and the one current
+exception is recorded there). The banned list was built from phrases actually
+present in this repo, not from a style guide.
 
 **Accessibility** — every `<img>` has alt text, `<html>` has a lang, every
 visible form field has a label.

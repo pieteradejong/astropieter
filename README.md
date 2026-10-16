@@ -10,9 +10,13 @@ Live at: https://padj.vercel.app/
 * Marketing: put myself out there.
 * Connect: Find like-minded, share ideas, potentially work together, etc.
 
+The rules for the whole public presence (which projects get a page, how one is published, what
+the GitHub profile and the other satellite repos must say) are in [`docs/PORTFOLIO.md`](docs/PORTFOLIO.md).
+
 # Website 'Table of contents':
 
 * Blog - I like to write
+* Projects - the software portfolio; criteria in `docs/PORTFOLIO.md`
 * About Me - Personal background, history, what sets me apart from the crowd.
 * Reading: I love to read, and seek out fellow readers.
 * Contact: self-evident.
@@ -140,7 +144,7 @@ Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app.
 │   ├── pages/            # Astro pages (qr.astro, press.astro, software.astro are unlisted)
 │   └── styles/           # Global styles and the pub-* design tokens
 ├── public/               # Static assets (qr.svg, terra/ standalone demo)
-├── docs/                 # TESTING.md, CONTENT-REVIEW.md (open content items)
+├── docs/                 # PORTFOLIO.md (the portfolio rules), TESTING.md, CONTENT-REVIEW.md (open content items)
 ├── init.sh               # First-time setup
 ├── run.sh                # dev | build | preview | stop
 ├── test.sh               # Comprehensive pre-deploy test suite
