@@ -190,6 +190,15 @@ if [ -n "$LIVE_URL" ]; then
 		warn "local HEAD ${LOCAL_HEAD:0:7} is not what production serves — unpushed or undeployed work"
 	fi
 
+	# The Web3Forms key is baked in at build time. Without it the page still
+	# renders and looks fine, but no message can be sent (DECISIONS #19).
+	KEY_INPUT=$(curl -s --max-time 15 "$LIVE_URL/contact/" | grep -o '<input[^>]*name="access_key"[^>]*>')
+	if echo "$KEY_INPUT" | grep -qE 'value="[^"]+"'; then
+		pass "contact form carries a Web3Forms access key"
+	else
+		fail "contact form has no Web3Forms access key — set PUBLIC_WEB3FORMS_KEY on the Vercel project (Production) and redeploy"
+	fi
+
 	# Analytics needs the script served AND Web Analytics enabled on the
 	# project. Vercel serves the script either way, so a 200 alone proved
 	# nothing (it passed here while analytics was off); ask the API as well.
@@ -898,6 +907,13 @@ if [ -f dist/contact/index.html ]; then
 		pass "contact form has a label for every visible field"
 	else
 		fail "contact form has $INPUTS fields but only $LABELS labels"
+	fi
+	# Only a warning: CI and fresh clones build without the key, and the page
+	# then renders the form disabled. --live is where a missing key fails.
+	if grep -o '<input[^>]*name="access_key"[^>]*>' dist/contact/index.html | grep -qE 'value="[^"]+"'; then
+		pass "contact form carries a Web3Forms access key"
+	else
+		warn "contact form built without PUBLIC_WEB3FORMS_KEY — the form renders disabled (set it in .env to test sending)"
 	fi
 fi
 

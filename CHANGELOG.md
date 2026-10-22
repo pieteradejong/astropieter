@@ -8,6 +8,11 @@ live.
 ## [Unreleased]
 
 ### Fixed
+- The contact form no longer fails silently when the site is built without
+  `PUBLIC_WEB3FORMS_KEY`: the button renders disabled with an "unavailable" notice instead of
+  posting a request Web3Forms rejects. `./test.sh --live` now fails when production serves the
+  form without a key (production does today; the key must be set on the Vercel project), and the
+  offline build warns. `DEPLOYMENT.md` documents the variable (DECISIONS #19).
 - The Terra demo (`public/terra/index.html`) now honours `prefers-reduced-motion: reduce`: no auto
   orbit, and about four redraws a second instead of one per animation frame. Its browser tests run
   under that setting; on the CI runner's software WebGL the full-rate loop starved the main thread

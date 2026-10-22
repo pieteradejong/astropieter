@@ -497,3 +497,28 @@ Rejected:
   over two globs failed when `.yaml` matched nothing) and re-run before the numbers above.
 - `/bin/bash -n scripts/vet-projects.sh` parses; `--help` exits 0.
 - `./test.sh` (full suite) after adding the script and docs: `185 passed, 0 failed, 10 warnings`.
+
+## 19. A missing Web3Forms key fails `--live`, warns offline, and disables the form
+**Date:** 2026-10-20
+**Context:** Production `/contact/` shipped with an empty `access_key` because
+`PUBLIC_WEB3FORMS_KEY` is not set on the Vercel project. The page looked fine and every
+submission was rejected by Web3Forms; no check noticed, and `DEPLOYMENT.md` said the site needs
+no environment variables.
+**Decision:** `./test.sh --live` fails when the served `access_key` input has no value, so the
+`site / live` check turns red after a deploy without the key. The build checks only warn, because
+CI's `--offline` build and fresh clones have no key. `contact.astro` renders the submit button
+disabled with "The contact form is temporarily unavailable." when the key is empty, and the
+script refuses to post a keyless request. The key is set by Pieter, never by the assistant.
+Rejected:
+- Failing the build when the key is missing: breaks CI's offline build and any fork, while the
+  real question is what production serves.
+- A `mailto:` fallback: the site publishes no email address, and adding one is a content decision.
+**Verified:**
+- `./test.sh --live https://padj.vercel.app` (before the key is set) → `✗ contact form has no
+  Web3Forms access key …`, `66 passed, 1 failed`: the check catches the live bug.
+- `./test.sh --offline` (local `.env` has a key) → `✓ contact form carries a Web3Forms access
+  key`, `179 passed, 0 failed, 10 warnings, 2 skipped`.
+- `PUBLIC_WEB3FORMS_KEY= npx astro build --outDir <scratch>` → `<button type="submit" disabled …>`
+  and the result line reads "The contact form is temporarily unavailable."
+- NOT YET: production with the key set — `--live` passing and one real submission arriving
+  (`~/dev/TODO.md`, astropieter section).

@@ -31,7 +31,12 @@ The same thing is in the dashboard under the project's Deployments tab.
 ## Configuration
 
 - **Output:** fully static. Add the `@astrojs/vercel` adapter only when a page needs server rendering.
-- **Environment variables:** none. The contact form posts to Web3Forms from the browser.
+- **Environment variables:** one, `PUBLIC_WEB3FORMS_KEY` (Production). The contact form posts to
+  Web3Forms from the browser, and Astro bakes the key into `/contact/` at build time. That makes
+  it public by design, but it still stays out of git. If it is missing, the form renders
+  disabled with an "unavailable" notice, and `./test.sh --live` fails. To set it: dashboard →
+  `padj` → Settings → Environment Variables, or `vercel env add PUBLIC_WEB3FORMS_KEY production`.
+  Then redeploy, because a change only takes effect on the next build. Why: `DECISIONS.md` #19.
 - **Analytics:** Vercel Web Analytics (cookie-less), via `<Analytics />` in `Footer.astro`.
   The static `public/terra/` page does not render the footer, so it is not counted.
 - **Local link:** `vercel link` writes `.vercel/` (gitignored), which only the CLI needs.

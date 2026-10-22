@@ -1,6 +1,10 @@
 ---
 import Layout from '../layouts/Default.astro';
-const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+// Build-time: set on the Vercel project (DEPLOYMENT.md). Without it the form
+// renders disabled rather than posting a keyless request; `test.sh --live`
+// fails when production ships without it.
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+const formReady = accessKey.trim() !== '';
 ---
 
 <Layout
@@ -29,8 +33,8 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
       <label for="message">Message:</label>
       <textarea id="message" name="message" rows="6" required></textarea>
     </div>
-    <button type="submit">Send Message</button>
-    <div id="result" role="status" aria-live="polite"></div>
+    <button type="submit" disabled={!formReady}>Send Message</button>
+    <div id="result" role="status" aria-live="polite">{!formReady && 'The contact form is temporarily unavailable.'}</div>
   </form>
 </div>
 
@@ -41,6 +45,10 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
     e.preventDefault();
     const formData = new FormData(form);
     const object = Object.fromEntries(formData);
+    if (!object.access_key) {
+      result.innerHTML = "The contact form is temporarily unavailable.";
+      return;
+    }
     const json = JSON.stringify(object);
     result.innerHTML = "Sending...";
     fetch('https://api.web3forms.com/submit', {
@@ -138,6 +146,10 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
   }
   button:hover {
     background: var(--accent-hover);
+  }
+  button:disabled {
+    background: var(--border);
+    cursor: not-allowed;
   }
   #result {
     margin-top: 1rem;
