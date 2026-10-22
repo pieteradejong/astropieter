@@ -74,10 +74,24 @@ decided, the page stays.
 0. Pick from the vetted list (§ Vetting the pool): the private register says which repos are
    `candidate` and what each still lacks.
 1. The repo meets Tier A. If it is going public for this, run the go-public checklist
-   (`security-and-privacy.md` §5) first. New repos start private.
-2. Write `src/content/projects/<slug>.md` against the schema; put the hero in
-   `src/assets/projects/`. Work on a branch: projects have no draft flag, so a file on `main`
-   is live after the next push.
+   (`security-and-privacy.md` §5) first. New repos start private. A hosted demo comes from the
+   workspace deploy pipeline (dotfiles `docs/deploy-pipeline.md`): the project's own Vercel
+   project, gated on its CI.
+2. The page lives in the project repo, as `portfolio.md` at its root:
+   - frontmatter against the schema, plus `public: true|false`, plus the body;
+   - `hero` is a path inside that repo (jpg, png or webp);
+   - `githubUrl` and `demoUrl` are double-quoted, because the link checks read only that form.
+
+   On a branch here, run `scripts/sync-projects.sh` (`--dry-run` first, `--repo NAME` for
+   one). It reads `portfolio.md` from every public repo:
+   - `public: true` writes `src/content/projects/<repo>.md` and copies the hero into
+     `src/assets/projects/`.
+   - `public: false`, or no file, removes a page the script generated earlier.
+
+   Generated pages carry `syncedFrom: "<repo>@<sha>"`. The script never touches a page without
+   that field, so the hand-written pages stay as they are. A private repo is never read, so it is
+   never listed. A read that fails for any reason other than a 404 keeps the existing page. The
+   flag decides listing only: the project's Vercel deployment exists either way.
 3. `./test.sh`, the full suite, with network. The dead-demo, sitemap, mobile and outbound-link
    checks all run here; `--offline` is for iterating, not for the push.
 4. Push `main`. That is the production deploy. Wait for the `site / tests` and `site / live`
@@ -86,8 +100,11 @@ decided, the page stays.
 5. Record the state in the private register's `Portfolio` column.
 6. If the project changes what the profile README should say, update repo `pieteradejong`.
 
-Removing a project is the same list without step 2: delete the page, test, push, update the
-register.
+Removing a project:
+- **Generated page:** set `public: false` in the project repo and run the sync.
+- **Hand-written page:** delete it.
+
+Then test, push and update the register.
 
 ## Content and voice
 

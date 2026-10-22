@@ -522,3 +522,37 @@ Rejected:
   and the result line reads "The contact form is temporarily unavailable."
 - NOT YET: production with the key set — `--live` passing and one real submission arriving
   (`~/dev/TODO.md`, astropieter section).
+
+## 20. Project pages come from the project repo's `portfolio.md`, pulled in by a sync script
+**Date:** 2026-10-22
+**Context:** Pieter wants one pipeline: push a project, it deploys to its own Vercel project, and a
+flag decides whether it is listed here. The flag controls listing only, not hosting. Until now each
+page was written by hand in this repo (`docs/PORTFOLIO.md` § Publishing a project), and nothing
+connected it to the project it describes.
+**Decision:** The project repo owns its page. `portfolio.md` at its root holds the schema's
+frontmatter, `public: true|false` and the body. `scripts/sync-projects.sh`, run by hand on a branch
+here, reads that file from every public repo through `gh` and writes or removes
+`src/content/projects/<repo>.md` and its hero. Generated pages carry `syncedFrom: "<repo>@<sha>"`
+(a new optional schema field). The script only rewrites or removes pages with that field, refuses a
+slug that collides with a hand-written page, keeps a page when a read fails with anything but a
+404, and refuses single-quoted `githubUrl`/`demoUrl`, which the link checks would not see.
+Pushing `main` is still the deploy, after `./test.sh`.
+Rejected:
+- A `listed:` field on pages in this repo: an unlisted project's page would still sit in a public
+  repo.
+- Fetching `portfolio.md` at build time: the site would change without a commit here, and
+  `./test.sh` would test something other than what ships.
+- An Action in each project repo that opens a PR here: it needs a long-lived cross-repo token in
+  every project.
+- Moving the hand-written pages to their repos now: not needed for the flag, and each move is a
+  content review of its own.
+**Verified:**
+- `shellcheck` and `/bin/bash -n` pass on the script.
+- Against fixtures (`SYNC_FROM_DIR`), `--dry-run` reported one write and two refusals (`public:
+  maybe`, a single-quoted `githubUrl`), exit 1, and changed nothing.
+- A real run for the `cnc-web` fixture wrote the page with its hero and `syncedFrom`. A rerun
+  printed "unchanged".
+- `./test.sh --offline` with that page passed (`182 passed, 0 failed`), including "project
+  'cnc-web' shows its hero on the card and the detail page". The fixture page was then removed;
+  `games/portfolio.md` itself says `public: false`.
+- NOT YET: a run against GitHub, which needs the games repo pushed (`~/dev/TODO.md`).

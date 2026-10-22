@@ -16,6 +16,7 @@ npm run dev                                  # dev server with live reload
 gh workflow run link-report.yml              # weekly broken-link report, on demand
 gh workflow run ci.yml -f url=https://padj.vercel.app   # live check of production, on demand
 gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / tests, site / live
+./scripts/sync-projects.sh --dry-run         # project pages from each public repo's portfolio.md (public: true|false), docs/PORTFOLIO.md
 ./scripts/vet-projects.sh                    # score ~/dev/projects for showcase readiness → ~/dev/audit-reports (docs/PORTFOLIO.md § Vetting)
 ```
 

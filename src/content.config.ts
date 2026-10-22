@@ -47,6 +47,9 @@ const projects = defineCollection({
 		// Screenshot or diagram shown on the card and the detail page.
 		hero: image().optional(),
 		heroAlt: z.string().optional(),
+		// "<repo>@<sha>" on pages scripts/sync-projects.sh generated from the
+		// repo's portfolio.md; absent on hand-written pages, which it never touches.
+		syncedFrom: z.string().optional(),
 	}).refine((d) => !d.hero || d.heroAlt, { message: 'hero needs heroAlt', path: ['heroAlt'] }),
 });
 

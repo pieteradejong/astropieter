@@ -7,6 +7,9 @@ live.
 
 ## [Unreleased]
 
+### Added
+- `scripts/sync-projects.sh`: project pages come from each public repo's `portfolio.md`. Its `public: true|false` flag decides whether the project is listed on `/projects`; hosting is separate. Generated pages carry `syncedFrom`, and hand-written pages are never touched. `docs/PORTFOLIO.md` § Publishing a project describes the new flow (DECISIONS #20).
+
 ### Security
 - Vite (pulled in by Astro) moved from 8.3.1 to 8.3.5 in the lockfile, fixing the high-severity
   dev-server advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, GHSA-vfpm-58rq-9qcg and the
