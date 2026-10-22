@@ -17,6 +17,8 @@ live.
   never affected: Vite only serves the dev server here.
 
 ### Fixed
+- The "Why Blog" post said the site deploys to SiteGround with `rsync`; it now says Vercel
+  builds every push to `main` (DECISIONS #1). Typos fixed on `/software` and in the same post.
 - The contact form no longer fails silently when the site is built without
   `PUBLIC_WEB3FORMS_KEY`: the button renders disabled with an "unavailable" notice instead of
   posting a request Web3Forms rejects. `./test.sh --live` now fails when production serves the

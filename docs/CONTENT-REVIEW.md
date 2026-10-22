@@ -25,8 +25,8 @@ they were documented, not changed. Tick an item when the pages agree. Delete thi
 
 ## Stale or placeholder text
 
-- [ ] `src/content/blog/why-blog.md:16` says the site deploys to SiteGround with `rsync`. It is
-  on Vercel now (DECISIONS #1).
+- [x] `src/content/blog/why-blog.md:16` says the site deploys to SiteGround with `rsync`. It is
+  on Vercel now (DECISIONS #1). Fixed 2026-10-22.
 - [ ] `why-blog.md:7` opens with "No promises I'll keep this up", and it is the only published
   post (dated July 2022). Either write the next post or reword the opener.
 - [ ] Reading page: most reviews say "In progress…" (`src/pages/reading.astro:61,84,106,170,193`).
@@ -38,8 +38,8 @@ they were documented, not changed. Tick an item when the pages agree. Delete thi
 
 ## Typos
 
-- [ ] "CicleCI" → "CircleCI" (`src/pages/software.astro:23`)
-- [ ] "to convoluted" → "too convoluted" (`src/content/blog/why-blog.md:26`)
+- [x] "CicleCI" → "CircleCI" (`src/pages/software.astro:23`) — fixed 2026-10-22
+- [x] "to convoluted" → "too convoluted" (`src/content/blog/why-blog.md:26`) — fixed 2026-10-22
 - [x] "uniquitous", "readibly" in `LaTeX_test.md` (fixed 2026-10-14; the post is now a draft)
 
 ## Fixed in the same review (for the record)
