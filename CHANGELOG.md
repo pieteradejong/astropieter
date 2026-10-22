@@ -7,6 +7,12 @@ live.
 
 ## [Unreleased]
 
+### Security
+- Vite (pulled in by Astro) moved from 8.3.1 to 8.3.5 in the lockfile, fixing the high-severity
+  dev-server advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, GHSA-vfpm-58rq-9qcg and the
+  `launch-editor` ones) that had turned `./test.sh`'s `npm audit` check red. The built site was
+  never affected: Vite only serves the dev server here.
+
 ### Fixed
 - The contact form no longer fails silently when the site is built without
   `PUBLIC_WEB3FORMS_KEY`: the button renders disabled with an "unavailable" notice instead of
