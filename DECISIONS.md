@@ -556,3 +556,127 @@ Rejected:
   'cnc-web' shows its hero on the card and the detail page". The fixture page was then removed;
   `games/portfolio.md` itself says `public: false`.
 - NOT YET: a run against GitHub, which needs the games repo pushed (`~/dev/TODO.md`).
+
+## 21. /press and /software are deleted and redirect to /about; the settled biography is pinned by tests
+**Date:** 2026-10-23
+**Context:** The 2026-10-14 review (`docs/CONTENT-REVIEW.md`) found the same facts disagreeing
+across pages: the career start year (2012 / 2013 / "over 7 years"), a Georgia Tech MSc on /press
+only, two city lists, and CodePath/Hack Reactor roles. /press and /software were thin pages kept
+unlisted (#9) in case they were finished. Pieter settled the facts on 2026-10-23: experience
+since 2011 (a software internship at WePay in Palo Alto), Senior Software Engineer, no MSc,
+cities Baltimore, Palo Alto, San Francisco, NYC and Miami, a student at CodePath and at Hack
+Reactor, Hacker in Residence at Hack Reactor, and not a CodePath TA.
+**Decision:** Delete `src/pages/press.astro` and `src/pages/software.astro`. `astro.config.mjs`
+`redirects` sends both to `/about/`, so old links land somewhere. The title moves to the Home
+bio. Where the cities go is Pieter's to write (#23). `test.sh` § Biography consistency fails on:
+- a second start year
+- a "years of experience" count
+- any retired claim or placeholder text in the build
+- Home without the title
+- a footer interest not named on Contact
+Supersedes #9 for /press and /software; /qr stays unlisted.
+Rejected:
+- Finishing both pages: the facts they held now fit in two sentences on Home, and every extra page
+  is one more place for a fact to drift.
+- Keeping them unlisted with corrected facts: still built, still indexable by direct link, still
+  a second copy to keep in step.
+- Vercel `vercel.json` 301s instead of Astro redirects: a second config file for two URLs. Astro's
+  stub (meta refresh, `noindex`, canonical to /about/) also works under `npm run dev` and is
+  testable from `dist/`.
+**Verified:**
+- `./test.sh` → `199 passed, 0 failed, 11 warnings, 0 skipped`, including
+  `✓ /press/ redirects to /about/`, `✓ /software/ redirects to /about/`,
+  `✓ every page dates the career from 2011` and `✓ every footer interest is named on Contact`.
+- `dist/press/index.html` → `<meta http-equiv="refresh" content="0;url=/about/">`.
+- NOT YET: the same on production after the push (`./test.sh --live` now checks it).
+
+## 22. Contact form: botcheck honeypot and an on-page privacy note; no third-party scripts
+**Date:** 2026-10-23
+**Context:** A security and privacy vetting found three problems (privacy-by-design §6–§7):
+- The contact form sends name, email and message to Web3Forms, and Vercel Web Analytics counts
+  every page view. Neither the site nor the README said so.
+- The form had no spam protection. Once the key is set, it relays spam into Pieter's inbox.
+- `/terra/` loaded three.js from jsDelivr with no integrity hash, so a CDN compromise would run
+  code on the site.
+
+The same vetting found more that is acceptable:
+- `.env` was never committed.
+- The security CI calls the reusable workflow.
+- The Web3Forms key is a public form ID by design.
+**Decision:**
+- The form gets Web3Forms' hidden `botcheck` checkbox.
+- A plain-language note under the form names Web3Forms, its retention, the cookie-less
+  analytics, and how to have a message deleted. Pieter writes it (#23): the assistant's draft
+  was removed, and `test.sh` warns until the note exists and fails if it is incomplete.
+- The README gets a processor table.
+- three.js r158 is vendored at `public/terra/vendor/`, verified byte-identical to the npm
+  tarball (registry integrity `sha512-TALj4E…`) and to the jsDelivr copy, with its MIT licence
+  beside it.
+
+`test.sh` § Privacy and form safety enforces each of these:
+- It fails on a missing honeypot, a missing or incomplete note, a form posting anywhere but
+  api.web3forms.com, any third-party `<script src>`, or a processor missing from the README.
+- It warns on third-party stylesheets.
+
+Rejected:
+- hCaptcha or reCAPTCHA: a third-party script on the contact page, which is what the policy
+  forbids. Web3Forms calls the honeypot weaker; revisit if spam arrives.
+- A separate /privacy page: two processors fit in three sentences where the data is entered.
+- An SRI hash on the CDN three.js instead of vendoring: it fixes integrity but still sends every
+  /terra/ visitor's IP to jsDelivr.
+**Verified:**
+- `./test.sh` → `199 passed, 0 failed`, including:
+  - `✓ contact form carries the hidden botcheck honeypot`
+  - `✓ no third-party <script src> in the build`
+  - `✓ README processor table lists hosting, analytics and the form backend`
+- The /terra/ browser tests pass on the vendored file.
+- `shasum -a 256`: npm and jsDelivr copies both `3b3a1c97…1d51`.
+- NOT YET:
+  - The KaTeX stylesheet (jsDelivr, every page, SRI-pinned) and Google Fonts on /terra/ still
+    leak visitor IPs. `test.sh` warns, and the README lists both (`~/dev/TODO.md`).
+  - A real submission with the key set.
+
+## 23. AI writes project descriptions only, and each project page says whether AI wrote it
+**Date:** 2026-10-23
+**Context:** On 2026-10-23 the assistant drafted sentences in Pieter's voice: a city list on
+Home, reworded About entries, the contact privacy note, and a new blog opener. Pieter wants to
+write the site himself, except for project descriptions, and wants readers to see which
+descriptions AI wrote.
+**Decision:** AI writes project descriptions only (`src/content/projects/`, a repo's
+`portfolio.md`). Every other page is Pieter's. AI may apply facts he has settled and fix
+typos there, and nothing more. The rule is in `docs/PORTFOLIO.md` § Content and voice and
+`CLAUDE.md` § Gotchas.
+
+The project schema gets a required `aiGenerated: boolean`, and
+`src/components/AuthorshipNote.astro` shows it at the bottom of each project page:
+- `true`: a sparkle icon and "Description generated by AI".
+- `false`: "Description written by Pieter".
+
+All five current descriptions are `true`: Claude rewrote every one in `c8dc28b`
+(2026-10-03). The 2026-10-23 drafts were reverted to Pieter's text, keeping only his settled
+facts: 2011, Senior Software Engineer, Palo Alto, Hacker in Residence, and no CodePath TA.
+
+Pieter also had four older AI-written pieces reverted:
+- The why-blog sentence `2c23f91` changed to say Vercel. His original says SiteGround with
+  `rsync`, which is now false, and is his to rewrite.
+- The two draft posts `information-theory-part-1-foundations` and
+  `ai-enhanced-programming-observations`, deleted. `test.sh` now derives the draft list from
+  the frontmatter, and the dev-mode draft check uses `test-fixture-markdown`.
+- The `/qr/` hint line.
+- The contact form's "temporarily unavailable" text (#19). Without a key the button is now
+  disabled with no message.
+Rejected:
+- An optional field defaulting to `false`: a page would claim Pieter wrote it by omission.
+- The label on the `/projects` cards as well: it is asked for "at the bottom of each project".
+  The cards repeat the same description, so revisit if Pieter wants it there too.
+- A text-only label: Pieter asked for an icon. The sparkle is the common AI mark, drawn inline
+  in `--accent` so it follows the palette and needs no asset.
+**Verified:**
+- `./test.sh` → `198 passed, 0 failed, 12 warnings, 0 skipped`, including
+  `✓ all 5 project pages state whether the description was generated by AI`. After the four
+  reverts: `196 passed, 0 failed, 12 warnings, 0 skipped` (two fewer drafts to check).
+- Setting one built page to `data-ai-generated="false"` → `✗ … terra(field=true,page=false)`.
+- Screenshot of `/projects/terra/`: a terracotta sparkle and "Description generated by AI" under
+  a hairline at the page bottom.
+- NOT YET: `scripts/sync-projects.sh` with a `portfolio.md` that carries the field (the build
+  rejects one without it).

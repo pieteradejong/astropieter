@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import Layout from '../../layouts/Default.astro';
 import Tag from '../../components/Tag.astro';
 import DemoBadge from '../../components/DemoBadge.astro';
+import AuthorshipNote from '../../components/AuthorshipNote.astro';
 
 export async function getStaticPaths() {
 	const projects = await getCollection('projects');
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
 }
 
 const project = Astro.props;
-const { title, description, techStack, githubUrl, demoUrl, keyFeatures, technicalHighlights, impact, tags, hero, heroAlt } = project.data;
+const { title, description, techStack, githubUrl, demoUrl, keyFeatures, technicalHighlights, impact, tags, hero, heroAlt, aiGenerated } = project.data;
 const { Content } = await render(project);
 ---
 
@@ -88,6 +89,8 @@ const { Content } = await render(project);
 					<Tag text={tag} />
 				))}
 			</div>
+
+			<AuthorshipNote aiGenerated={aiGenerated} />
 		</div>
 	</article>
 </Layout>

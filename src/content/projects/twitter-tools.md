@@ -21,6 +21,8 @@ status: "active"
 order: 3
 hero: "../../assets/projects/twitter-tools.svg"
 heroAlt: "Twitter Tools pipeline: X archive exports load into SQLite, served by FastAPI to a React UI, with optional X API enrichment and a topic tagger"
+# Rewritten by Claude in c8dc28b (2026-10-03).
+aiGenerated: true
 ---
 
 X lets you download your whole account as an archive, but the export is a folder of JavaScript files. This loads every export I have into SQLite, keeps each one as a dated snapshot, and puts a FastAPI backend and React front end on top for searching, filtering and tagging.

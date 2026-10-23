@@ -18,6 +18,8 @@ status: "active"
 order: 5
 hero: "../../assets/projects/chrome-bookmarks.jpg"
 heroAlt: "Chrome Bookmark Assistant results: 1803 working, 92 needing review, 18 behind a login"
+# Rewritten by Claude in c8dc28b (2026-10-03).
+aiGenerated: true
 ---
 
 Started as a Python and React app that read Chrome's bookmarks file, then rebuilt as an extension so it can use the bookmarks API directly and run on a schedule. Everything runs locally in the browser. The source is private for now.

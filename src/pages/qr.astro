@@ -15,7 +15,6 @@ const shown = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 			<img src="/qr.svg" alt={`QR code for ${url}`} width="420" height="420" decoding="async" />
 		</a>
 		<p class="qr-url">{shown}</p>
-		<p class="qr-hint">Open this page on your phone and hold it up. Scanning opens the homepage.</p>
 	</div>
 </Layout>
 
@@ -51,10 +50,5 @@ const shown = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 		letter-spacing: 0.02em;
 		margin: 0;
 		overflow-wrap: anywhere;
-	}
-	.qr-hint {
-		color: var(--secondary-text);
-		margin: 0;
-		max-width: 36ch;
 	}
 </style>

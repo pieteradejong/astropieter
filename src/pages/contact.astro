@@ -21,6 +21,8 @@ const formReady = accessKey.trim() !== '';
   </div>
   <form id="form">
     <input type="hidden" name="access_key" value={accessKey}>
+    <!-- Web3Forms honeypot: bots tick it, Web3Forms drops those submissions (DECISIONS #22). -->
+    <input type="checkbox" name="botcheck" class="hidden" style="display: none;" tabindex="-1" autocomplete="off">
     <div class="form-group">
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
@@ -34,7 +36,7 @@ const formReady = accessKey.trim() !== '';
       <textarea id="message" name="message" rows="6" required></textarea>
     </div>
     <button type="submit" disabled={!formReady}>Send Message</button>
-    <div id="result" role="status" aria-live="polite">{!formReady && 'The contact form is temporarily unavailable.'}</div>
+    <div id="result" role="status" aria-live="polite"></div>
   </form>
 </div>
 
@@ -45,10 +47,7 @@ const formReady = accessKey.trim() !== '';
     e.preventDefault();
     const formData = new FormData(form);
     const object = Object.fromEntries(formData);
-    if (!object.access_key) {
-      result.innerHTML = "The contact form is temporarily unavailable.";
-      return;
-    }
+    if (!object.access_key) return;
     const json = JSON.stringify(object);
     result.innerHTML = "Sending...";
     fetch('https://api.web3forms.com/submit', {

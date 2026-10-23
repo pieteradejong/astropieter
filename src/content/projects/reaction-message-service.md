@@ -20,6 +20,8 @@ status: "completed"
 order: 4
 hero: "../../assets/projects/reaction-message-service.svg"
 heroAlt: "Live Emoji Reactions pipeline: a Go service writes reactions to Kafka, Spark counts them in 2-second windows, and a Go broadcaster streams totals to viewers over SSE"
+# Rewritten by Claude in c8dc28b (2026-10-03).
+aiGenerated: true
 ---
 
 Picture a stadium screen showing how the crowd feels in real time. Reactions go in through one Go service, Spark tallies them every two seconds, and a second Go service broadcasts the running counts to anyone watching.

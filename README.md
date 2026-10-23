@@ -96,10 +96,10 @@ npm run dev
 
 The site will be available at `http://localhost:4321` (or another port if 4321 is in use).
 
-Unlisted pages, built but kept out of the nav and the sitemap: `/qr/` (a QR code for the site, to
+Unlisted page, built but kept out of the nav and the sitemap: `/qr/` (a QR code for the site, to
 open on a phone and hold up; the SVG is `public/qr.svg`, regenerate it with
-`qrencode -t SVG -l M -m 2 -o public/qr.svg '<site url>'` if the domain changes), `/press/` and
-`/software/` (unfinished).
+`qrencode -t SVG -l M -m 2 -o public/qr.svg '<site url>'` if the domain changes). `/press/` and
+`/software/` were deleted and redirect to `/about/` (DECISIONS #21).
 
 Key development commands:
 - `npm run dev` - Start development server with hot reloading (Astro 7 runs this as a background daemon — manage it with `npx astro dev status` / `stop` / `logs`)
@@ -131,6 +131,21 @@ $$
 `$$x$$` on a single line renders as *inline* math; `test.sh` fails on it. A literal dollar sign is `\$`. Math works the same in `.mdx` posts.
 
 How it works: `remark-math` finds the math, `rehype-katex` renders it with its own bundled `katex`, and `BaseHead.astro` loads the matching KaTeX stylesheet from jsDelivr. When `rehype-katex` moves to a new katex, `test.sh` fails until the stylesheet URL and its `integrity` hash are updated to match.
+
+## Privacy and processors
+
+The site sets no cookies and loads no third-party scripts (three.js for `/terra/` is vendored in
+`public/terra/vendor/`, byte-identical to the npm 0.158.0 build). Two features send visitor data to
+a processor; `/contact/` says so under the form, and `./test.sh` fails if this table, that note or
+the form's honeypot goes missing (DECISIONS #22).
+
+| Processor | Purpose | Data it receives | Region / retention |
+|---|---|---|---|
+| Vercel (hosting) | Serves the site | IP address and user agent, in request logs | Vercel's log retention for the plan (not checked) |
+| Vercel Web Analytics | Page-view counts | Page URL, referrer, country, device class; cookie-less, no IP stored | Aggregate counts; Hobby queries the last 31 days |
+| jsDelivr | KaTeX stylesheet on every page (SRI-pinned, `BaseHead.astro`), until it is bundled | IP address and user agent | jsDelivr's terms; to be removed (TODO.md) |
+| Google Fonts | Two typefaces on `/terra/` only, until they are self-hosted | IP address and user agent | Google's terms; to be removed (TODO.md) |
+| Web3Forms | Delivers the contact form by email | Name, email address and message a visitor types | AWS; dashboard keeps submissions up to 30 days on the free plan (web3forms.com, checked 2026-10-23; its privacy page refused automated reads) |
 
 ## Deployment
 

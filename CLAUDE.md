@@ -22,6 +22,9 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
 
 ## Gotchas
 
+- **AI writes project descriptions only.** Every other page's prose is Pieter's: apply settled
+  facts and typo fixes, never draft or reword (`docs/PORTFOLIO.md` § Content and voice). A
+  project page you write or rewrite gets `aiGenerated: true`.
 - **Pushing `main` is a production deploy.** Vercel builds on push, and it does not run
   `./test.sh`. Run the suite first. GitHub then runs it too (`ci.yml`, DECISIONS #10): `tests` on
   the push (`--offline`, Playwright's own Chromium) and `live` against padj.vercel.app after Vercel's
@@ -36,8 +39,13 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
   `/Applications/Chrome.app`, not the default path. No Playwright browser download is needed.
 - `public/terra/` is a static page outside Astro: no footer, no analytics, no meta description.
   The dev server does not resolve `/terra/` to it; use `/terra/index.html` locally (the tests do).
-- **Unlisted pages** `/qr/`, `/press/`, `/software/` are built but filtered out of the sitemap
-  (`astro.config.mjs`, DECISIONS #9). `test.sh` fails if one shows up in `dist/sitemap-*.xml`.
+- **Unlisted page** `/qr/` is built but filtered out of the sitemap (`astro.config.mjs`, DECISIONS
+  #9). `/press/` and `/software/` were deleted and redirect to `/about/` (#21); `test.sh` fails if
+  any of the three shows up in `dist/sitemap-*.xml`.
+- **Biography facts are pinned by `test.sh`** (§ Biography consistency): career start 2011, the
+  title, the cities, and footer interests also named on Contact. Change the fact and the check together.
+- **Contact form privacy** (#22): the hidden `botcheck` honeypot, the note under the form and the
+  README processor table are all tested. A new third-party script fails the suite.
 - **`public/qr.svg` is static.** It encodes `https://padj.vercel.app/`; if the site moves to a
   custom domain, regenerate it (`qrencode -t SVG -l M -m 2 -o public/qr.svg '<url>'`, then strip
   the fixed `width`/`height` so it scales) and re-check with `zbarimg` (DECISIONS #7).

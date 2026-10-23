@@ -13,7 +13,7 @@ Since I'm a software developer, deploying content on GitHub is straightforward. 
 
 **My particular needs**
 * Why Astro.js? Wordpress became over-complicated, and if I'm going to invest more time, I might as well use something developer-centric and more flexible. Astro uses technology I already know well: JavaScript, React.js, CSS3, and Markdown.
-* Quick deployment: I created a build + deployment process that allows me to instantly locally preview any change, and deploy it by pushing to `main`: Vercel builds and publishes every push.
+* Quick deployment: I created a build + deployment process that allows me to instantly locally preview any change, and deploy to my hosting provider (Siteground) with one `rsync` command.
 * Since I intend to frequently publish Mathematics, I need to be able to use `LaTeX` embedded in my content. Astro allows me to do so.
 
 **Why do I love to write?** Writing is many things:

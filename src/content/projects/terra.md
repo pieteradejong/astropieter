@@ -22,6 +22,8 @@ status: "active"
 order: 1
 hero: "../../assets/projects/terra.jpg"
 heroAlt: "Terra showing the North Atlantic from above the Arctic: the day side with clouds, the night side with city lights, and submarine cables in blue"
+# Rewritten by Claude in c8dc28b (2026-10-03).
+aiGenerated: true
 ---
 
 A real-time model of Earth with the world's physical infrastructure drawn on top. The planet itself is shaded from physics — a ray-marched atmosphere gives the blue limb and the red terminator — and the layers above it come from public data: TeleGeography's cable map, EIA chokepoint flows, and, in local mode, live aircraft, ship and earthquake feeds.

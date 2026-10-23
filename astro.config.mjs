@@ -21,12 +21,16 @@ import rehypeKatex from 'rehype-katex';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://padj.vercel.app',
+	// /press and /software were deleted (DECISIONS #21); old links land on About.
+	redirects: {
+		'/press': '/about/',
+		'/software': '/about/',
+	},
 	integrations: [
 		mdx(),
 		sitemap({
-			// Unlisted pages: /press and /software are unfinished (kept, not
-			// promoted); /qr is a utility page for sharing the site in person.
-			filter: (page) => !/\/(press|software|qr)\/$/.test(page),
+			// Unlisted page: /qr is a utility page for sharing the site in person.
+			filter: (page) => !/\/qr\/$/.test(page),
 		}),
 	],
 	markdown: {
