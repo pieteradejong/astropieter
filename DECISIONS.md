@@ -680,3 +680,18 @@ Rejected:
   a hairline at the page bottom.
 - NOT YET: `scripts/sync-projects.sh` with a `portfolio.md` that carries the field (the build
   rejects one without it).
+
+## 24. The TV Show Chat page drops its GitHub link while that repo is private
+**Date:** 2026-10-23
+**Context:** `pieteradejong/tvshowchat` went private on 2026-10-23 while the personal email in its
+history is dealt with (tvshowchat `DECISIONS.md` #21). Strangers now get a 404 for it, and
+`test.sh`'s outbound-link check failed: `✗ https://github.com/pieteradejong/tvshowchat -> 404
+(dead link on a project entry)`.
+**Decision:** Removed `githubUrl` from `src/content/projects/tv-show-chat.md` (the field is
+optional). The page stays listed.
+Rejected:
+- Unlisting the project. The description and diagram are still accurate, and only the code link
+  is gone.
+- Allow-listing the 404 in `test.sh`. That would publish a dead link.
+**Verified:** `./test.sh` → `195 passed, 0 failed, 13 warnings, 0 skipped`; pushed
+`2c23f91..d4d75e5`. NOT YET: the live page after the Vercel deploy.
