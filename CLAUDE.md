@@ -11,6 +11,7 @@ npm run dev                                  # dev server with live reload
 ./test.sh                                    # full suite: build, content, links, dev server, browser tests
 ./test.sh --offline                          # same, without network checks
 ./test.sh --live https://padj.vercel.app     # check what production is serving
+./test.sh --bless-prose                      # Pieter only: re-sign tests/prose.sha256 after a wording change
 ./init.sh                                    # fresh clone: toolchain check, npm ci, .env, Chrome check
 ./run.sh [dev|build|preview|stop]            # dev server reachable from a phone on the same Wi-Fi
 gh workflow run link-report.yml              # weekly broken-link report, on demand
@@ -42,6 +43,10 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
 - **Unlisted page** `/qr/` is built but filtered out of the sitemap (`astro.config.mjs`, DECISIONS
   #9). `/press/` and `/software/` were deleted and redirect to `/about/` (#21); `test.sh` fails if
   any of the three shows up in `dist/sitemap-*.xml`.
+- **Pieter's prose is pinned by hash** (`tests/prose.sha256`, DECISIONS #25). A reworded block
+  fails `test.sh`. Never run `./test.sh --bless-prose` (it re-signs the manifest) unless Pieter
+  asks for it in the current conversation, for that change. A fact or typo fix he approved
+  still needs his sign-off.
 - **Biography facts are pinned by `test.sh`** (§ Biography consistency): career start 2011, the
   title, the cities, and footer interests also named on Contact. Change the fact and the check together.
 - **Contact form privacy** (#22): the hidden `botcheck` honeypot, the note under the form and the

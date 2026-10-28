@@ -13,14 +13,16 @@
 # fails the build, so the suite does not cry wolf. A SKIP could not be
 # determined (usually no network).
 #
-# Usage: ./test.sh [--offline] [--live <url>]
+# Usage: ./test.sh [--offline] [--live <url>] [--bless-prose]
 #   --offline      skip the checks that need the network
 #   --live <url>   check only the deployed site at <url> (routes, canonical
 #                  host, analytics, browser rendering of every post)
+#   --bless-prose  build, then rewrite tests/prose.sha256 from it — only on
+#                  Pieter's word for that change (DECISIONS #25)
 
 set -uo pipefail
 cd "$(dirname "$0")" || exit 1
-case "${1:-}" in -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+case "${1:-}" in -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -35,10 +37,12 @@ SKIP_COUNT=0
 
 OFFLINE=0
 LIVE_URL=""
-USAGE="usage: ./test.sh [--offline] [--live <url>]"
+BLESS_PROSE=0
+USAGE="usage: ./test.sh [--offline] [--live <url>] [--bless-prose]"
 while [ $# -gt 0 ]; do
 	case "$1" in
 		--offline) OFFLINE=1 ;;
+		--bless-prose) BLESS_PROSE=1 ;;
 		--live)
 			[ $# -ge 2 ] || { echo "--live needs a URL ($USAGE)"; exit 2; }
 			LIVE_URL="${2%/}"; shift ;;
@@ -150,6 +154,81 @@ run_browser_tests() {
 	done <<< "$results"
 }
 
+# Pieter's prose, pinned by hash (DECISIONS #25). Project descriptions are
+# AI-written and labeled (#23), so they are not in the list; drafts are never
+# built. One line per block: route, sha256 of its visible text, a snippet.
+PROSE_MANIFEST=${PROSE_MANIFEST:-tests/prose.sha256}
+prose_routes() {
+	printf '%s\n' / /about/ /contact/ /reading/
+	grep -LE '^draft:[[:space:]]*true' src/content/blog/*.md src/content/blog/*.mdx 2>/dev/null \
+		| sed -E 's#.*/##; s#\.mdx?$##' | tr '[:upper:]' '[:lower:]' | sed 's#.*#/blog/&/#'
+}
+
+# prose_lines <dist-dir|base-url>: the manifest lines for what that source
+# holds. A page that can't be read yields a "missing" line, so it shows up as
+# a difference instead of passing silently.
+prose_lines() {
+	local src="$1" route html
+	while IFS= read -r route; do
+		case "$src" in
+			http*) html=$(curl -s --max-time 15 "${src}${route}") ;;
+			*) html=$(cat "${src}${route}index.html" 2>/dev/null) ;;
+		esac
+		echo "$html" | node scripts/prose-blocks.mjs "$route" 2>/dev/null \
+			|| printf '%s\tmissing\t(page not found or has no <main>)\n' "$route"
+	done <<< "$(prose_routes)"
+	case "$src" in
+		http*) html=$(curl -s --max-time 15 "${src}/") ;;
+		*) html=$(cat "${src}/index.html" 2>/dev/null) ;;
+	esac
+	echo "$html" | node scripts/prose-blocks.mjs footer --footer 2>/dev/null \
+		|| printf 'footer\tmissing\t(no <footer> on Home)\n'
+}
+
+# check_prose <dist-dir|base-url>: compare with the signed-off manifest. A
+# reworded block shows up as one line gone and one line new.
+check_prose() {
+	local current gone new route
+	if [ ! -f "$PROSE_MANIFEST" ]; then
+		warn "no $PROSE_MANIFEST yet — prose is not pinned (Pieter signs off with ./test.sh --bless-prose)"
+		return
+	fi
+	current=$(prose_lines "$1")
+	gone=$(comm -23 <(grep -v '^#' "$PROSE_MANIFEST" | cut -f1,2 | sort) <(echo "$current" | cut -f1,2 | sort))
+	new=$(comm -13 <(grep -v '^#' "$PROSE_MANIFEST" | cut -f1,2 | sort) <(echo "$current" | cut -f1,2 | sort))
+	if [ -z "$gone$new" ]; then
+		pass "prose on $(prose_routes | wc -l | tr -d ' ') pages and the footer matches the signed-off hashes"
+		return
+	fi
+	for route in $( (echo "$gone"; echo "$new") | cut -f1 | grep . | sort -u); do
+		fail "prose on $route differs from $PROSE_MANIFEST (reworded, added or removed text):"
+		# At most 8 lines per page: a missing page would otherwise list every block.
+		{
+			echo "$gone" | awk -F'\t' -v r="$route" '$1 == r {print $2}' | while IFS= read -r sha; do
+				echo "      - $(grep -F "$route	$sha	" "$PROSE_MANIFEST" | head -1 | cut -f3)…"
+			done
+			echo "$new" | awk -F'\t' -v r="$route" '$1 == r {print $2}' | while IFS= read -r sha; do
+				echo "      + $(echo "$current" | grep -F "$route	$sha	" | head -1 | cut -f3)…"
+			done
+		} | awk 'NR <= 8 {print} END {if (NR > 8) printf "      … and %d more\n", NR - 8}'
+	done
+}
+
+# ---------------------------------------------------------------------------
+# --bless-prose: rebuild and sign off on the current prose, then stop.
+# ---------------------------------------------------------------------------
+if [ "$BLESS_PROSE" = "1" ]; then
+	npm run build > /dev/null 2>&1 || { echo "build failed; nothing signed off"; exit 1; }
+	{
+		echo "# Signed-off prose: route, sha256 of the block's visible text, a snippet."
+		echo "# Regenerate only on Pieter's word: ./test.sh --bless-prose (DECISIONS #25)."
+		prose_lines dist
+	} > "$PROSE_MANIFEST"
+	echo "Wrote $PROSE_MANIFEST ($(grep -vc '^#' "$PROSE_MANIFEST") blocks). Changes since the last commit:"
+	git --no-pager diff -U0 -- "$PROSE_MANIFEST" | grep -E '^[+-][^+-]' | cut -f1,3 || echo "  (none, or the file is new)"
+	exit 0
+fi
+
 # ---------------------------------------------------------------------------
 # --live: check what the host is actually serving, then stop.
 # ---------------------------------------------------------------------------
@@ -251,6 +330,9 @@ if [ -n "$LIVE_URL" ]; then
 			fail "Vercel project link is '$LINK', expected 'github pieteradejong astropieter main' — pushes will not deploy"
 		fi
 	fi
+
+	section "Prose integrity on the live site"
+	check_prose "$LIVE_URL"
 
 	section "Content rendering on the live site (browser)"
 	# Fixtures are drafts and never deployed, so only the every-post, projects
@@ -972,6 +1054,14 @@ if [ -f src/components/Footer.astro ] && [ -f dist/contact/index.html ]; then
 		fail "footer interest(s) missing from the Contact intro:$NOT_ON_CONTACT"
 	fi
 fi
+
+# ---------------------------------------------------------------------------
+section "Prose integrity"
+# ---------------------------------------------------------------------------
+# Every page but the project descriptions is Pieter's (DECISIONS #23). The
+# visible text of each block is hashed, so markup and styling can change
+# freely while any reworded sentence fails until Pieter signs it off (#25).
+check_prose dist
 
 # ---------------------------------------------------------------------------
 section "Privacy and form safety"

@@ -695,3 +695,54 @@ Rejected:
 - Allow-listing the 404 in `test.sh`. That would publish a dead link.
 **Verified:** `./test.sh` → `195 passed, 0 failed, 13 warnings, 0 skipped`; pushed
 `2c23f91..d4d75e5`. NOT YET: the live page after the Vercel deploy.
+
+## 25. Pieter's prose is pinned by per-block hashes of the visible text
+**Date:** 2026-10-25
+**Context:** #23 makes every page except the project descriptions Pieter's. Until now `test.sh`
+pinned only single facts (§ Biography consistency), so any other rewording passed. AI-written
+sentences reached his pages on 2026-10-23 before anyone noticed. Pieter asked for a content test
+that uses hashes instead of copies of the full text.
+
+**Decision:** `scripts/prose-blocks.mjs` takes `<main>` (or `<footer>`) of a built or served page
+and drops script, style and svg. It splits the text at every block-level tag, removes the
+remaining tags, decodes entities and collapses whitespace. Each block then becomes a line of
+route, sha256 and a 40-character snippet. The footer's `© <year>` becomes `© YEAR`, because the
+year is the build year.
+
+`tests/prose.sha256` is the signed-off list. It covers Home, About, Contact, Reading, every
+non-draft post and the footer. § Prose integrity compares the build with it, and `--live`
+compares production with it:
+- a difference fails and prints the `-`/`+` snippets, at most 8 lines per page;
+- a missing manifest warns.
+
+`./test.sh --bless-prose` rebuilds and rewrites the manifest. Only Pieter runs it (`CLAUDE.md`
+§ Gotchas). The first manifest waits for him (`TODO.md`).
+
+Rejected:
+- Hashing source files (`about.astro`): it fails on every markup or CSS change, and people would
+  learn to re-bless without reading.
+- One hash per page: shorter, but a failure only says "/about/ changed".
+- Hashing Markdown bodies only: exact for posts, but it leaves out the `.astro` pages, which are
+  most of the site.
+- Fuzzy checks (word-count drift, readability): they miss a changed sentence.
+- Gate enforcement through a commit trailer: an assistant can write the trailer too. The manifest
+  diff in review is the real control.
+- `shasum` per block in bash: one subprocess per block. Node's `crypto` gives the same sha256 in
+  one process.
+
+**Verified:**
+- Against a scratch manifest from the current `dist/` (`PROSE_MANIFEST=…`, under `/bin/bash`
+  3.2):
+  - clean → `✓ prose on 5 pages and the footer matches the signed-off hashes`;
+  - one word changed on About → `✗ prose on /about/ differs …` with `- Full-stack web
+    development program…` / `+ Full-stack web engineering program…`;
+  - every `data-astro-cid` renamed, the container class changed and each `<p>` wrapped in a
+    `<div>` → still `✓`;
+  - `/reading/` deleted → `✗` with 8 lines and `… and 84 more`.
+- `check_prose https://padj.vercel.app` against the same manifest → `✓` (production serves the
+  local text).
+- `bash -n test.sh` → OK.
+- Full `./test.sh` (no manifest yet) → `! no tests/prose.sha256 yet …`; `195 passed, 1 failed,
+  13 warnings`. The one failure is `npm audit` (new high advisories in transitive `undici` and
+  `zod`), which is unrelated (`TODO.md`).
+- NOT YET: the first real manifest (Pieter, `TODO.md`).

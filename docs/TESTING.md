@@ -76,6 +76,24 @@ image, and entries with no `githubUrl` (a warning: the showcase rules in
 exception is recorded there). The banned list was built from phrases actually
 present in this repo, not from a style guide.
 
+**Prose integrity** (DECISIONS #25): Pieter's prose is pinned by hash. These pages are covered:
+Home, About, Contact, Reading, every published post, and the footer. Project descriptions are
+left out, because AI writes them and they carry a label saying so (#23).
+
+For each block (a paragraph, list item, heading and so on), `scripts/prose-blocks.mjs` hashes
+the visible text with the tags stripped. `tests/prose.sha256` holds one line per block: the
+route, the sha256 and a 40-character snippet. Because only the words are hashed, markup,
+classes and styling can change freely. A reworded, added or removed block fails, and the
+failure shows the old (`-`) and new (`+`) snippets.
+
+`--live` runs the same comparison against production. If the manifest is missing, the check
+warns instead of failing.
+
+To sign off on a change, Pieter runs `./test.sh --bless-prose`. It rebuilds the site, rewrites
+the manifest and prints the snippets that changed. The manifest diff in the commit is the
+sign-off. The assistant never runs `--bless-prose` on its own. To test the check against a
+scratch manifest, set `PROSE_MANIFEST=<path>`.
+
 **Accessibility** — every `<img>` has alt text, `<html>` has a lang, every
 visible form field has a label.
 
