@@ -80,7 +80,9 @@ decided, the page stays.
 2. The page lives in the project repo, as `portfolio.md` at its root:
    - frontmatter against the schema, plus `public: true|false`, plus the body;
    - `hero` is a path inside that repo (jpg, png or webp);
-   - `githubUrl` and `demoUrl` are double-quoted, because the link checks read only that form.
+   - `githubUrl` and `demoUrl` are double-quoted, because the link checks read only that form;
+   - `aiGenerated: true|false` is present (`true` when AI wrote the description). The script
+     refuses a file without it, because the build would fail on it.
 
    On a branch here, run `scripts/sync-projects.sh` (`--dry-run` first, `--repo NAME` for
    one). It reads `portfolio.md` from every public repo:

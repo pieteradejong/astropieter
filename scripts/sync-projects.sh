@@ -120,6 +120,11 @@ while IFS= read -r repo; do
 		false) continue ;;
 		*) skip "$repo" "portfolio.md: public must be true or false, got '${flag:-nothing}'"; continue ;;
 	esac
+	# The schema requires it (DECISIONS #23); without it the page syncs and the build fails.
+	case "$(fm_value "$src" aiGenerated)" in
+		true|false) ;;
+		*) skip "$repo" "portfolio.md: aiGenerated must be true or false (true when AI wrote the description)"; continue ;;
+	esac
 	# test.sh's link checks read double-quoted githubUrl/demoUrl only; a
 	# single-quoted one would be published unchecked.
 	if fm "$src" | grep -qE "^(githubUrl|demoUrl):[[:space:]]*'"; then

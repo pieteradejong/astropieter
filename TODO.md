@@ -19,15 +19,16 @@ kept here.
       `docs/TESTING.md`, `CLAUDE.md`, `CHANGELOG.md`, `DECISIONS.md`, `TODO.md`): uncommitted,
       awaiting Pieter's go. It's test-only, so no site change ships when it's pushed. `DECISIONS.md` #25.
       **Done 2026-10-28:** committed as `bc4cf8d`, not pushed yet.
-- [ ] 2026-10-28 — **Push astropieter `main`**: the prose check (`bc4cf8d`), the lockfile fix,
+- [x] 2026-10-28 — **Push astropieter `main`**: the prose check (`bc4cf8d`), the lockfile fix,
       and the `portfolio-games` branch (the cnc-web page, DECISIONS #26). This is the first push
       gated by Deployment Checks. Verify: `gh run list --workflow ci.yml --limit 2` green, `vercel
       ls padj` shows it as production, `./test.sh --live https://padj.vercel.app` passes, and
       `/projects/cnc-web/` answers. Then turn #26's `NOT YET` into its Verified line. Needs
-      Pieter's go.
-- [ ] 2026-10-28 — **`sync-projects.sh` does not add `aiGenerated`**, which the schema requires
+      Pieter's go. **Done 2026-10-28:** pushed on Pieter's go; see #26 § Verified.
+- [x] 2026-10-28 — **`sync-projects.sh` does not add `aiGenerated`**, which the schema requires
       (#23). A `portfolio.md` without it syncs fine and then fails the build. Either check for it
       in the script (exit 1, as with other invalid fields) or document it in `docs/PORTFOLIO.md`
-      § Publishing a project. `DECISIONS.md` #20.
+      § Publishing a project. `DECISIONS.md` #20. **Done 2026-10-28:** both. The script refuses
+      it (fixture: exit 1), and `docs/PORTFOLIO.md` names the field.
 - [ ] 2026-10-23 — **Check the live TV Show Chat page** after the `d4d75e5` deploy: no GitHub
       link, page still listed. `DECISIONS.md` #24.

@@ -120,7 +120,28 @@ Vercel gives the GitHub environment and waits for a successful deployment, every
 job has a timeout, both `test.sh` modes are wired, `engines.node` and the CI Node
 major agree, third-party actions are pinned by SHA, `test.sh` itself starts the
 dev server with `--background`, and nothing that ships or that a reader follows
-names the retired SiteGround host.
+names the retired SiteGround host. Production waits for the GitHub checks `tests`,
+`security / gitleaks` and `security / gate` (DECISIONS #26), and Vercel matches
+them by name. The suite checks that `ci.yml` keeps a job `tests` and that
+`security.yml` calls the reusable workflow as job `security`. Online, with
+dotfiles' `bin/` on PATH and a `vercel` login, it runs `vercel-project check`; in CI
+and with `--offline` that check is a skip.
+
+**Portfolio sync** (DECISIONS #20) — `scripts/sync-projects.sh` runs from a copy
+in a scratch tree against fixtures (`SYNC_FROM_DIR`), so the real pages are never
+touched. Covered:
+- `--dry-run` writes nothing.
+- `public: true` writes the page with `syncedFrom` and its hero; `public: false`
+  is not listed.
+- It refuses `public: maybe`, a missing `aiGenerated`, a hero outside the repo, a
+  single-quoted URL, and a slug that collides with a hand-written page.
+- A hand-written page is left alone. A generated page whose repo now fails
+  validation is kept.
+- A rerun reports "unchanged".
+- Flipping to `public: false` removes the page and its hero.
+
+Removing the `aiGenerated` check from the script turns two of these red, so they
+test something.
 
 **Outbound link integrity** — every `githubUrl` and `demoUrl` in project
 frontmatter is fetched. Internal demos must exist as a real page in the build. A

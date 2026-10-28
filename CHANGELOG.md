@@ -8,6 +8,8 @@ live.
 ## [Unreleased]
 
 ### Added
+- `test.sh` § Portfolio sync: thirteen fixture checks of `scripts/sync-projects.sh` (writes, refusals, hand-written pages, kept pages, rerun, removal), run from a scratch copy. § Deployment pipeline checks that the GitHub jobs production waits for keep their names, and runs `vercel-project check` where the CLI is logged in (DECISIONS #20, #26).
+- `scripts/sync-projects.sh` refuses a `portfolio.md` without `aiGenerated: true|false` (exit 1, the page is kept as is). Before, such a file synced and then failed the build (DECISIONS #20).
 - The `Command & Conquer in the browser` project page (`cnc-web`), synced from that repo's `portfolio.md`, with a live demo at https://cnc-web-padj.vercel.app (DECISIONS #20).
 - Production waits for CI. A push to `main` goes live only after `tests`, `security / gitleaks` and `security / gate` pass (Vercel Deployment Checks). A red check keeps the previous build live (DECISIONS #26).
 - `test.sh` § Prose integrity: Pieter's prose is pinned by hash. These pages are covered: Home, About, Contact, Reading, every published post, and the footer. Each block of visible text is hashed into `tests/prose.sha256`, so markup and styling can change freely while a reworded sentence fails, and the failure shows the old and new snippets. `--live` runs the same check against production. Pieter signs off on a change with `./test.sh --bless-prose` (DECISIONS #25).

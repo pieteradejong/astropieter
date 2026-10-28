@@ -1462,6 +1462,101 @@ else
 	fail "retired SiteGround host referenced in: $(echo $OLD_HOST_REFS) (DECISIONS #11)"
 fi
 
+# Production waits for the GitHub checks `tests`, `security / gitleaks` and
+# `security / gate` (Vercel Deployment Checks, DECISIONS #26). Vercel matches
+# them by name: rename a job and the check never reports, so production never
+# moves again.
+if grep -qE '^  tests:$' "$CI_YML" 2>/dev/null && ! awk '/^  tests:$/{f=1;next} f && /^  [a-z_-]+:$/{exit} f && /^    name:/{print}' "$CI_YML" | grep -vq 'name: *tests$'; then
+	pass "ci.yml has the job 'tests' that production waits for"
+else
+	fail "ci.yml must keep a job named 'tests': Vercel's Deployment Check waits for that name (DECISIONS #26)"
+fi
+if grep -qE '^  security:$' .github/workflows/security.yml 2>/dev/null \
+	&& grep -q 'uses: pieteradejong/dotfiles/.github/workflows/security-reusable.yml@' .github/workflows/security.yml; then
+	pass "security.yml calls security-reusable.yml as job 'security' (checks 'security / gitleaks', 'security / gate')"
+else
+	fail "security.yml must call security-reusable.yml as job 'security': production waits for 'security / gitleaks' and 'security / gate' (DECISIONS #26)"
+fi
+# The live settings, where the vercel CLI is logged in (this Mac, not CI).
+if [ "$OFFLINE" -eq 1 ]; then
+	skip "vercel-project check (offline)"
+elif ! command -v vercel-project >/dev/null 2>&1 || ! vercel whoami >/dev/null 2>&1; then
+	skip "vercel-project check (needs dotfiles bin/ on PATH and a vercel login)"
+elif VP_OUT=$(vercel-project check 2>&1); then
+	pass "vercel-project check: padj matches the pipeline settings, Deployment Checks included"
+else
+	fail "vercel-project check reports drift: $(echo "$VP_OUT" | grep '✗' | sed 's/^ *//' | tr '\n' ' ')"
+fi
+
+# ---------------------------------------------------------------------------
+section "Portfolio sync"
+# ---------------------------------------------------------------------------
+# scripts/sync-projects.sh against fixtures (SYNC_FROM_DIR), run from a copy in
+# a scratch tree so the real pages are never touched (DECISIONS #20).
+SY=$(mktemp -d)
+mkdir -p "$SY/scripts" "$SY/src/content/projects" "$SY/src/assets/projects" "$SY/fx"
+cp scripts/sync-projects.sh "$SY/scripts/"
+sy_fixture() {  # sy_fixture <repo> <extra frontmatter lines...>
+	local d="$SY/fx/$1"; shift
+	mkdir -p "$d/docs" && printf 'png' > "$d/docs/hero.png"
+	{ echo '---'; for l in "$@"; do echo "$l"; done
+	  echo 'title: "Fixture"'; echo 'githubUrl: "https://github.com/pieteradejong/fixture"'
+	  echo '---'; echo 'Body.'; } > "$d/portfolio.md"
+}
+sy_run() { (cd "$SY" && SYNC_FROM_DIR="$SY/fx" scripts/sync-projects.sh "$@") > "$SY/out" 2>&1; }
+sy_fixture good 'public: true' 'aiGenerated: true' 'hero: "docs/hero.png"'
+sy_fixture hidden 'public: false' 'aiGenerated: true'
+sy_fixture maybe 'public: maybe' 'aiGenerated: true'
+sy_fixture noai 'public: true'
+sy_fixture escape 'public: true' 'aiGenerated: true' 'hero: "../secret.png"'
+sy_fixture handmade 'public: true' 'aiGenerated: false'
+sy_fixture squote 'public: true' 'aiGenerated: true' "demoUrl: 'https://example.com'"
+printf -- '---\ntitle: "Hand-written"\n---\nMine.\n' > "$SY/src/content/projects/handmade.md"
+cp "$SY/src/content/projects/handmade.md" "$SY/handmade.orig"
+# A page generated earlier for a repo whose file is now invalid: it must stay.
+printf -- '---\ntitle: "Old"\nsyncedFrom: "noai@0000000"\n---\nOld.\n' > "$SY/src/content/projects/noai.md"
+
+sy_run --dry-run; rc=$?
+if [ "$rc" = 1 ] && grep -q 'would write src/content/projects/good.md' "$SY/out" && [ ! -e "$SY/src/content/projects/good.md" ]; then
+	pass "sync --dry-run reports the write, writes nothing, exits 1 on the invalid fixtures"
+else
+	fail "sync --dry-run (rc=$rc): $(tr '\n' ' ' < "$SY/out")"
+fi
+sy_run; rc=$?
+P="$SY/src/content/projects"
+if [ "$rc" = 1 ] && grep -q '^syncedFrom: "good@' "$P/good.md" 2>/dev/null && grep -q '^hero: "../../assets/projects/good.png"' "$P/good.md" \
+	&& [ -f "$SY/src/assets/projects/good.png" ] && ! grep -qE '^(public|#)' "$P/good.md"; then
+	pass "sync writes a public: true page with syncedFrom and its hero, dropping public and comments"
+else
+	fail "sync did not write good.md as expected (rc=$rc)"
+fi
+for c in "hidden:" "maybe:public must be true or false" "noai:aiGenerated must be true or false" \
+	"escape:hero must be a path inside the repo" "handmade:is a hand-written page" "squote:must be double-quoted"; do
+	repo=${c%%:*}; msg=${c#*:}
+	if [ "$repo" = hidden ]; then
+		[ ! -e "$P/hidden.md" ] && pass "sync: public: false is not listed" || fail "sync listed a public: false repo"
+	elif grep -q "✗ $repo: .*$msg" "$SY/out"; then
+		pass "sync refuses '$repo' ($msg)"
+	else
+		fail "sync did not refuse '$repo' with '$msg'"
+	fi
+done
+cmp -s "$P/handmade.md" "$SY/handmade.orig" && pass "sync leaves a hand-written page alone" || fail "sync changed a hand-written page"
+grep -q 'noai@0000000' "$P/noai.md" 2>/dev/null && pass "sync keeps a generated page whose repo now fails validation" \
+	|| fail "sync removed or rewrote the page of a repo that failed validation"
+[ ! -e "$P/escape.md" ] && [ ! -e "$P/maybe.md" ] && [ ! -e "$P/squote.md" ] \
+	&& pass "sync writes no page for a refused repo" || fail "sync wrote a page for a refused repo"
+sy_run --repo good
+grep -q '= good unchanged' "$SY/out" && pass "sync rerun: unchanged page reported, not rewritten" || fail "sync rerun did not report good unchanged"
+sed -i.bak 's/^public: true/public: false/' "$SY/fx/good/portfolio.md"
+sy_run --repo good
+if [ ! -e "$P/good.md" ] && [ ! -e "$SY/src/assets/projects/good.png" ]; then
+	pass "sync: public: false removes the generated page and its hero"
+else
+	fail "sync left good.md or its hero after public: false"
+fi
+rm -rf "$SY"
+
 # ---------------------------------------------------------------------------
 section "Outbound link integrity"
 # ---------------------------------------------------------------------------

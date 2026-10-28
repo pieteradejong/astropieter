@@ -558,8 +558,11 @@ Rejected:
 - Against GitHub, 2026-10-28: with `cnc-web` `public: false` the run printed "nothing to change".
   After `cnc-web` `96f8c29` (`public: true`), it wrote `src/content/projects/cnc-web.md` and
   `src/assets/projects/cnc-web.png`, and the full `./test.sh` passed (`200 passed, 0 failed`).
-  Gap found: the sync does not add `aiGenerated` (#23), so a `portfolio.md` without it fails the
-  build. games' file now carries it.
+  Gap found: the sync did not check `aiGenerated` (#23), so a `portfolio.md` without it synced and
+  then failed the build. games' file now carries it, and since 2026-10-28 the script refuses a file
+  without it. Fixture run: `✗ noai: portfolio.md: aiGenerated must be true or false`, exit 1, while
+  the fixture that has the field would be written. Against GitHub: `= cnc-web unchanged`, exit 0.
+  `shellcheck -S warning` is clean.
 
 ## 21. /press and /software are deleted and redirect to /about; the settled biography is pinned by tests
 **Date:** 2026-10-23
@@ -773,4 +776,9 @@ known to be unrelated.
   gates production" and the two `security / …` lines. Before: the three ✗.
 - The check names match what GitHub reports on `main` (`gh api …/check-runs`: `tests`,
   `security / gate`, `security / gitleaks`).
-- NOT YET: the first gated push of `padj` (`TODO.md`).
+- First gated push, 2026-10-28 (`a14084c`): `tests` finished at 2m07s, and padj served `a14084c`
+  about 150 s after the push, so the alias waited for the checks. `/projects/cnc-web/` → 200.
+  `./test.sh --live` → 69 passed, 1 failed. The one failure is the known missing
+  `PUBLIC_WEB3FORMS_KEY` (`~/dev/TODO.md` § astropieter), not this change.
+- `test.sh` § Deployment pipeline now checks that the job names production waits for are kept
+  (see `docs/TESTING.md`).
