@@ -25,6 +25,9 @@ live.
   dev-server advisories (GHSA-9jrq-w75r-8gcw, GHSA-rq7h-c2jc-7f22, GHSA-vfpm-58rq-9qcg and the
   `launch-editor` ones) that had turned `./test.sh`'s `npm audit` check red. The built site was
   never affected: Vite only serves the dev server here.
+- Lockfile only: `undici` 8.10.2 → 8.12.3 and `zod` 4.5.4 → 4.6.7, clearing two high advisories
+  (including GHSA-mrhx-c7xc-m3w5) that had turned `./test.sh`'s `npm audit` check, and CI's
+  `tests` check, red.
 
 ### Changed
 - The TV Show Chat page no longer links to its GitHub repo, which went private on 2026-10-23 while the personal data in its history is dealt with (tvshowchat DECISIONS #21). `test.sh`'s outbound-link check had turned red on the 404.
