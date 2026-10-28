@@ -555,7 +555,11 @@ Rejected:
 - `./test.sh --offline` with that page passed (`182 passed, 0 failed`), including "project
   'cnc-web' shows its hero on the card and the detail page". The fixture page was then removed;
   `games/portfolio.md` itself says `public: false`.
-- NOT YET: a run against GitHub, which needs the games repo pushed (`~/dev/TODO.md`).
+- Against GitHub, 2026-10-28: with `cnc-web` `public: false` the run printed "nothing to change".
+  After `cnc-web` `96f8c29` (`public: true`), it wrote `src/content/projects/cnc-web.md` and
+  `src/assets/projects/cnc-web.png`, and the full `./test.sh` passed (`200 passed, 0 failed`).
+  Gap found: the sync does not add `aiGenerated` (#23), so a `portfolio.md` without it fails the
+  build. games' file now carries it.
 
 ## 21. /press and /software are deleted and redirect to /about; the settled biography is pinned by tests
 **Date:** 2026-10-23
@@ -746,3 +750,27 @@ Rejected:
   13 warnings`. The one failure is `npm audit` (new high advisories in transitive `undici` and
   `zod`), which is unrelated (`TODO.md`).
 - NOT YET: the first real manifest (Pieter, `TODO.md`).
+
+## 26. Production waits for CI: Deployment Checks gate padj
+**Date:** 2026-10-28
+**Context:** The rest of the workspace deploys through dotfiles D42: Vercel builds every push, and
+Deployment Checks hold the production alias until the GitHub checks `tests`, `security /
+gitleaks` and `security / gate` pass. `padj` predates that. Vercel built every push of `main`
+and moved the alias at once, while `ci.yml` (#10) only reported afterwards. A red test, or a red
+gate (a secret or personal data in the commit), still reached visitors. On 2026-10-28 `games`
+proved that on Hobby the gate holds the `.vercel.app` alias (dotfiles D42 § Verified).
+**Decision:** `vercel-project init` on `padj` added the three Deployment Checks
+(`blocks: deployment-alias`, production only). The other settings already matched. A held build
+is Ready but not live. Promote it by hand (`vercel promote <url>`) only when the failing check is
+known to be unrelated.
+**Rejected:**
+- Keep push-deploys ungated and roll back after a red `live`: visitors see the broken or leaking
+  build until someone notices.
+- Gate with GitHub branch protection: it gates merges, not the direct pushes to `main` this repo
+  uses.
+**Verified:**
+- `vercel-project check` (2026-10-28) → seven ✓, exit 0, including "deployment check 'tests'
+  gates production" and the two `security / …` lines. Before: the three ✗.
+- The check names match what GitHub reports on `main` (`gh api …/check-runs`: `tests`,
+  `security / gate`, `security / gitleaks`).
+- NOT YET: the first gated push of `padj` (`TODO.md`).

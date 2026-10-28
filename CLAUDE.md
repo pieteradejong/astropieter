@@ -26,10 +26,13 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
 - **AI writes project descriptions only.** Every other page's prose is Pieter's: apply settled
   facts and typo fixes, never draft or reword (`docs/PORTFOLIO.md` § Content and voice). A
   project page you write or rewrite gets `aiGenerated: true`.
-- **Pushing `main` is a production deploy.** Vercel builds on push, and it does not run
-  `./test.sh`. Run the suite first. GitHub then runs it too (`ci.yml`, DECISIONS #10): `tests` on
-  the push (`--offline`, Playwright's own Chromium) and `live` against padj.vercel.app after Vercel's
-  `deployment_status`. A red `live` means visitors see a broken site: `vercel rollback`.
+- **Pushing `main` is a production deploy.** Vercel builds on push and does not run
+  `./test.sh`, but production waits for the GitHub checks `tests`, `security / gitleaks` and
+  `security / gate` (Deployment Checks, DECISIONS #26): a red one holds the old build. Run the
+  suite first. GitHub then runs it too (`ci.yml`, DECISIONS #10): `tests` on the push
+  (`--offline`, Playwright's own Chromium) and `live` against padj.vercel.app after Vercel's
+  `deployment_status`. A red `live` means visitors see a broken site: `vercel rollback`. A held
+  build whose failure is known to be unrelated: `vercel promote <url>`.
 - **Projects: `demoUrl` is the only demo field** (`deploymentUrl` is retired, DECISIONS #3). Only
   list a demo that works: `test.sh` fails on a dead one (#4). The "Live demo" / "Source only"
   badge and the `/projects` filter derive from it (#5).

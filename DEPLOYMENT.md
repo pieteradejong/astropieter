@@ -5,9 +5,14 @@ The site is hosted on **Vercel** as project `padj` (team `pieteradejongs-project
 
 ## How a change goes live
 
-Push to `main`. Vercel builds (`astro build`, Node 22.x from `package.json` `engines`) and
-publishes `dist/` as the production deployment. There is no deploy script and nothing to run
-locally. Other branches and pull requests get preview URLs.
+Push to `main`. Vercel builds (`astro build`, Node 22.x from `package.json` `engines`), and the
+build becomes the production deployment once the GitHub checks `tests`, `security / gitleaks` and
+`security / gate` pass. Those are Vercel Deployment Checks (`DECISIONS.md` #26, dotfiles
+`docs/deploy-pipeline.md`). On a red check, the build stays Ready but production keeps the
+previous one. Fix the cause and push again, or, if the failure is known to be unrelated, run
+`vercel promote <deployment-url>`. `vercel-project check` (dotfiles `bin/`) reports drift from
+these settings. There is no deploy script. Other branches and pull requests get preview URLs
+behind a Vercel login.
 
 Vercel does not run `./test.sh`, so run it before pushing. GitHub runs it after: the `site`
 workflow (`.github/workflows/ci.yml`) runs `./test.sh --offline` on the push and, when Vercel
