@@ -681,49 +681,34 @@ else
 fi
 
 # The markup comes from whichever katex rehype-katex resolves; the stylesheet
-# comes from a CDN URL in BaseHead. If the two versions differ, math renders
-# with the wrong spacing and fonts while every markup check still passes.
+# is bundled from the direct `katex` dependency (BaseHead.astro, DECISIONS #27).
+# If the two versions differ, math renders with the wrong spacing and fonts
+# while every markup check still passes.
 RENDER_KATEX=$(node -e "console.log(require(require.resolve('katex/package.json',{paths:[require.resolve('rehype-katex')]})).version)" 2>/dev/null)
-KATEX_LINK=$(grep -o '<link[^>]*cdn.jsdelivr.net/npm/katex@[^>]*>' src/components/BaseHead.astro)
-CSS_KATEX=$(echo "$KATEX_LINK" | sed -nE 's#.*katex@([0-9.]+)/.*#\1#p')
-if [ -z "$KATEX_LINK" ]; then
-	fail "no KaTeX stylesheet link in BaseHead.astro"
-elif [ "$CSS_KATEX" = "$RENDER_KATEX" ]; then
-	pass "KaTeX stylesheet version ($CSS_KATEX) matches the renderer's katex ($RENDER_KATEX)"
+PINNED_KATEX=$(node -p "require('./package.json').dependencies.katex || ''" 2>/dev/null)
+CSS_KATEX=$(node -p "require('katex/package.json').version" 2>/dev/null)
+if [ -z "$PINNED_KATEX" ]; then
+	fail "katex is not a direct dependency in package.json — BaseHead.astro bundles its stylesheet"
+elif [ "$PINNED_KATEX" = "$RENDER_KATEX" ] && [ "$CSS_KATEX" = "$RENDER_KATEX" ]; then
+	pass "bundled KaTeX stylesheet ($CSS_KATEX) matches the renderer's katex ($RENDER_KATEX)"
 else
-	fail "KaTeX stylesheet is v$CSS_KATEX but rehype-katex renders with v$RENDER_KATEX — update the CDN URL and integrity hash in BaseHead.astro"
+	fail "KaTeX stylesheet is v$CSS_KATEX (pinned $PINNED_KATEX) but rehype-katex renders with v$RENDER_KATEX — set the katex pin in package.json to $RENDER_KATEX"
 fi
 
-KATEX_SRI=$(echo "$KATEX_LINK" | sed -nE 's#.*integrity="([^"]+)".*#\1#p')
-if [ -n "$KATEX_LINK" ] && [ -z "$KATEX_SRI" ]; then
-	fail "KaTeX CDN stylesheet has no integrity (SRI) attribute"
-elif [ -n "$KATEX_SRI" ]; then
-	KATEX_URL=$(echo "$KATEX_LINK" | sed -nE 's#.*href="([^"]+)".*#\1#p')
-	if [ "$OFFLINE" = "1" ]; then
-		skip "KaTeX stylesheet SRI hash check (--offline)"
-	else
-		# Hash the bytes straight from curl: capturing them in a variable first
-		# strips the trailing newline and changes the hash.
-		CSS_FILE=$(mktemp)
-		if ! curl -sfL --max-time 12 -o "$CSS_FILE" "$KATEX_URL" 2>/dev/null || [ ! -s "$CSS_FILE" ]; then
-			skip "KaTeX stylesheet SRI hash check (could not fetch $KATEX_URL)"
-		else
-			ACTUAL_SRI="sha384-$(openssl dgst -sha384 -binary "$CSS_FILE" | openssl base64 -A)"
-			if [ "$ACTUAL_SRI" = "$KATEX_SRI" ]; then
-				pass "KaTeX stylesheet SRI hash matches the CDN file"
-			else
-				fail "KaTeX stylesheet SRI hash does not match the CDN file — the browser will refuse to load it"
-			fi
-		fi
-		rm -f "$CSS_FILE"
-	fi
+if grep -q 'cdn.jsdelivr.net' src/components/BaseHead.astro; then
+	fail "BaseHead.astro loads from jsDelivr again — bundle the stylesheet instead (DECISIONS #27)"
 fi
 
-if [ -n "$KATEX_PAGE" ]; then
-	if grep -q "cdn.jsdelivr.net/npm/katex@$RENDER_KATEX/" "$KATEX_PAGE"; then
-		pass "built math page links the matching KaTeX stylesheet"
+# The bundled stylesheet must ship with its fonts, or math falls back to the body face.
+KATEX_CSS=$(grep -l '\.katex{' dist/_astro/*.css 2>/dev/null | head -1)
+if [ -z "$KATEX_CSS" ]; then
+	fail "no bundled KaTeX stylesheet in dist/_astro/"
+else
+	KATEX_FONT=$(grep -oE '/_astro/KaTeX_Main-Regular[^)]*\.woff2' "$KATEX_CSS" | head -1)
+	if [ -n "$KATEX_FONT" ] && [ -f "dist$KATEX_FONT" ]; then
+		pass "bundled KaTeX stylesheet and its fonts are in dist/_astro/"
 	else
-		fail "built math page does not link katex@$RENDER_KATEX stylesheet"
+		fail "bundled KaTeX stylesheet does not reference a KaTeX_Main woff2 that exists in dist/_astro/"
 	fi
 fi
 

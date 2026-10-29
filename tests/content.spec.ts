@@ -10,8 +10,8 @@ import { test, expect, type Page } from '@playwright/test';
 const MD_FIXTURE = '/blog/test-fixture-markdown/';
 const MDX_FIXTURE = '/blog/test-fixture-mdx/';
 
-// Collect console errors and failed requests, so a blocked stylesheet (bad
-// SRI hash, CDN 404) fails the test instead of silently unstyling the math.
+// Collect console errors and failed requests, so a missing stylesheet or font
+// (a 404 in dist/_astro/) fails the test instead of silently unstyling the math.
 async function openClean(page: Page, path: string) {
 	const problems: string[] = [];
 	page.on('console', (m) => {

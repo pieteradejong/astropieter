@@ -4,7 +4,7 @@
 #            Linux checkout (build, drafts, RSS, theme, contrast, a11y, SEO,
 #            weight, hygiene, dev-server smoke test, and the Playwright content
 #            and mobile suites in Playwright's own Chromium). The network
-#            sections (outbound links, KaTeX SRI fetch) are left to the weekly
+#            sections (outbound links) are left to the weekly
 #            link report and to the local run, so this job never fails on a
 #            third party.
 #   live   — after Vercel reports a successful production deployment of the

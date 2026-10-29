@@ -701,7 +701,8 @@ Rejected:
   is gone.
 - Allow-listing the 404 in `test.sh`. That would publish a dead link.
 **Verified:** `./test.sh` → `195 passed, 0 failed, 13 warnings, 0 skipped`; pushed
-`2c23f91..d4d75e5`. NOT YET: the live page after the Vercel deploy.
+`2c23f91..d4d75e5`. Live page, 2026-10-29: `/projects/tv-show-chat/` → 200, and its only
+GitHub link is the profile, not the repo.
 
 ## 25. Pieter's prose is pinned by per-block hashes of the visible text
 **Date:** 2026-10-25
@@ -782,3 +783,26 @@ known to be unrelated.
   `PUBLIC_WEB3FORMS_KEY` (`~/dev/TODO.md` § astropieter), not this change.
 - `test.sh` § Deployment pipeline now checks that the job names production waits for are kept
   (see `docs/TESTING.md`).
+
+## 27. KaTeX's stylesheet is bundled, not loaded from jsDelivr
+**Date:** 2026-10-29
+**Context:** Every page loaded the KaTeX stylesheet from jsDelivr (SRI-pinned), which sent each
+visitor's IP address to a processor the site doesn't need (#22's processor table listed it as
+"to be removed"). `/terra/` also loads Google Fonts, and that is out of scope here: Pieter treats
+Terra as creative content and wants it left untouched (2026-10-29).
+**Decision:** `BaseHead.astro` imports `katex/dist/katex.min.css`, and Vite bundles it with its
+fonts into `dist/_astro/`. `katex` is a direct dependency, exact-pinned to the version
+`rehype-katex` resolves (0.16.47). `test.sh` § KaTeX fails when the pin and the renderer's katex
+differ, when the bundled stylesheet or its KaTeX_Main font is missing, or when BaseHead
+references jsDelivr again. The jsDelivr row is gone from the README processor table.
+**Rejected:**
+- Keep the CDN link with SRI: it still leaks every visitor's IP address, and the SRI check needed
+  a network fetch.
+- Copy `katex.min.css` and its fonts into `public/` by hand: a second copy that drifts from the
+  pinned package.
+**Verified:**
+- `./test.sh` (2026-10-29) → `216 passed, 0 failed, 14 warnings, 0 skipped`, including
+  "bundled KaTeX stylesheet (0.16.47) matches the renderer's katex (0.16.47)" and "bundled KaTeX
+  stylesheet and its fonts are in dist/_astro/".
+- `grep -rl jsdelivr dist/` → no hits.
+- NOT YET: production after the push (`./test.sh --live https://padj.vercel.app`).

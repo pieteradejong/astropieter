@@ -5,6 +5,9 @@ import '../styles/pub-core.css';
 import '../styles/pub-fonts.css';
 import '../styles/pub-theme-terracotta.css';
 import '../styles/global.css';   // bridge + site rules; must come last
+// KaTeX's stylesheet and fonts, bundled by Vite: no CDN request (DECISIONS #27).
+// The direct katex pin must equal rehype-katex's katex; test.sh checks it.
+import 'katex/dist/katex.min.css';
 
 interface Props {
 	title: string;
@@ -34,11 +37,6 @@ const buildCommit = __BUILD_COMMIT__;
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
-
-<!-- Needed for LaTeX 
-source: https://blog.alexafazio.dev/blog/render-latex-in-astro/
--->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css" integrity="sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA" crossorigin="anonymous">
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

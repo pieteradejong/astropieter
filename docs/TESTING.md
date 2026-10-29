@@ -47,7 +47,8 @@ has a detail page; every draft is *absent* from the production build; the
 **RSS feed** — well-formed XML, no drafts, no `undefined` values.
 
 **KaTeX** — a published post that uses math actually renders `class="katex"` markup, and
-the CDN stylesheet version matches the renderer's katex. With no published math post (the
+the bundled stylesheet (the exact `katex` pin) matches the renderer's katex and ships with its
+fonts in `dist/_astro/`. With no published math post (the
 LaTeX test post is a draft) this warns; the browser fixtures still cover the pipeline.
 
 **Theme integrity** — the section that keeps the design system honest. The

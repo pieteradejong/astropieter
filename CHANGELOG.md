@@ -34,6 +34,7 @@ live.
   `tests` check, red.
 
 ### Changed
+- The KaTeX stylesheet and its fonts are bundled into the site instead of loaded from jsDelivr, so no page sends visitors' IP addresses to a CDN. `katex` is now a direct, exact-pinned dependency, and `test.sh` checks that it matches `rehype-katex`'s katex and that the fonts are in `dist/_astro/` (DECISIONS #27).
 - The TV Show Chat page no longer links to its GitHub repo, which went private on 2026-10-23 while the personal data in its history is dealt with (tvshowchat DECISIONS #21). `test.sh`'s outbound-link check had turned red on the 404.
 - The biography facts agree: experience since 2011 and Senior Software Engineer on Home; on About, the WePay entry moves to 2011 in Palo Alto, Hack Reactor says "Hacker in Residence", and the CodePath TA entry is gone. The footer interests add Linguistics. The Georgia Tech MSc claim is gone (DECISIONS #21).
 - `/press/` and `/software/` are deleted and redirect to `/about/` (DECISIONS #21).
