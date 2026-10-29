@@ -7,6 +7,11 @@ live.
 
 ## [Unreleased]
 
+## 2026-10 — Site review follow-ups, portfolio sync, CI-gated deploys
+
+Live on padj.vercel.app as of 2026-10-29 (`5d493a7`; `./test.sh --live` 69 passed, 1 failed: the
+Web3Forms key, which only Pieter can set).
+
 ### Added
 - `test.sh` § Portfolio sync: thirteen fixture checks of `scripts/sync-projects.sh` (writes, refusals, hand-written pages, kept pages, rerun, removal), run from a scratch copy. § Deployment pipeline checks that the GitHub jobs production waits for keep their names, and runs `vercel-project check` where the CLI is logged in (DECISIONS #20, #26).
 - `scripts/sync-projects.sh` refuses a `portfolio.md` without `aiGenerated: true|false` (exit 1, the page is kept as is). Before, such a file synced and then failed the build (DECISIONS #20).

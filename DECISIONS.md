@@ -805,4 +805,8 @@ references jsDelivr again. The jsDelivr row is gone from the README processor ta
   "bundled KaTeX stylesheet (0.16.47) matches the renderer's katex (0.16.47)" and "bundled KaTeX
   stylesheet and its fonts are in dist/_astro/".
 - `grep -rl jsdelivr dist/` → no hits.
-- NOT YET: production after the push (`./test.sh --live https://padj.vercel.app`).
+- Production (2026-10-29, after pushing `5d493a7`): `tests` run 40972567271 and `security` run
+  40972567532 green; `vercel ls padj` → `padj-g6kwtbsuk` Production. `./test.sh --live
+  https://padj.vercel.app` → `69 passed, 1 failed, 1 warnings, 0 skipped`, the one failure being
+  the known Web3Forms key (#19). `curl -s https://padj.vercel.app/ | grep -c jsdelivr` → 0, and
+  the `/_astro/` stylesheet carries the `.katex` rules (200).

@@ -30,11 +30,12 @@ kept here.
       in the script (exit 1, as with other invalid fields) or document it in `docs/PORTFOLIO.md`
       § Publishing a project. `DECISIONS.md` #20. **Done 2026-10-28:** both. The script refuses
       it (fixture: exit 1), and `docs/PORTFOLIO.md` names the field.
-- [ ] 2026-10-29 — **Commit and push the KaTeX bundling** (`DECISIONS.md` #27). It is uncommitted;
+- [x] 2026-10-29 — **Commit and push the KaTeX bundling** (`DECISIONS.md` #27). It is uncommitted;
       `./test.sh` 216 passed, 0 failed. The push is a production deploy and needs Pieter's go. After it,
       run `./test.sh --live https://padj.vercel.app`, which should fail only on the known Web3Forms key,
       then turn #27's `NOT YET` into its Verified line. Terra keeps Google Fonts: Pieter wants it left
-      untouched as creative content (2026-10-29).
+      untouched as creative content (2026-10-29). **Done 2026-10-29:** `5d493a7` pushed on Pieter's go,
+      production `padj-g6kwtbsuk`; `--live` 69 passed, 1 failed (the key only). See #27 § Verified.
 - [x] 2026-10-23 — **Check the live TV Show Chat page** after the `d4d75e5` deploy: no GitHub
       link, page still listed. `DECISIONS.md` #24. **Done 2026-10-29:** `/projects/tv-show-chat/`
       → 200, and the only GitHub link on it is the profile, not the repo.
