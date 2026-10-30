@@ -845,5 +845,10 @@ rebuilds.
   CI/CD status row(s)" and the browser test "CI/CD row sits at the bottom of each card with a
   repo".
 - Screenshots of the cnc-web card at 1000px (light) and 320px (dark) look right.
-- NOT YET: production. It is uncommitted and unpushed, and Vercel has no `GITHUB_TOKEN`
-  (`TODO.md`).
+- Production (2026-10-30, after pushing `a3c330d`): `tests` run 41145610640 and `security` run
+  41145611079 green; `vercel ls padj` → `padj-4xhd4dli1` Production. `curl -s
+  https://padj.vercel.app/projects/` → 4 `ci-status` rows, "CI passing" ×4 and "Deploy live" on
+  cnc-web, so the Vercel build reached GitHub without a token. `./test.sh --live
+  https://padj.vercel.app` → `70 passed, 1 failed, 1 warnings, 0 skipped`, the one failure being
+  the known Web3Forms key (#19). `GITHUB_TOKEN` is not set: add it only if a build shows
+  "unknown".

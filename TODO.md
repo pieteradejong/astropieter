@@ -10,12 +10,14 @@ kept here.
       `./test.sh --bless-prose` and commit `tests/prose.sha256`. Until then § Prose integrity
       only warns. Open texts (why-blog opener, contact privacy note, CONTENT-REVIEW items) will
       each need a re-bless when they land. `DECISIONS.md` #25.
-- [ ] 2026-10-30 — **Ship the CI/CD row on `/projects`** (`DECISIONS.md` #28). Uncommitted;
+- [x] 2026-10-30 — **Ship the CI/CD row on `/projects`** (`DECISIONS.md` #28). Uncommitted;
       `./test.sh` 219 passed, 0 failed. Needs Pieter's go for: (1) commit + push (a production
       deploy); (2) optionally `vercel env add GITHUB_TOKEN` (fine-grained, public repos read-only)
       for Production and Preview, since Vercel's shared build IPs may hit the 60/h limit and show
       "unknown". After the push: `curl -s https://padj.vercel.app/projects/ | grep -c 'class="ci-status'`
       → 4, then turn #28's `NOT YET` into its Verified line.
+      **Done 2026-10-30:** `a3c330d` pushed on Pieter's go, production `padj-4xhd4dli1`; 4 rows
+      live; `--live` 70 passed, 1 failed (the key only). Token not needed so far. See #28 § Verified.
 - [x] 2026-10-25 — **`npm audit` is red:** high advisories in transitive `undici` and `zod` (fix
       available) turn `./test.sh` red, and CI's `tests` check will fail the same way. Do a
       lockfile-only `npm audit fix`, as in `4129257`, then re-run the suite. Found by the
