@@ -50,6 +50,8 @@ while [ $# -gt 0 ]; do
 	esac
 	shift
 done
+# Offline, the /projects CI/CD row shows 'unknown' instead of asking GitHub (DECISIONS #28).
+[ "$OFFLINE" -eq 1 ] && export CI_STATUS=off
 
 pass() { echo -e "  ${GREEN}✓${NC} $1"; PASS_COUNT=$((PASS_COUNT + 1)); }
 fail() { echo -e "  ${RED}✗${NC} $1"; FAIL_COUNT=$((FAIL_COUNT + 1)); }
@@ -607,6 +609,21 @@ if [ -f dist/projects/index.html ]; then
 		pass "every project card links to its detail page"
 	else
 		fail "$N_DETAILS of $N_PROJECTS project cards link to their detail page"
+	fi
+	# CI/CD row (DECISIONS #28): one per card with a GitHub repo, and a build
+	# that could not reach GitHub degrades to 'unknown' instead of failing.
+	N_REPO_SRC=$(grep -l '^githubUrl:\s*"https://github.com/' src/content/projects/*.md 2>/dev/null | wc -l | tr -d ' ')
+	N_CI_ROWS=$(grep -o 'class="ci-status' dist/projects/index.html | wc -l | tr -d ' ')
+	if [ "$N_CI_ROWS" = "$N_REPO_SRC" ]; then
+		pass "projects page shows $N_CI_ROWS CI/CD status row(s), one per card with a GitHub repo"
+	else
+		fail "projects page shows $N_CI_ROWS CI/CD status row(s) but $N_REPO_SRC projects list a github.com githubUrl"
+	fi
+	N_CI_UNKNOWN=$(grep -oE 'ci-unknown' dist/projects/index.html | wc -l | tr -d ' ')
+	if [ "${CI_STATUS:-}" = "off" ] || [ "$N_CI_UNKNOWN" = 0 ]; then
+		pass "CI/CD status fetched for every repo (or skipped: CI_STATUS=off)"
+	else
+		warn "$N_CI_UNKNOWN CI/CD status(es) are 'unknown': GitHub API unreachable or rate-limited (set GITHUB_TOKEN)"
 	fi
 fi
 

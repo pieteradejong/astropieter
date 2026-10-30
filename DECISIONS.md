@@ -810,3 +810,40 @@ references jsDelivr again. The jsDelivr row is gone from the README processor ta
   https://padj.vercel.app` → `69 passed, 1 failed, 1 warnings, 0 skipped`, the one failure being
   the known Web3Forms key (#19). `curl -s https://padj.vercel.app/ | grep -c jsdelivr` → 0, and
   the `/_astro/` stylesheet carries the `.katex` rules (200).
+
+## 28. CI/CD status on project cards: fetched from GitHub at build time
+**Date:** 2026-10-30
+**Context:** Pieter asked for small CI/CD indicators at the bottom of each `/projects` card. The
+site is static, and #22/#27 keep visitors' browsers off third-party hosts.
+**Decision:** `src/utils/ci-status.ts` asks the GitHub API during the build, once per repo:
+- **CI:** the check runs on the head commit of the default branch, combined into
+  passing / failing / running.
+- **Deploy:** the newest status of the latest `Production` deployment, read as
+  live / failed / deploying. It is shown only for repos that have deployments (today: cnc-web).
+
+`CiStatus.astro` renders this as a labelled row with a dot, as the card's last element. Each
+label links to the repo's Actions or Deployments page, and a tooltip and screen-reader text give
+"as of <build time>". Any error, or `CI_STATUS=off` (set by `./test.sh --offline`, and so in CI's
+`tests` job), shows "unknown" instead of failing the build. The palette has no green or red, so
+the words carry the state and the dot's fill only reinforces it. An optional `GITHUB_TOKEN` build
+env lifts the 60/h unauthenticated limit.
+
+The status is as of the last padj build. A satellite repo that goes red shows only after padj
+rebuilds.
+**Rejected:**
+- GitHub's badge SVGs as `<img>`: every visitor's IP goes to GitHub (#22).
+- A client-side API call: the same leak, plus a 60/h limit per visitor IP.
+- A snapshot committed by `scripts/sync-projects.sh`: stale until someone syncs and pushes.
+- A nightly rebuild through a Vercel deploy hook: not wanted for now (Pieter, 2026-10-30), but it
+  is the way to make the status fresher.
+**Verified:**
+- `CI_STATUS=off npm run build` → four rows, all "CI unknown".
+- `npm run build` online → "CI passing" ×4, plus "Deploy live" on cnc-web only, matching
+  `gh run list` and the `deployments` API for go-service, terra, cnc-web and twittertools.
+- `./test.sh --offline` → `211 passed, 0 failed`.
+- `./test.sh` → `219 passed, 0 failed, 14 warnings, 0 skipped`, including "projects page shows 4
+  CI/CD status row(s)" and the browser test "CI/CD row sits at the bottom of each card with a
+  repo".
+- Screenshots of the cnc-web card at 1000px (light) and 320px (dark) look right.
+- NOT YET: production. It is uncommitted and unpushed, and Vercel has no `GITHUB_TOKEN`
+  (`TODO.md`).

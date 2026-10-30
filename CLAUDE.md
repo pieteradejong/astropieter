@@ -36,6 +36,9 @@ gh run list --workflow ci.yml --limit 5       # the two GitHub checks: site / te
 - **Projects: `demoUrl` is the only demo field** (`deploymentUrl` is retired, DECISIONS #3). Only
   list a demo that works: `test.sh` fails on a dead one (#4). The "Live demo" / "Source only"
   badge and the `/projects` filter derive from it (#5).
+- **CI/CD row on `/projects` cards is as of the last padj build** (DECISIONS #28): the build asks
+  the GitHub API, so a satellite repo going red shows only after padj rebuilds. `CI_STATUS=off`
+  (set by `--offline`) renders "unknown" without network; `GITHUB_TOKEN`, if set, lifts the 60/h limit.
 - `test.sh` starts the dev server with `astro dev --background` and stops it with `astro dev stop`.
   Keep the flag: without it Astro only backgrounds when an AI agent is the parent process, so the
   suite passes from Claude Code and hangs in CI (DECISIONS #12).

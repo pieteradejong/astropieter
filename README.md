@@ -146,6 +146,9 @@ the form's honeypot goes missing (DECISIONS #22).
 | Google Fonts | Two typefaces on `/terra/` only, until they are self-hosted | IP address and user agent | Google's terms; to be removed (TODO.md) |
 | Web3Forms | Delivers the contact form by email | Name, email address and message a visitor types | AWS; dashboard keeps submissions up to 30 days on the free plan (web3forms.com, checked 2026-10-23; its privacy page refused automated reads) |
 
+At build time (not in the visitor's browser) the `/projects` page asks the GitHub API for each
+project repo's CI and deploy status (DECISIONS #28). No visitor data is involved.
+
 ## Deployment
 
 Push to `main`: Vercel builds and publishes the site to https://padj.vercel.app. There is no deploy script. Vercel does not run the tests, so run `./test.sh` before pushing. On GitHub, `.github/workflows/ci.yml` then runs `./test.sh --offline` on the push (the **site / tests** check) and, once Vercel reports the production deployment, `./test.sh --live https://padj.vercel.app` against what is actually served (the **site / live** check). Both must be green for the site to count as working. Rollback, configuration and plan limits: `DEPLOYMENT.md`.

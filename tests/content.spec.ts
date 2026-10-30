@@ -153,6 +153,23 @@ test.describe('Projects', () => {
 		expect(problems).toEqual([]);
 	});
 
+	test('CI/CD row sits at the bottom of each card with a repo, and only there', async ({ page }) => {
+		await openClean(page, '/projects/');
+		for (const item of await page.locator('.project-item').all()) {
+			const hasRepo = (await item.locator('a', { hasText: 'Source Code' }).count()) > 0;
+			const row = item.locator('.project-content > .ci-status');
+			if (!hasRepo) {
+				await expect(row).toHaveCount(0);
+				continue;
+			}
+			await expect(row).toBeVisible();
+			await expect(row).toContainText(/CI (passing|failing|running|unknown)/);
+			// Last visible child of the card body, so it reads as the card's footer.
+			const isLast = await row.evaluate((el) => el === el.parentElement?.lastElementChild);
+			expect(isLast, 'ci-status is not the last element of the card').toBe(true);
+		}
+	});
+
 	test('every detail page renders its hero with no console errors', async ({ page }) => {
 		const index = await (await page.request.get('/projects/')).text();
 		const hrefs = [...new Set([...index.matchAll(/href="(\/projects\/[^/"]+\/?)"/g)].map((m) => m[1]))];

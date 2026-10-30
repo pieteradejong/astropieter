@@ -7,6 +7,9 @@ live.
 
 ## [Unreleased]
 
+### Added
+- `/projects` cards with a GitHub repo end in a small CI/CD row. "CI passing / failing / running" comes from the check runs on the default branch's head commit; "Deploy live / failed / deploying" from the latest Production deployment, where the repo has one. It is fetched from the GitHub API at build time, so visitors never contact GitHub, and shows "unknown" when offline or rate-limited. `./test.sh --offline` builds with `CI_STATUS=off` (DECISIONS #28).
+
 ## 2026-10 — Site review follow-ups, portfolio sync, CI-gated deploys
 
 Live on padj.vercel.app as of 2026-10-29 (`5d493a7`; `./test.sh --live` 69 passed, 1 failed: the

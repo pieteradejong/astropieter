@@ -1,0 +1,76 @@
+---
+// CI and deploy status of a project's repo, as of the build. DECISIONS.md #28.
+import type { CiStatus } from '../utils/ci-status';
+
+interface Props {
+	status: CiStatus;
+}
+
+const { status } = Astro.props;
+const asOf = status.asOf.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+const tone = (s: string) =>
+	s === 'passing' || s === 'live' ? 'ok'
+	: s === 'failing' || s === 'failed' ? 'bad'
+	: s === 'running' || s === 'deploying' ? 'busy'
+	: 'unknown';
+---
+
+{(status.ci || status.deploy) && (
+	<p class="ci-status" title={`As of ${asOf}`}>
+		{status.ci && (
+			<a href={`${status.repoUrl}/actions`} class={`ci-item ci-${tone(status.ci)}`} target="_blank" rel="noopener noreferrer">
+				CI {status.ci}
+			</a>
+		)}
+		{status.deploy && (
+			<a href={`${status.repoUrl}/deployments`} class={`ci-item ci-${tone(status.deploy)}`} target="_blank" rel="noopener noreferrer">
+				Deploy {status.deploy}
+			</a>
+		)}
+		<span class="sr-only">(as of {asOf})</span>
+	</p>
+)}
+
+<style>
+	.ci-status {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 1rem;
+		margin: 0;
+		padding-top: 0.5rem;
+		border-top: var(--pub-rule-hair) solid var(--border);
+		font-family: var(--pub-font-meta);
+		font-size: 0.8rem; /* same floor as Tag: nothing under 12px */
+	}
+
+	.ci-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4em;
+		min-height: 24px;
+		color: var(--secondary-text);
+		text-decoration: none;
+	}
+
+	.ci-item:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	/* The palette has no green or red; the words carry the state, the dot's
+	   fill only reinforces it: solid = settled, ring = not (yet) known. */
+	.ci-item::before {
+		content: '';
+		width: 0.6em;
+		height: 0.6em;
+		border-radius: 50%;
+		box-sizing: border-box;
+		flex: none;
+	}
+
+	.ci-ok::before { background: var(--secondary-text); }
+	.ci-bad { color: var(--accent); font-weight: 600; }
+	.ci-bad::before { background: var(--pub-accent); }
+	.ci-busy::before { border: 2px solid var(--secondary-text); }
+	.ci-unknown::before { border: 2px solid var(--border); }
+</style>

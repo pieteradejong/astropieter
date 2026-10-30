@@ -5,6 +5,8 @@ import Layout from '../layouts/Default.astro';
 import Card from '../components/Card.astro';
 import Tag from '../components/Tag.astro';
 import DemoBadge from '../components/DemoBadge.astro';
+import CiStatus from '../components/CiStatus.astro';
+import { getCiStatus } from '../utils/ci-status';
 
 const allProjects = await getCollection('projects');
 
@@ -21,6 +23,11 @@ const projects = allProjects.sort((a, b) => {
 // A project "has a demo" only if it lists a demoUrl; test.sh --live fails on a
 // dead one, so the badge can be trusted (DECISIONS.md #4, #5).
 const demoCount = projects.filter((p) => p.data.demoUrl).length;
+
+// CI/CD status per repo, fetched once at build time (DECISIONS.md #28).
+const ciStatuses = await Promise.all(
+	projects.map((p) => (p.data.githubUrl ? getCiStatus(p.data.githubUrl) : null)),
+);
 ---
 
 <Layout
@@ -36,7 +43,7 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 				<button type="button" data-filter="demo" aria-pressed="false">With live demo ({demoCount})</button>
 			</div>
 			<div class="grid-container">
-				{projects.map((project) => (
+				{projects.map((project, i) => (
 					<div class="project-item" data-demo={project.data.demoUrl ? 'yes' : 'no'}>
 					<Card 
 						title={project.data.title}
@@ -94,6 +101,9 @@ const demoCount = projects.filter((p) => p.data.demoUrl).length;
 									</div>
 								</div>
 							</div>
+
+							<!-- CI/CD status of the repo, as of the build - always visible -->
+							{ciStatuses[i] && <CiStatus status={ciStatuses[i]} />}
 						</div>
 					</Card>
 					</div>
