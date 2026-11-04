@@ -1479,6 +1479,31 @@ if grep -qE '^  security:$' .github/workflows/security.yml 2>/dev/null \
 else
 	fail "security.yml must call security-reusable.yml as job 'security': production waits for 'security / gitleaks' and 'security / gate' (DECISIONS #26)"
 fi
+# The weekly portfolio sync (DECISIONS #29) opens PRs with GITHUB_TOKEN, which
+# start no CI of their own: the suite must run in the sync job before the PR,
+# write permissions stay on the job, and the token stays out of .git.
+SYNC_YML=.github/workflows/sync-projects.yml
+if [ -f "$SYNC_YML" ]; then
+	if awk '/^jobs:/{exit} {print}' "$SYNC_YML" | grep -qE 'contents: *write|pull-requests: *write'; then
+		fail "$SYNC_YML grants write at workflow level; keep it on the sync job (DECISIONS #29)"
+	else
+		pass "$SYNC_YML: write permissions only at job level"
+	fi
+	if grep -q 'timeout-minutes:' "$SYNC_YML" && grep -q 'persist-credentials: false' "$SYNC_YML"; then
+		pass "$SYNC_YML has a timeout and keeps the token out of .git"
+	else
+		fail "$SYNC_YML needs timeout-minutes and checkout persist-credentials: false (DECISIONS #29)"
+	fi
+	TEST_LINE=$(grep -n 'run: ./test.sh --offline' "$SYNC_YML" | head -1 | cut -d: -f1)
+	PR_LINE=$(grep -nE '^ +gh pr create' "$SYNC_YML" | head -1 | cut -d: -f1)
+	if [ -n "$TEST_LINE" ] && [ -n "$PR_LINE" ] && [ "$TEST_LINE" -lt "$PR_LINE" ]; then
+		pass "$SYNC_YML runs ./test.sh --offline before it opens the PR"
+	else
+		fail "$SYNC_YML must run ./test.sh --offline before gh pr create: the PR gets no CI (DECISIONS #29)"
+	fi
+else
+	fail "$SYNC_YML missing (DECISIONS #29)"
+fi
 # The live settings, where the vercel CLI is logged in (this Mac, not CI).
 if [ "$OFFLINE" -eq 1 ]; then
 	skip "vercel-project check (offline)"

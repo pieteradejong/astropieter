@@ -7,6 +7,9 @@ live.
 
 ## [Unreleased]
 
+### Added
+- Weekly portfolio sync: `.github/workflows/sync-projects.yml` runs `scripts/sync-projects.sh` on Mondays (or on demand, with `dry_run`). When project pages change, it runs `./test.sh --offline` and opens or updates one PR from `sync/projects`; merging stays manual (DECISIONS #29).
+
 ## 2026-10-30 — CI/CD status on project cards
 
 Live on padj.vercel.app as of 2026-10-30 (`a3c330d`; `./test.sh --live` 70 passed, 1 failed: the

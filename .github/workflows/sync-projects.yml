@@ -1,0 +1,118 @@
+# Weekly portfolio sync (DECISIONS.md #20, #29).
+# Runs scripts/sync-projects.sh, which reads portfolio.md from every public repo
+# of the owner. If pages changed, runs ./test.sh --offline here and opens (or
+# updates) one rolling PR from branch sync/projects. Merging stays a human step:
+# the merge pushes main, which runs ci.yml and security.yml, and production waits
+# for those checks (DECISIONS.md #26).
+#
+# GITHUB_TOKEN only, no cross-repo token. Two consequences:
+#   - A PR opened with GITHUB_TOKEN triggers no other workflow, so the PR shows
+#     no checks. That is why ./test.sh --offline runs in this job first.
+#   - The repo setting "Allow GitHub Actions to create and approve pull
+#     requests" must be on, or `gh pr create` fails.
+# The token is handed only to the steps that call GitHub; npm, Playwright and
+# test.sh run without it (persist-credentials: false keeps it out of .git).
+# GitHub pauses a schedule after 60 days without a commit (DECISIONS.md #6).
+name: sync-projects
+on:
+  schedule:
+    - cron: '0 12 * * 1' # Mondays 12:00 UTC, an hour before link-report
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only print what would change (sync-projects.sh --dry-run)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: sync-projects
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      BRANCH: sync/projects
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Sync project pages
+        id: sync
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: |
+          args=()
+          [ "$DRY_RUN" = "1" ] && args+=(--dry-run)
+          set +e
+          scripts/sync-projects.sh "${args[@]}" | tee sync-output.txt
+          rc=${PIPESTATUS[0]}
+          set -e
+          # 1 = some portfolio.md is invalid; the valid repos were still written.
+          if [ "$rc" = "1" ]; then
+            echo "::warning::sync-projects.sh: at least one portfolio.md is invalid — see the log"
+          elif [ "$rc" != "0" ]; then
+            echo "::error::sync-projects.sh exited $rc"; exit "$rc"
+          fi
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$DRY_RUN" = "1" ]; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          # Only the generated paths may change; anything else is a bug in the script.
+          other=$(git status --porcelain -- . ':!src/content/projects' ':!src/assets/projects' ':!sync-output.txt')
+          if [ -n "$other" ]; then echo "::error::unexpected changes outside the project pages:"; echo "$other"; exit 1; fi
+          if [ -n "$(git status --porcelain -- src/content/projects src/assets/projects)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.sync.outputs.changed == 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.sync.outputs.changed == 'true'
+        run: npm ci --ignore-scripts
+      - if: steps.sync.outputs.changed == 'true'
+        run: npx playwright install --with-deps chromium
+      # The PR gets no CI run of its own (see the header), so the suite runs here.
+      - if: steps.sync.outputs.changed == 'true'
+        run: ./test.sh --offline
+
+      - name: Push sync/projects and open or update the PR
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C "$BRANCH"
+          git add -- src/content/projects src/assets/projects
+          git commit -q -m "content: sync project pages from portfolio.md ($(date -u +%Y-%m-%d))"
+          auth=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push --force \
+            "https://github.com/$GITHUB_REPOSITORY.git" "HEAD:refs/heads/$BRANCH"
+          {
+            echo "Weekly run of \`.github/workflows/sync-projects.yml\` (DECISIONS.md #20, #29)."
+            echo
+            echo "\`./test.sh --offline\` passed in the run before this PR was opened: $RUN_URL"
+            echo "A PR opened with GITHUB_TOKEN triggers no other workflow, so no checks show here."
+            echo "Merging pushes \`main\`, which runs \`tests\` and \`security\`; production waits for them."
+            echo
+            echo '```'
+            cat sync-output.txt
+            echo '```'
+          } > pr-body.md
+          num=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$num" ]; then
+            gh pr edit "$num" --repo "$GITHUB_REPOSITORY" --body-file pr-body.md
+          else
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$BRANCH" \
+              --title "Sync project pages from portfolio.md" --body-file pr-body.md
+          fi

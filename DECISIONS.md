@@ -852,3 +852,30 @@ rebuilds.
   https://padj.vercel.app` → `70 passed, 1 failed, 1 warnings, 0 skipped`, the one failure being
   the known Web3Forms key (#19). `GITHUB_TOKEN` is not set: add it only if a build shows
   "unknown".
+
+## 29. The portfolio sync runs weekly in Actions and opens one PR with GITHUB_TOKEN
+**Date:** 2026-11-04
+**Context:** #20 left `scripts/sync-projects.sh` to be run by hand. A follow-up asked for a
+scheduled run that opens a PR here without a cross-repo token. The script reads only public repos
+through `gh`, so this repo's `GITHUB_TOKEN` can read them. A PR opened with that token triggers no
+other workflow, and the repo setting "Allow GitHub Actions to create and approve pull requests" was
+off.
+**Decision:** `.github/workflows/sync-projects.yml`, Mondays 12:00 UTC plus `workflow_dispatch`
+(with `dry_run`). If the generated pages changed, it runs `./test.sh --offline` in the same job,
+force-pushes one rolling branch `sync/projects`, and opens or updates its PR, whose body says
+where the tests ran. Any change outside `src/content/projects` and `src/assets/projects` fails the
+job. Write permissions sit on the job only. The token goes only to the steps that call GitHub; npm,
+Playwright and `test.sh` never see it (`persist-credentials: false`). Merging stays manual, and the
+merge's push to `main` runs `tests` and `security` as usual (#26). The repo setting is turned on.
+`test.sh` § Deployment pipeline pins the permissions, the timeout, `persist-credentials` and the
+test-before-PR order.
+**Rejected:**
+- A fine-grained PAT, so the PR gets its own CI run: a long-lived secret, which #20 rejected.
+- `gh workflow run ci.yml` on the branch: the `tests` job only runs on push and pull_request, and a
+  dispatched run is not reported on the PR anyway.
+- Pushing straight to `main`: a production deploy with no human look at new project pages.
+- Branch only plus an issue with a compare link (no setting change): one more manual step every week.
+**Verified:** PARTIAL. 2026-11-04: `actionlint` clean, and `./test.sh --offline` passes with the
+three new checks. NOT YET: the repo setting, a `workflow_dispatch` dry run on GitHub (which also
+shows whether `gh repo list` returns the owner's public repos with an Actions token), and one real
+run.

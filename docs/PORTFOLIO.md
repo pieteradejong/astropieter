@@ -84,7 +84,9 @@ decided, the page stays.
    - `aiGenerated: true|false` is present (`true` when AI wrote the description). The script
      refuses a file without it, because the build would fail on it.
 
-   On a branch here, run `scripts/sync-projects.sh` (`--dry-run` first, `--repo NAME` for
+   The weekly `sync-projects` workflow does this on Mondays and opens or updates a PR from
+   `sync/projects` (DECISIONS #29); merge it to publish. To sync sooner, run
+   `scripts/sync-projects.sh` on a branch here (`--dry-run` first, `--repo NAME` for
    one). It reads `portfolio.md` from every public repo:
    - `public: true` writes `src/content/projects/<repo>.md` and copies the hero into
      `src/assets/projects/`.
