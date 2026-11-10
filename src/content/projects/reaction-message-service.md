@@ -2,7 +2,7 @@
 title: "Live Emoji Reactions"
 description: "Fans send emoji reactions during a game; Kafka and Spark count them in 2-second windows, and the totals stream back to every viewer"
 techStack: ["Go", "Apache Kafka", "Apache Spark", "Server-Sent Events", "Docker Compose"]
-githubUrl: "https://github.com/pieteradejong/go-service"
+githubUrl: "https://github.com/pieteradejong/crowd-pulse"
 keyFeatures: [
   "A Go service accepts reactions over HTTP and writes them to Kafka",
   "Spark Structured Streaming counts each emoji per 2-second window",
