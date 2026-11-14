@@ -12,3 +12,7 @@ Newest first. Earlier sessions are recorded in `CHANGELOG.md` and `DECISIONS.md`
   internals, but the KaTeX browser fixtures pass. The low katex and fast-xml-parser advisories
   stay warnings, as before.
 - Verified: `./test.sh` → 227 passed, 0 failed, 14 warnings; `npm audit --audit-level=moderate` → exit 0.
+- Pushed `main` `845a4e2`. Production serves it, `/projects/chokepoints-globe/` → 200, and
+  `site / tests` and `security` are green. `site / live` is red only on the Web3Forms key, as it has
+  been on every deploy since 2026-10-30 (`./test.sh --live` → 70 passed, 1 failed). That item is
+  in the workspace TODO, not this one.
