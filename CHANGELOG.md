@@ -13,6 +13,9 @@ live.
 ### Changed
 - Live Emoji Reactions links to `pieteradejong/crowd-pulse`, the renamed `go-service` repo (2026-11-10); the page slug is unchanged.
 
+### Security
+- `astro` 7.3.5 → 7.4.12 (exact pin) for GHSA-mh32-jxcr-mh9f (XSS via attribute injection in dynamic tag names, moderate, affects ≤ 7.4.6), which failed `test.sh`'s `npm audit --audit-level=moderate`. The math pipeline is unchanged: the KaTeX browser fixtures pass on 7.4.12 (2026-11-14).
+
 ## 2026-10-30 — CI/CD status on project cards
 
 Live on padj.vercel.app as of 2026-10-30 (`a3c330d`; `./test.sh --live` 70 passed, 1 failed: the
