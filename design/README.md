@@ -8,8 +8,8 @@ authored as a Claude Design canvas.
 | `padj-publication-template.html` | Self-contained bundle. Open in any browser; fonts and runtime are embedded, no network needed. |
 | `padj-template-source.html` | Extracted template only — readable markup, but references fonts by UUID so it will not render standalone. For reading the CSS, not for viewing. |
 
-The canonical copy lives at `~/dev/design/PADJ.html`, with the full token
-breakdown documented under **PADJ Field Notes** in `~/dev/design/DESIGN_SYSTEMS.md`.
+The canonical copy lives at `~/dev/projects/design/PADJ.html`, with the full token
+breakdown documented under **PADJ Field Notes** in `~/dev/projects/design/VISUAL_DESIGN_SYSTEMS.md`.
 
 ## The two directions
 
