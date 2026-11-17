@@ -2,6 +2,14 @@
 
 Newest first. Earlier sessions are recorded in `CHANGELOG.md` and `DECISIONS.md` only.
 
+## 2026-11-16 — devops page
+
+- Synced the "devops" project page from `devops/portfolio.md` (`public: true`) with its screenshot,
+  staged on branch `sync/devops-page`. Ran the mobile-vetting audit on `/`, `/about`, `/blog`:
+  18 FAIL, 7 WARN, written to `TODO.md`.
+- Verified 2026-11-17: `./test.sh` → 231 passed, 0 failed, 14 warnings. Committed on
+  `sync/devops-page`; merging to `main` (which deploys) is the open item in `TODO.md`.
+
 ## 2026-11-14 — Chokepoints page; astro 7.4.12
 
 - Synced the "Chokepoints" project page from `chokepoints-globe` (`scripts/sync-projects.sh --repo

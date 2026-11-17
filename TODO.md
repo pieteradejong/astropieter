@@ -3,6 +3,18 @@
 Older open items for this site live in `~/dev/TODO.md` § astropieter. Items from 2026-10-23 on are
 kept here.
 
+- [ ] 2026-11-16 — **Merge the devops page** (`sync/devops-page`, tested and pushed 2026-11-17)
+      into `main`, which deploys it; then check `/projects/devops/` is live. `docs/SESSIONS.md` 2026-11-16.
+- [ ] 2026-11-16 — **Mobile audit FAILs** (dotfiles D75 skill `mobile-vetting`, run on the local
+      `astro preview` of `/`, `/about`, `/blog`: 18 FAIL, 7 WARN; report in
+      `~/dev/audit-reports/mobile-2026-11-16/audit-astro/`). (1) `body-scroller`: `html` and `body`
+      both have `overflow: auto`, so `<body>` scrolls instead of the document. iOS Safari's bars never
+      collapse and tap-status-bar-to-top fails. Drop `overflow` and the fixed height from `html, body`.
+      (2) `word-split` on iPhone SE: "CONTAC/T", "LINKE/DIN", "GITH/UB" in the hero buttons. The box is
+      too narrow for the letter-spacing. Give the buttons `min-width: max-content`, or wrap the row.
+      (3) WARN `tap-target-small`: 7 links between 24 and 44 px. Fix, then re-run
+      `node ~/.claude/skills/mobile-vetting/scripts/mobile-audit.mjs http://localhost:4321/ /about /blog`
+      until it exits 0.
 - [ ] 2026-10-23 — **Restore the TV Show Chat GitHub link** (`githubUrl`) if `tvshowchat` goes
       public again. `DECISIONS.md` #24.
 - [ ] 2026-10-25 — **Pieter: create the first prose manifest.** Read the live pages (Home, About,

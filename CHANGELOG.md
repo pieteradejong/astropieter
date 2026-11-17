@@ -9,6 +9,7 @@ live.
 
 ### Added
 - Weekly portfolio sync: `.github/workflows/sync-projects.yml` runs `scripts/sync-projects.sh` on Mondays (or on demand, with `dry_run`). When project pages change, it runs `./test.sh --offline` and opens or updates one PR from `sync/projects`; merging stays manual (DECISIONS #29).
+- Project page "devops", synced from `pieteradejong/devops` (`portfolio.md`, `public: true`), with a screenshot (`src/assets/projects/devops.png`), on branch `sync/devops-page` (2026-11-16).
 - Project page "Chokepoints", synced from `chokepoints-globe` (`portfolio.md`, `public: true`), with its live demo at https://chokepoints-globe.vercel.app (2026-11-14).
 
 ### Changed
